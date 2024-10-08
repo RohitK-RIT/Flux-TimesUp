@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 676041346}
   - component: {fileID: 676041345}
   - component: {fileID: 676041344}
+  - component: {fileID: 676041348}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -452,6 +453,21 @@ Transform:
   - {fileID: 1705090969}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &676041348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 676041343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf6269866abb446db24c12c879e8b80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1071631945}
+  detectionRange: 5
+  rotationSpeed: 2
 --- !u!1 &740990726
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,6 +806,7 @@ GameObject:
   - component: {fileID: 1071631941}
   - component: {fileID: 1071631940}
   - component: {fileID: 1071631946}
+  - component: {fileID: 1071631947}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -809,6 +826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6d5758395c849f18c1b34ac8c212bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveDirection: {x: 0, y: 0}
   moveSpeed: 5
 --- !u!114 &1071631941
 MonoBehaviour:
@@ -937,6 +955,18 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1071631947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071631939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e559bbdc9b3e45678a387662f720f87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1411652319
 GameObject:
   m_ObjectHideFlags: 0

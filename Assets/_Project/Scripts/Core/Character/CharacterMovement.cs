@@ -38,7 +38,7 @@ namespace _Project.Scripts.Core.Character
         {
             // Handle movement and look.
             HandleMovement();
-            HandleLook();
+            HandleLook(moveDirection);
         }
 
         /// <summary>
@@ -59,9 +59,10 @@ namespace _Project.Scripts.Core.Character
         /// <summary>
         /// This method is called to rotate the character based on the movement input.
         /// </summary>
-        private void HandleLook()
+        public void HandleLook(Vector2 direction)
         {
-            var positionToLookAt = new Vector3(moveDirection.x, 0.0f, moveDirection.y);
+            //var positionToLookAt = new Vector3(moveDirection.x, 0.0f, moveDirection.y);
+            var positionToLookAt = new Vector3(direction.x, 0.0f, direction.y);
             var currentRotation = transform.rotation;
 
             // If movement input is pressed, rotate the character to face the movement direction
