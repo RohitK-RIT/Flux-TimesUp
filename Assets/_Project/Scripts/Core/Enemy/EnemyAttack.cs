@@ -7,14 +7,20 @@ namespace _Project.Scripts.Core.Enemy
     {
         public Transform player;  // Reference to the player's Transform
         public float detectionRange = 5f;  // The distance at which the enemy detects the player
+        public float fieldOfViewAngle = 45f; // The conical angle at which the enemy detects the player
       
         void Update()
         {
-            // Call the method to rotate towards the player
-            RotateTowardsPlayer();
+            // Rotate the player only if its in the Conical Field of View
+            if(isPlayerInCone())
+            {
+                 // Call the method to rotate towards the player
+                 RotateTowardsPlayer();
 
-            // Check if the player is within the detection range
-            CheckProximity();
+                // Check if the player is within the detection range
+                Debug.Log("Player in range");
+            }
+           
         }
 
         void RotateTowardsPlayer()
@@ -29,16 +35,34 @@ namespace _Project.Scripts.Core.Enemy
             HandleLook(playerDirection);
         }
 
-        void CheckProximity()
+        private bool isPlayerInCone()
         {
-            // Calculate distance between enemy and player
+            // Calculating the direction from the enemy to player
+            Vector3 directionToPlayer = player.position - transform.position;
+
+            // Calculating the distance between the enemy to the player
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-            // Log a message if the player is within detection range
-            if (distanceToPlayer <= detectionRange)
+            // Checking if the player is within the detection range
+            if (distanceToPlayer > detectionRange)
             {
-                Debug.Log("Player is close to the enemy!");
+                return false;
             }
+
+            // Normalizing the direction vector and getting the forward direction of the enemy
+            directionToPlayer.Normalize();
+            Vector3 forward = transform.forward;
+
+            // The angle between the enemy's forward direction and the direction to the player
+            float angleToPlayer = Vector3.Angle(forward, directionToPlayer);
+
+            // Checking if the player is in the field of view angle
+            if (angleToPlayer <= fieldOfViewAngle)
+            {
+                return true;
+            }
+            return false;
+
         }
     }
 }
