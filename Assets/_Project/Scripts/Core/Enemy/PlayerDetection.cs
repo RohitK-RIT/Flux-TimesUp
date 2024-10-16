@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
 {
-    public class PlayerDetection : CharacterMovement
+    public class PlayerDetection : MonoBehaviour
     {
         public float detectionRange = 5f;  // The distance at which the enemy detects the player
         public float fieldOfViewAngle = 45f; // The conical angle at which the enemy detects the player
@@ -21,25 +21,10 @@ namespace _Project.Scripts.Core.Enemy
 
             // Debugging: Print the list of players in range --> Just for testing purpose
             DebugPlayersInRange();
-
-            // If there are players in range, process the closest one
-            if (_playersInRange.Count > 0)
-            {
-                // Find the closest player
-                Transform closestPlayer = FindClosestPlayerInRange();
-
-                // Check if the closest player is in the conical view
-                if (closestPlayer && IsPlayerInCone(closestPlayer))
-                {
-                    // Rotate the enemy towards the closest player
-                    RotateTowardsPlayer(closestPlayer);
-                    Debug.Log("Closest player in range and view."+closestPlayer.name);
-                }
-            }
         }
        
         // Find all players currently within the detection range.
-        void FindPlayersInRange()
+        private void FindPlayersInRange()
         {
             // Get all colliders within the detection range
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRange, layerMask);
@@ -74,7 +59,7 @@ namespace _Project.Scripts.Core.Enemy
         }
         
         // Print the names of the players currently in range for debugging.
-        void DebugPlayersInRange()
+        private void DebugPlayersInRange()
         {
             if (_playersInRange.Count == 0)
             {
@@ -91,7 +76,7 @@ namespace _Project.Scripts.Core.Enemy
         }
         
         // Find the closest player within the playersInRange list.
-        Transform FindClosestPlayerInRange()
+        internal Transform FindClosestPlayerInRange()
         {
             // Variable to store the closest player's Transform
             Transform closest = null;
@@ -115,8 +100,8 @@ namespace _Project.Scripts.Core.Enemy
             // Return the Transform of the closest player, or null if no player was found
             return closest;
         }
-        
-        bool IsPlayerInCone(Transform player)
+
+        internal bool IsPlayerInCone(Transform player)
         {
             Vector3 directionToPlayer = player.position - transform.position;
             directionToPlayer.y = 0;  // Only rotate on the horizontal plane
@@ -128,14 +113,5 @@ namespace _Project.Scripts.Core.Enemy
             return angleToPlayer <= fieldOfViewAngle;
         }
         
-        void RotateTowardsPlayer(Transform player)
-        {
-            Vector3 directionToPlayer = player.position - transform.position;
-            directionToPlayer.y = 0;  // Keep rotation on the horizontal plane
-            
-            // Use the inherited HandleLook method to rotate the enemy
-            HandleLook(directionToPlayer);
-        }
-      
     }
 }

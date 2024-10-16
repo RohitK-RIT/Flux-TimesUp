@@ -58,7 +58,7 @@ namespace _Project.Scripts.Core.Character
         /// <summary>
         /// This method is called to rotate the character based on the movement input.
         /// </summary>
-        public void HandleLook(Vector3 direction)
+        internal void HandleLook(Vector3 direction)
         {
             //Normalizing the direction value
             direction = direction.normalized;
@@ -75,7 +75,7 @@ namespace _Project.Scripts.Core.Character
             
         }
         
-        public void PlayerLookAtMouse()
+        private void PlayerLookAtMouse()
         {
             // Ground plane at y = 0
             var groundPlane = new Plane(Vector3.up, Vector3.zero); 
