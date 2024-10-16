@@ -132,12 +132,9 @@ namespace _Project.Scripts.Core.Enemy
         {
             Vector3 directionToPlayer = player.position - transform.position;
             directionToPlayer.y = 0;  // Keep rotation on the horizontal plane
-
-            // Convert the 3D direction to a 2D vector for HandleLook
-            Vector2 playerDirection = new Vector2(directionToPlayer.x, directionToPlayer.z);
-
+            
             // Use the inherited HandleLook method to rotate the enemy
-            HandleLook(playerDirection);
+            HandleLook(directionToPlayer);
         }
       
     }
