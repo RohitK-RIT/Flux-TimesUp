@@ -6,7 +6,7 @@ namespace _Project.Scripts.Core.Enemy
 {
     public class PlayerDetection : MonoBehaviour
     {
-        public float detectionRange = 5f;  // The distance at which the enemy detects the player
+        public float detectionRange = 10f;  // The distance at which the enemy detects the player
         public float fieldOfViewAngle = 45f; // The conical angle at which the enemy detects the player
         
         public LayerMask layerMask; // A LayerMask to specify which layers the detection should interact with
