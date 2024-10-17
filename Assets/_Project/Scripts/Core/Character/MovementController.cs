@@ -6,7 +6,7 @@ namespace _Project.Scripts.Core.Character
     /// This class is responsible for moving the character based on the movement input.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class CharacterMovement : MonoBehaviour
+    public class MovementController : MonoBehaviour
     {
         /// <summary>
         /// The direction the player is moving in.

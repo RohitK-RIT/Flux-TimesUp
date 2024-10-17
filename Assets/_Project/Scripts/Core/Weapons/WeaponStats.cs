@@ -15,6 +15,11 @@ namespace _Project.Scripts.Core.Weapons
         public string WeaponID => weaponID;
 
         /// <summary>
+        /// Weapon type.
+        /// </summary>
+        public WeaponType WeaponType => weaponType;
+
+        /// <summary>
         /// Weapon name.
         /// </summary>
         public string WeaponName => weaponName;
@@ -37,6 +42,7 @@ namespace _Project.Scripts.Core.Weapons
         [Header("Weapon Stats")] [SerializeField]
         private string weaponID;
 
+        [SerializeField] private WeaponType weaponType;
         [SerializeField] private string weaponName;
         [SerializeField] private float damage;
         [SerializeField] private int range;

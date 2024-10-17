@@ -6,14 +6,8 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
-    /// <typeparam name="T">struct for weapon stats</typeparam>
-    public abstract class Weapon<T> : MonoBehaviour where T : WeaponStats
+    public abstract class Weapon : MonoBehaviour
     {
-        /// <summary>
-        /// Stats of the weapon.
-        /// </summary>
-        [SerializeField] protected T stats;
-
         /// <summary>
         /// Coroutine for attacking.
         /// </summary>
@@ -31,9 +25,9 @@ namespace _Project.Scripts.Core.Weapons
         {
             // End the previous attack if it's still running
             EndAttack();
-            
+
             Attacking = true;
-            
+
             // Start the new attack
             AttackCoroutine = StartCoroutine(OnAttack());
         }

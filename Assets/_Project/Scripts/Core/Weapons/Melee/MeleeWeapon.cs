@@ -6,8 +6,13 @@ namespace _Project.Scripts.Core.Weapons.Melee
     /// <summary>
     /// Melee weapon class.
     /// </summary>
-    public class MeleeWeapon : Weapon<MeleeWeaponStats>
+    public class MeleeWeapon : Weapon
     {
+        /// <summary>
+        /// Melee weapon stats.
+        /// </summary>
+        [SerializeField] private MeleeWeaponStats stats;
+
         /// <summary>
         /// Coroutine for attacking.
         /// </summary>
@@ -17,7 +22,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
             while (true)
             {
                 Slash();
-                
+
                 yield return new WaitForSeconds(1 / stats.AttackSpeed);
             }
         }
