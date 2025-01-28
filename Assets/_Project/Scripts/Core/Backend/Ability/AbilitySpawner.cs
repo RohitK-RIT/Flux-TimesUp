@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Weapons.Abilities;
-using _Project.Scripts.Gameplay.PCG;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Backend.Ability
@@ -21,6 +16,7 @@ namespace _Project.Scripts.Core.Backend.Ability
         /// </summary>
         private static readonly LayerMask GroundLayer = LayerMask.GetMask("Ground");
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Spawns random abilities in the room.
         /// </summary>
@@ -39,7 +35,14 @@ namespace _Project.Scripts.Core.Backend.Ability
                 for (var i = 0; i < numberOfAbilitiesToSpawn;)
                 {
                     // Randomly determine the ability type
-                    var abilityType = Random.Range(0, 2) == 0 ? AbilityType.Heal : AbilityType.Shield;
+                    var abilityType = Random.Range(0, 4) switch
+                    {
+                        0 => AbilityType.Shield,
+                        1 => AbilityType.Teleport,
+                        2 => AbilityType.Heal,
+                        3 => AbilityType.Attack,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
                     // Calculate a random spawn position within the room
                     var roomSpawnPosition = new Vector3(Random.Range(-size.x / 2, size.x / 2), 1f, Random.Range(-size.z / 2, size.z / 2));
                     var spawnPosition = roomPosition + roomSpawnPosition;

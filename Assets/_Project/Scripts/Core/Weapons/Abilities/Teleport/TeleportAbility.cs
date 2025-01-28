@@ -15,6 +15,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         /// </summary>
         [SerializeField] private TeleportAbilityStats stats;
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
@@ -25,6 +26,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
             Used = true;
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Activates the teleport ability.
         /// </summary>
@@ -35,12 +37,27 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
-
-            //SetShieldVisual(true);
             IsAbilityActive = true;
+            
+            // Teleport the player to the target position
+            Vector3 targetPosition = GetTeleportTargetPosition();
+            CurrentPlayerController.transform.position = targetPosition;
+            
+            Debug.Log("Player teleported to: " + targetPosition);
+            
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
         }
+        
+        /// <summary>
+        /// Function to determine the target position for the teleport ability.
+        /// </summary>
+        private Vector3 GetTeleportTargetPosition()
+        {
+            Vector3 targetPosition = CurrentPlayerController.transform.position + CurrentPlayerController.transform.forward * stats.Distance;
+            return targetPosition;
+        }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Coroutine to deactivate the ability after a certain time.
         /// </summary>
@@ -50,7 +67,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            //SetShieldVisual(false);
             CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
@@ -62,14 +78,5 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         {
             yield break;
         }
-
-        /// <summary>
-        /// Sets the visual representation of the shield.
-        /// </summary>
-        /// <param name="value">A boolean value indicating whether to activate or deactivate the shield visual.</param>
-        /*private void SetShieldVisual(bool value)
-        {
-            _shieldVisual.SetActive(value);
-        }*/
     }
 }
