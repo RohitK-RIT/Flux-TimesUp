@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1154413304545008157}
   - component: {fileID: 6759900882341720125}
   m_Layer: 0
-  m_Name: Shield Ability Pickup
+  m_Name: Grenade Ability Pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480574405387069552}
-  m_Mesh: {fileID: 4300000, guid: e50957f3a4a037e4d9a7fdad9b88ab23, type: 3}
+  m_Mesh: {fileID: 4300000, guid: b945fc7164617984c9a7d253f5cdfab7, type: 3}
 --- !u!23 &7064469724080959180
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -118,4 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3096d3a3afb4a0b90604ca784ae1c8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityType: 1
+  abilityType: 2
