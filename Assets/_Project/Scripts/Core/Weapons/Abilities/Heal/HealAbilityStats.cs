@@ -11,7 +11,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
         public int HealValue => healValue;
 
         /// <summary>
-        /// The duration for which the shield ability remains active.
+        /// The amount of health restored by the ability.   
         /// </summary>
         [SerializeField] private int healValue = 50;
     }

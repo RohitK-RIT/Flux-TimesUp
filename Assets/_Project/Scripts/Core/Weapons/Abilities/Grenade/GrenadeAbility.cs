@@ -1,34 +1,33 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Weapons.Abilities.Heal
+namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
 {
     /// <summary>
-    /// Represents the heal ability for the player.
+    /// Represents the grenade ability for the player.
     /// </summary>
-    public class HealAbility : Ability
+    public class GrenadeAbility : Ability
     {
-        public override AbilityType Type => AbilityType.Heal;
-
         /// <summary>
         /// The stats for the heal ability.
         /// </summary>
-        [SerializeField] private HealAbilityStats stats;
-
+        [SerializeField] private GrenadeAbilityStats stats;
+        
+        public override AbilityType Type => AbilityType.Attack;
+        
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
         public override void OnEquip()
         {
             base.OnEquip();
-            UseHeal();
+            UseGrenade();
             Used = true;
         }
-
         /// <summary>
-        /// Function to use the heal ability.
+        /// Function to use the attack ability using grenade.
         /// </summary>
-        private void UseHeal()
+        private void UseGrenade()
         {
             if (IsAbilityActive || IsCooldownActive)
             {
@@ -37,9 +36,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
             }
 
             IsAbilityActive = true;
-            //Heal the player
             Debug.Log("Player is using the heal ability!!");
-            CurrentPlayerController.Heal(stats.HealValue);
+            //CurrentPlayerController.Heal(stats.HealValue);
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
         }
 
