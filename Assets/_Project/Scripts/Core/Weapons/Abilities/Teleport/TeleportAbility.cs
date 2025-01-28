@@ -53,7 +53,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         /// </summary>
         private Vector3 GetTeleportTargetPosition()
         {
-            Vector3 targetPosition = CurrentPlayerController.transform.position + CurrentPlayerController.transform.forward * stats.Distance;
+            Vector3 targetPosition = CurrentPlayerController.transform.position + CurrentPlayerController.MovementController.AimTransform.forward * stats.Distance;
             return targetPosition;
         }
 
