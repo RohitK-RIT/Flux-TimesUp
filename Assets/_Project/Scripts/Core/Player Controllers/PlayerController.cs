@@ -138,10 +138,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             currentHealth -= damageDealt;
             currentHealth = Mathf.Clamp(currentHealth, 0f, Stats.maxHealth);
-            OnHitConfirmed(weapon.CurrentPlayerController);
+            OnHitConfirmed(weapon?.CurrentPlayerController);
 
             if (currentHealth <= 0)
-                Die(weapon.CurrentPlayerController);
+                Die(weapon?.CurrentPlayerController, weapon);
         }
 
         /// <summary>

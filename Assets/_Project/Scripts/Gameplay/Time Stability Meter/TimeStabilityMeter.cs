@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Project.Scripts.Core.Backend.Scene_Control;
+using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 {
@@ -26,6 +27,12 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
         {
             TimeStability -= decreaseRate * Time.deltaTime;
             TimeStability = Mathf.Clamp(TimeStability, 0, initialTimeStability);
+            if(TimeStability <= 0)
+            {
+                TimeStability = 0;
+                var player = LevelSceneController.Instance.Player;
+                player.TakeDamage(null, player.CurrentHealth);
+            }
         }
     }
 }
