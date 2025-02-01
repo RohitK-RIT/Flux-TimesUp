@@ -1,6 +1,7 @@
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ namespace _Project.Scripts.UI
     {
         // References to the UI components
         [SerializeField] public Slider healthBar;
+        [SerializeField] private Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public LocalPlayerController player;
@@ -38,6 +40,7 @@ namespace _Project.Scripts.UI
         {
             // Initialize the health bar and ammo display with the player's starting values
             UpdateHealthBar();
+            UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
             primaryOverlay = Instantiate(overlay, primaryWeaponSlotHolder.rectTransform);
             secondaryOverlay = Instantiate(overlay, secondaryWeaponSlotHolder.rectTransform);
@@ -48,6 +51,7 @@ namespace _Project.Scripts.UI
         {
             // Update the health bar and ammo display in real-time
             UpdateHealthBar();
+            UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
             UpdateReloadingText();
             //UpdateObjectiveText();
@@ -56,10 +60,9 @@ namespace _Project.Scripts.UI
         }
         
         //Updates the current loadout of the player in real-time.
-        // ReSharper disable Unity.PerformanceAnalysis
         private void UpdateLoadoutInfo()
         {
-            if (player == null) return;
+            if (!player) return;
 
             primaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
             secondaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
@@ -98,6 +101,15 @@ namespace _Project.Scripts.UI
         {
             healthBar.value = player.CurrentHealth;
             healthBar.maxValue = player.Stats.maxHealth;
+        }
+        
+        /// <summary>
+        /// Function to update the time stability bar.
+        /// </summary>
+        private void UpdateTimeStabilityBar()
+        {
+            timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
+            timeStabilityBar.maxValue = TimeStabilityMeter.Instance.InitialTimeStability;
         }
 
         // Updates the ammo display based on the player's current and total ammo
