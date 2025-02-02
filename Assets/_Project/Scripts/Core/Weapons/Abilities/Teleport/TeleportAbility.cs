@@ -22,7 +22,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         public override void OnEquip()
         {
             base.OnEquip();
-            UseTeleport();
+            Teleport();
             Used = true;
         }
 
@@ -30,7 +30,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         /// <summary>
         /// Activates the teleport ability.
         /// </summary>
-        private void UseTeleport()
+        private void Teleport()
         {
             if (IsAbilityActive || IsCooldownActive)
             {

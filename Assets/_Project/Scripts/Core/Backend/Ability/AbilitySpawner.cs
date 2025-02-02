@@ -35,11 +35,11 @@ namespace _Project.Scripts.Core.Backend.Ability
                 for (var i = 0; i < numberOfAbilitiesToSpawn;)
                 {
                     // Randomly determine the ability type
-                    var abilityType = Random.Range(0, 4) switch
+                    var abilityType = Random.Range(0, 1) switch
                     {
-                        0 => AbilityType.Shield,
-                        1 => AbilityType.Teleport,
-                        2 => AbilityType.Heal,
+                        0 => AbilityType.Attack,
+                        1 => AbilityType.Attack,
+                        2 => AbilityType.Attack,
                         3 => AbilityType.Attack,
                         _ => throw new ArgumentOutOfRangeException()
                     };

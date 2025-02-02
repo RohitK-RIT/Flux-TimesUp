@@ -54,14 +54,14 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         public override void OnEquip()
         {
             base.OnEquip();
-            UseShield();
+            Shield();
             Used = true;
         }
 
         /// <summary>
         /// Activates the shield ability.
         /// </summary>
-        private void UseShield()
+        private void Shield()
         {
             if (IsAbilityActive || IsCooldownActive)
             {

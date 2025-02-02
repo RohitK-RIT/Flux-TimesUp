@@ -21,14 +21,14 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
         public override void OnEquip()
         {
             base.OnEquip();
-            UseHeal();
+            Heal();
             Used = true;
         }
 
         /// <summary>
         /// Function to use the heal ability.
         /// </summary>
-        private void UseHeal()
+        private void Heal()
         {
             if (IsAbilityActive || IsCooldownActive)
             {
