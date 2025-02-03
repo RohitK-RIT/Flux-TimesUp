@@ -11,11 +11,10 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         public override AbilityType Type => AbilityType.Teleport;
 
         /// <summary>
-        /// The stats for the shield ability.
+        /// The stats for the Teleport ability.
         /// </summary>
         [SerializeField] private TeleportAbilityStats stats;
 
-        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
@@ -25,8 +24,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
             Teleport();
             Used = true;
         }
-
-        // ReSharper disable Unity.PerformanceAnalysis
+        
         /// <summary>
         /// Activates the teleport ability.
         /// </summary>
@@ -40,24 +38,19 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
             IsAbilityActive = true;
             
             // Teleport the player to the target position
-            Vector3 targetPosition = GetTeleportTargetPosition();
+            Vector3 targetPosition = CurrentPlayerController.transform.position + (-CurrentPlayerController.MovementController.Body.forward) * stats.Distance;
+            
+            // Perform a raycast to check that teleport does not happen through room walls. 
+            RaycastHit hit;
+            if (Physics.Raycast(CurrentPlayerController.transform.position, -CurrentPlayerController.MovementController.Body.forward, out hit, stats.Distance))
+            {
+                return; // Prevent teleportation
+            }
+
             CurrentPlayerController.transform.position = targetPosition;
-            
-            Debug.Log("Player teleported to: " + targetPosition);
-            
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
         }
         
-        /// <summary>
-        /// Function to determine the target position for the teleport ability.
-        /// </summary>
-        private Vector3 GetTeleportTargetPosition()
-        {
-            Vector3 targetPosition = CurrentPlayerController.transform.position + CurrentPlayerController.MovementController.AimTransform.forward * stats.Distance;
-            return targetPosition;
-        }
-
-        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Coroutine to deactivate the ability after a certain time.
         /// </summary>

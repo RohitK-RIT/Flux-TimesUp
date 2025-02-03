@@ -35,12 +35,12 @@ namespace _Project.Scripts.Core.Backend.Ability
                 for (var i = 0; i < numberOfAbilitiesToSpawn;)
                 {
                     // Randomly determine the ability type
-                    var abilityType = Random.Range(0, 1) switch
+                    var abilityType = Random.Range(0, 4) switch
                     {
-                        0 => AbilityType.Attack,
-                        1 => AbilityType.Attack,
+                        0 => AbilityType.Heal,
+                        1 => AbilityType.Shield,
                         2 => AbilityType.Attack,
-                        3 => AbilityType.Attack,
+                        3 => AbilityType.Teleport,
                         _ => throw new ArgumentOutOfRangeException()
                     };
                     // Calculate a random spawn position within the room

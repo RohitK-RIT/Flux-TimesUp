@@ -5,16 +5,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
     [CreateAssetMenu(fileName = "GAS_LevelName", menuName = "Stats/Ability/Grenade", order = 0)]
     public class GrenadeAbilityStats : AbilityStats
     {
-        ///<summary>
-        /// The delay before the grenade explodes.
-        /// </summary>
-        public float Delay => delay;
-        
-        ///<summary>
-        /// The delay before the grenade explodes.
-        /// </summary>
-        [SerializeField] private float delay = 3f;
-        
         /// <summary>
         /// The amount of damage dealt by the ability.
         /// </summary>
