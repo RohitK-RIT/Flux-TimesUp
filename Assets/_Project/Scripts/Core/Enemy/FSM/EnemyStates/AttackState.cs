@@ -1,3 +1,5 @@
+using Vector3 = UnityEngine.Vector3;
+
 namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 {
     public class AttackState : BaseState
@@ -30,7 +32,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
-            _enemyInputController.StopChasing();
+            //_enemyInputController.StopChasing();
 
             // Check if the player health is low
             if (_enemyInputController.EnemyHUD.enemy.CurrentHealth < 50)
@@ -61,6 +63,17 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 
             // Player is in attack range, so keep attacking
             _enemyInputController.TryAttack();
+            
+            // Attack and move towards the player till the DistanceFromPlayer is reached
+            if ( Vector3.Distance(_enemyInputController.Enemy.transform.position,
+                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.DistanceFromPlayer)
+            {
+               _enemyInputController.StopChasing();
+            }
+            else
+            {
+                _enemyInputController.StartChasing();
+            }
         }
         
         public override EnemyState GetNextState()

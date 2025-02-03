@@ -58,7 +58,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Cinemachine will follow this target
             cinemachineCameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
 
-            PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 1000f)
+            PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 1000f,~PlayerController.FriendlyLayer)
                 ? hit.point
                 : mainCamera.transform.position + mainCamera.transform.forward * 50f;
         }

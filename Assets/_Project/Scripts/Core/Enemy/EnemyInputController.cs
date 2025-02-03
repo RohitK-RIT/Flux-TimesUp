@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
@@ -25,7 +24,7 @@ namespace _Project.Scripts.Core.Enemy
 
         private readonly float _attackRange = 10f; // Attack range
 
-        [SerializeField] private float attackCooldown = 5f; // Cooldown time between attacks
+        [SerializeField] private float attackCooldown = 3f; // Cooldown time between attacks
 
         private bool _isAttacking; // Tracks if an attack is in progress
 
@@ -43,7 +42,7 @@ namespace _Project.Scripts.Core.Enemy
 
         internal Vector3 RoamingPosition; // random roaming position for an enemy
 
-        private bool _isRoaming = false; // tracks if the enemy is roaming
+        private bool _isRoaming; // tracks if the enemy is roaming
 
         internal EnemyHUD EnemyHUD; // reference for enemy HUD
 
@@ -57,6 +56,8 @@ namespace _Project.Scripts.Core.Enemy
         
         public EnemyType enemyType; // The enemy type
         
+        internal readonly float DistanceFromPlayer = 3.0f; // Distance between the player and enemy
+        
         private void Awake()
         {
             Enemy = GetComponent<NavMeshAgent>();
@@ -64,8 +65,8 @@ namespace _Project.Scripts.Core.Enemy
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
         }
-        
-        internal void InitializeState()
+
+        private void InitializeState()
         {
             var states = new Dictionary<EnemyState, BaseState>();
             states.Clear();
@@ -113,7 +114,7 @@ namespace _Project.Scripts.Core.Enemy
         
 
         //Method to check if the player in present on the navmesh rooms
-        internal bool IsPlayerOnNavMesh()
+        private bool IsPlayerOnNavMesh()
         {
             NavMeshHit hit;
             // Ensure the ClosestPlayer object exists before proceeding.
@@ -262,10 +263,11 @@ namespace _Project.Scripts.Core.Enemy
                 Enemy.SetDestination(ClosestPlayer.position);
                 OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
-                // If a player is in attack range, transition to attack state
-                if (CanAttack())
+                // If a player is in DistanceFromPlayer range, stop chasing
+                if (Vector3.Distance(Enemy.transform.position,
+                        ClosestPlayer.transform.position) <= DistanceFromPlayer)
                 {
-                    StopChasing(); // Stop chasing once the attack range is reached
+                    StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;
                 }
 
