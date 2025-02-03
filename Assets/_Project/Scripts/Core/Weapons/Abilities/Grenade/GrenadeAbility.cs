@@ -8,7 +8,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
     /// </summary>
     public class GrenadeAbility : Ability
     {
+        // Property to reference Grenade Ability stats.
         public GrenadeAbilityStats Stats => stats;
+        
         /// <summary>
         /// The stats for the heal ability.
         /// </summary>
@@ -18,7 +20,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         [SerializeField] private Grenade grenade;
         
         /// <summary>
-        /// Function to use the attack ability using grenade.
+        /// Function to use grenade ability.
         /// </summary>
         private void UseGrenadeAbility()
         {

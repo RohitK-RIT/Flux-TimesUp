@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
@@ -12,6 +11,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         /// </summary>
         [SerializeField] private GameObject explosionVFXPrefab;
 
+        /// <summary>
+        /// Rigidbody reference for physics implementation on grenade. 
+        /// </summary>
         private Rigidbody grenadeRb;
         
         private void Awake()
@@ -20,6 +22,11 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             grenadeRb.isKinematic = true;
         }
 
+        /// <summary>
+        /// Function to throw grenade. 
+        /// </summary>
+        /// <param name="forceDirection"></param>
+        /// <param name="grenadeAbility"></param>
         public void ThrowGrenade(Vector3 forceDirection, GrenadeAbility grenadeAbility)
         {
             //Throw Grenade Functionality
