@@ -40,7 +40,7 @@ namespace _Project.Scripts.Core.Loadout
             PopulateWeaponSlots(primaryWeaponSlotHolder, _primaryRangedWeapons);
             PopulateWeaponSlots(secondaryWeaponSlotHolder, _secondaryRangedWeapons);
             PopulateWeaponSlots(meleeWeaponSlotHolder, _meleeWeapons);
-            updateInstructionText.text = "Please select your Primary Weapon";
+            updateInstructionText.text = "Please select your Primary, Secondary, and Melee Weapon!";
             feedbackText.text = "";
         }
         
@@ -95,19 +95,16 @@ namespace _Project.Scripts.Core.Loadout
             {
                 _loadout[0] = weaponID;
                 feedbackText.text = "You have selected " + weaponID + " as your Primary Weapon";
-                updateInstructionText.text = "Please select your Secondary Weapon";
             }
             else if (weaponType == WeaponType.Secondary)
             {
                 _loadout[1] = weaponID;
                 feedbackText.text = "You have selected " + weaponID + " as your Secondary Weapon";
-                updateInstructionText.text = "Please select your Melee Weapon";
             }
             else if (weaponType == WeaponType.Melee)
             {
                 _loadout[2] = weaponID;
                 feedbackText.text = "You have selected " + weaponID + " as your Melee Weapon";
-                updateInstructionText.text = "Click Continue to proceed";
             }
             // Show overlay for the selected weapon and persist previous selections
             var allWeaponSlots = FindObjectsOfType<WeaponSlots>();
