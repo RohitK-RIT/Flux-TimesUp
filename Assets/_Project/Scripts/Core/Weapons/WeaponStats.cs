@@ -38,6 +38,11 @@ namespace _Project.Scripts.Core.Weapons
         /// Attack speed of the weapon.
         /// </summary>
         public float AttackSpeed => attackSpeed;
+        
+        /// <summary>
+        /// Time stability effect of the weapon.
+        /// </summary>
+        public float TimeStabilityEffect => timeStabilityEffect;
 
         [Header("Weapon Stats")] [SerializeField]
         private string weaponID;
@@ -47,6 +52,6 @@ namespace _Project.Scripts.Core.Weapons
         [SerializeField] private float damage;
         [SerializeField] private float range;
         [SerializeField] private float attackSpeed;
-
+        [SerializeField] private float timeStabilityEffect = 3f;
     }
 }

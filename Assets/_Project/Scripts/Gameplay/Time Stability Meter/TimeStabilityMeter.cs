@@ -1,4 +1,9 @@
-﻿using _Project.Scripts.Core.Backend.Scene_Control;
+﻿using System;
+using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
+using _Project.Scripts.Core.Weapons.Melee;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.Time_Stability_Meter
@@ -21,6 +26,30 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
             Instance = this;
             TimeStability = initialTimeStability;
+        }
+
+        private void Start()
+        {
+            foreach (var enemy in LevelSceneController.Instance.enemies)
+            {
+                enemy.OnDeath += OnEnemyDeath;
+            }
+        }
+
+        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
+        {
+            if(killingPlayer != LevelSceneController.Instance.Player)
+                return;
+            
+            switch (weaponKilledBy)
+            {
+                case RangedWeapon rangedWeapon:
+                    TimeStability += rangedWeapon.Stats.TimeStabilityEffect;
+                    break;
+                case MeleeWeapon meleeWeapon:
+                    TimeStability += meleeWeapon.Stats.TimeStabilityEffect;
+                    break;
+            }
         }
 
         private void Update()
