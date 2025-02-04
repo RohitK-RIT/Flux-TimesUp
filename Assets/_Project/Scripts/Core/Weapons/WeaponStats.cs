@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons
@@ -43,6 +44,11 @@ namespace _Project.Scripts.Core.Weapons
         /// Time stability effect of the weapon.
         /// </summary>
         public float TimeStabilityEffect => timeStabilityEffect;
+        
+        /// <summary>
+        /// Weapon era.
+        /// </summary>
+        public WeaponEra WeaponEra => weaponEra;
 
         [Header("Weapon Stats")] [SerializeField]
         private string weaponID;
@@ -52,6 +58,7 @@ namespace _Project.Scripts.Core.Weapons
         [SerializeField] private float damage;
         [SerializeField] private float range;
         [SerializeField] private float attackSpeed;
+        [SerializeField] private WeaponEra weaponEra;
         [SerializeField] private float timeStabilityEffect = 3f;
     }
 }
