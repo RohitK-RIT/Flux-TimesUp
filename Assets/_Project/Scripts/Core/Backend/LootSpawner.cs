@@ -11,6 +11,9 @@ namespace _Project.Scripts.Core.Backend
     {
         [SerializeField] private GameObject[] lootPrefabs;
 
+        /// <summary>
+        /// Singleton instance of LootSpawner.
+        /// </summary>
         private void Awake()
         {
             if (Instance && Instance != this)
@@ -24,6 +27,11 @@ namespace _Project.Scripts.Core.Backend
 
         public static LootSpawner Instance { get; private set; }
 
+        /// <summary>
+        /// Function to spawn loot on Enemy Death.
+        /// </summary>
+        /// <param name="lootDropPosition"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void LootDrop(Vector3 lootDropPosition)
         {
             var dropType = Random.Range(0, 2);
@@ -52,6 +60,12 @@ namespace _Project.Scripts.Core.Backend
             }
             
         }
+        
+        /// <summary>
+        /// Function to spawn random abilities.
+        /// </summary>
+        /// <param name="abilityType">The type of ability to spawn.</param>
+        /// <param name="lootDropPosition">The position to spawn the ability.</param>
         private void SpawnRandomAbilities(AbilityType abilityType, Vector3 lootDropPosition)
         {
             // Get the ability pickup prefab

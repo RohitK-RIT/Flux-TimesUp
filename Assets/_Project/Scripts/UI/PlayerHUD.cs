@@ -166,13 +166,20 @@ namespace _Project.Scripts.UI
             coinsText.text = player?.GetCoins().ToString();
         }
         
+        /// <summary>
+        /// Function to show pickup feedback.
+        /// </summary>
+        /// <param name="msg">Message to display on loot pickup.</param>
         public void ShowPickupFeedback(string msg)
         {
             PickupText.text = msg;
             PickupText.gameObject.SetActive(true);
-            Invoke(nameof(HidePickupFeedback), 1.5f);
+            Invoke(nameof(HidePickupFeedback), 2f);
         }
-
+        
+        /// <summary>
+        /// Function to hide pickup feedback.
+        /// </summary>
         private void HidePickupFeedback()
         {
             PickupText.gameObject.SetActive(false);
