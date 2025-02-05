@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.UI;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
@@ -7,7 +8,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities
     public class AbilityPickup : MonoBehaviour, IPickupItem
     {
         [SerializeField] private AbilityType abilityType;
-
         public void OnItemPickup()
         {
             var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
@@ -27,6 +27,13 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
             // Destroy the pickup item.
             Destroy(gameObject);
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
+            }
         }
     }
 }

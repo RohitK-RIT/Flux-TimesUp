@@ -1,5 +1,8 @@
+using System;
+using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
@@ -23,7 +26,7 @@ namespace _Project.Scripts.UI
         [SerializeField] public Image primaryWeaponSlotHolder;
         [SerializeField] public Image secondaryWeaponSlotHolder;
         [SerializeField] public Image meleeWeaponSlotHolder;
-        //[SerializeField] public Image abilitySlotHolder;
+        [SerializeField] public Image abilitySlotHolder;
         [SerializeField] private GameObject overlay;
 
         [SerializeField] public GameObject reloadingText;
@@ -34,8 +37,10 @@ namespace _Project.Scripts.UI
         private GameObject primaryOverlay;
         private GameObject secondaryOverlay;
         private GameObject meleeOverlay;
+        private GameObject abilityOverlay;
 
-        //private WeaponDataSystem weaponDataSystem;
+        private AbilityData abilityData;
+
         private void Start()
         {
             // Initialize the health bar and ammo display with the player's starting values
@@ -45,6 +50,8 @@ namespace _Project.Scripts.UI
             primaryOverlay = Instantiate(overlay, primaryWeaponSlotHolder.rectTransform);
             secondaryOverlay = Instantiate(overlay, secondaryWeaponSlotHolder.rectTransform);
             meleeOverlay = Instantiate(overlay, meleeWeaponSlotHolder.rectTransform);
+            abilityOverlay = Instantiate(overlay, abilitySlotHolder.rectTransform);
+            abilitySlotHolder.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -58,12 +65,26 @@ namespace _Project.Scripts.UI
             UpdateCoinsText();
             UpdateLoadoutInfo();
         }
-        
+        public void ShowAbilityHUD(AbilityType abilityType)
+        {
+            abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
+            abilitySlotHolder.sprite = abilityData.Icon;
+            abilitySlotHolder.gameObject.SetActive(true);
+        }
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
             if (!player) return;
 
+            if (player.WeaponController.CurrentWeapon is Ability)
+            {
+                abilitySlotHolder.enabled = true;
+                abilitySlotHolder.sprite = abilityData.Icon;
+                primaryOverlay.SetActive(true);
+                secondaryOverlay.SetActive(true);
+                meleeOverlay.SetActive(true);
+                abilityOverlay.SetActive(false);
+            }
             primaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
             secondaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
             meleeWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
@@ -81,18 +102,21 @@ namespace _Project.Scripts.UI
                 primaryOverlay.SetActive(false);
                 secondaryOverlay.SetActive(true);
                 meleeOverlay.SetActive(true);
+                abilityOverlay.SetActive(true);
             }
             else if (player.WeaponController.CurrentWeapon == player.WeaponController.Weapons[1])
             {
                 primaryOverlay.SetActive(true);
                 secondaryOverlay.SetActive(false);
                 meleeOverlay.SetActive(true);
+                abilityOverlay.SetActive(true);
             }
             else if (player.WeaponController.CurrentWeapon == player.WeaponController.Weapons[2])
             {
                primaryOverlay.SetActive(true);
                secondaryOverlay.SetActive(true);
-                meleeOverlay.SetActive(false);
+               meleeOverlay.SetActive(false);
+               abilityOverlay.SetActive(true);
             }
         }
 
