@@ -56,7 +56,7 @@ namespace _Project.Scripts.Core.Enemy
         
         public EnemyType enemyType; // The enemy type
         
-        internal readonly float DistanceFromPlayer = 3.0f; // Distance between the player and enemy
+        internal readonly float DistanceFromPlayer = 5.0f; // Distance between the player and enemy
         
         private void Awake()
         {
@@ -82,6 +82,13 @@ namespace _Project.Scripts.Core.Enemy
                     break;
 
                 case EnemyType.Boss:
+                    states[EnemyState.Detect] = new DetectState(this);
+                    states[EnemyState.Chase] = new ChaseState(this);
+                    states[EnemyState.Attack] = new AttackState(this);
+                    StateManager.InitializeStates(states, EnemyState.Detect);
+                    break;
+                
+                case EnemyType.Charger:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
@@ -156,7 +163,8 @@ namespace _Project.Scripts.Core.Enemy
         // ReSharper disable Unity.PerformanceAnalysis
         internal void StartChasing()
         {
-            if (IsPlayerInCone() && IsPlayerOnNavMesh())
+            var chk1 = IsPlayerInCone();
+            if (IsPlayerInCone())
             {
                 StartCoroutine(FollowPlayer()); // Start following the player
             }
@@ -203,7 +211,7 @@ namespace _Project.Scripts.Core.Enemy
 
 
         // Start the attack process if not already attacking and not in cooldown
-        private void StartAttack()
+        internal void StartAttack()
         {
             if (_isAttacking || _isCooldownActive) return; // Prevent multiple attacks or attacks during cooldown
 
@@ -263,9 +271,18 @@ namespace _Project.Scripts.Core.Enemy
                 Enemy.SetDestination(ClosestPlayer.position);
                 OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
+                float StoppingDistance;
+                if (enemyType == EnemyType.Charger)
+                {
+                    StoppingDistance = 2.0f;
+                }
+                else
+                {
+                    StoppingDistance = DistanceFromPlayer;
+                }
                 // If a player is in DistanceFromPlayer range, stop chasing
                 if (Vector3.Distance(Enemy.transform.position,
-                        ClosestPlayer.transform.position) <= DistanceFromPlayer)
+                        ClosestPlayer.transform.position) <= StoppingDistance)
                 {
                     StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;

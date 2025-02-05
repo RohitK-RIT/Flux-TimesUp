@@ -7,8 +7,8 @@ public class SpawnManager : MonoBehaviour
     public static SpawnManager Instance { get; private set; }
 
     [SerializeField] private GameObject chargerPrefab;
-    [SerializeField] private float spawnDistanceFromEnemy = 2f;  // Distance from enemy
-    [SerializeField] private float spawnOffsetFromPlayer = 3f;   // Distance in front of the player
+    private float spawnDistanceFromEnemy = 4f;  // Distance from enemy
+    private float spawnOffsetFromPlayer = 3f;   // Distance in front of the player
     
     internal void ChargerSpawner(Vector3 enemyPosition)
     {

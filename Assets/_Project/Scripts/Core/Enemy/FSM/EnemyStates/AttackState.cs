@@ -50,9 +50,15 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 }
             }
             // If health is not low check if enemy can attack
-            else if (_enemyInputController.CanAttack())
+            else if (_enemyInputController.CanAttack() && (_enemyInputController.enemyType != EnemyType.Charger))
             {
                 AttackPlayer();
+            }
+            else if (_enemyInputController.enemyType == EnemyType.Charger)
+            {
+                _enemyInputController.RotateTowardsPlayer();
+                _enemyInputController.StartChasing();
+                _enemyInputController.StartAttack();
             }
         }
 
