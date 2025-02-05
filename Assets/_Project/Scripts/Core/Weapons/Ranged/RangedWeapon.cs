@@ -337,5 +337,14 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (Attacking)
                 BeginAttack();
         }
+
+        /// <summary>
+        /// Function to Add ammo to the weapon when the ammo is picked up.
+        /// </summary>
+        /// <param name="ammo">the ammo to be added</param>
+        public void AddAmmo(int ammo)
+        {
+            MaxAmmo += ammo;
+        }
     }
 }

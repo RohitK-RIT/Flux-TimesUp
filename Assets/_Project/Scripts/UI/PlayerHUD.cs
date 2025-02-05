@@ -21,6 +21,7 @@ namespace _Project.Scripts.UI
         [SerializeField] private Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
+        [SerializeField] public TMP_Text PickupText;
         [SerializeField] public LocalPlayerController player;
         
         [SerializeField] public Image primaryWeaponSlotHolder;
@@ -163,6 +164,18 @@ namespace _Project.Scripts.UI
         private void UpdateCoinsText()
         {
             coinsText.text = player?.GetCoins().ToString();
+        }
+        
+        public void ShowPickupFeedback(string msg)
+        {
+            PickupText.text = msg;
+            PickupText.gameObject.SetActive(true);
+            Invoke(nameof(HidePickupFeedback), 1.5f);
+        }
+
+        private void HidePickupFeedback()
+        {
+            PickupText.gameObject.SetActive(false);
         }
     }
 }
