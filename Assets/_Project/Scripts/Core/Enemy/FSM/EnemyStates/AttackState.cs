@@ -32,8 +32,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
-            //_enemyInputController.StopChasing();
-
             // Check if the player health is low
             if (_enemyInputController.EnemyHUD.enemy.CurrentHealth < 50)
             {
@@ -49,10 +47,18 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                     _enemyInputController.StateManager.TransitionToState(EnemyState.Flee);
                 }
             }
-            // If health is not low check if enemy can attack
-            else if (_enemyInputController.CanAttack())
+            // If health is not low check if enemy can attack and not a charger type
+            else if (_enemyInputController.CanAttack() && (_enemyInputController.enemyType != EnemyType.Charger))
             {
                 AttackPlayer();
+            }
+            
+            // If enemy is charger type start attacking directly
+            else if (_enemyInputController.enemyType == EnemyType.Charger)
+            {
+                _enemyInputController.RotateTowardsPlayer();
+                _enemyInputController.StartChasing();
+                _enemyInputController.StartAttack();
             }
         }
 
@@ -66,7 +72,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             
             // Attack and move towards the player till the DistanceFromPlayer is reached
             if ( Vector3.Distance(_enemyInputController.Enemy.transform.position,
-                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.DistanceFromPlayer)
+                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.EnemyDistanceFromPlayer)
             {
                _enemyInputController.StopChasing();
             }

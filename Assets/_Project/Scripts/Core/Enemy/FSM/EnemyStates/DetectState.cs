@@ -30,7 +30,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // ReSharper disable Unity.PerformanceAnalysis
         public override void UpdateState()
         {
-            _enemyInputController.StartChasing();
             // If the player is detected, rotate towards them
             _enemyInputController.RotateTowardsPlayer();
         }

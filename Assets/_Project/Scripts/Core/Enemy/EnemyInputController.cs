@@ -22,7 +22,7 @@ namespace _Project.Scripts.Core.Enemy
 
         private Transform _currentTarget; // current target to assign
 
-        private readonly float _attackRange = 10f; // Attack range
+        private readonly float _attackRange = 15f; // Attack range
 
         [SerializeField] private float attackCooldown = 3f; // Cooldown time between attacks
 
@@ -38,7 +38,7 @@ namespace _Project.Scripts.Core.Enemy
 
         internal StateManager StateManager; // reference to state manager
 
-        private const float ChaseRange = 15f; // chase range
+        private const float ChaseRange = 20f; // chase range
 
         internal Vector3 RoamingPosition; // random roaming position for an enemy
 
@@ -55,8 +55,10 @@ namespace _Project.Scripts.Core.Enemy
         internal float FleeTimeout { get; private set; } = 5f; // Timeout threshold for FleeState
         
         public EnemyType enemyType; // The enemy type
-        
-        internal readonly float DistanceFromPlayer = 3.0f; // Distance between the player and enemy
+
+        internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
+
+        private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
         
         private void Awake()
         {
@@ -82,6 +84,13 @@ namespace _Project.Scripts.Core.Enemy
                     break;
 
                 case EnemyType.Boss:
+                    states[EnemyState.Detect] = new DetectState(this);
+                    states[EnemyState.Chase] = new ChaseState(this);
+                    states[EnemyState.Attack] = new AttackState(this);
+                    StateManager.InitializeStates(states, EnemyState.Detect);
+                    break;
+                
+                case EnemyType.Charger:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
@@ -156,7 +165,7 @@ namespace _Project.Scripts.Core.Enemy
         // ReSharper disable Unity.PerformanceAnalysis
         internal void StartChasing()
         {
-            if (IsPlayerInCone() && IsPlayerOnNavMesh())
+            if (IsPlayerInCone())
             {
                 StartCoroutine(FollowPlayer()); // Start following the player
             }
@@ -203,7 +212,7 @@ namespace _Project.Scripts.Core.Enemy
 
 
         // Start the attack process if not already attacking and not in cooldown
-        private void StartAttack()
+        internal void StartAttack()
         {
             if (_isAttacking || _isCooldownActive) return; // Prevent multiple attacks or attacks during cooldown
 
@@ -263,9 +272,11 @@ namespace _Project.Scripts.Core.Enemy
                 Enemy.SetDestination(ClosestPlayer.position);
                 OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
+                var stoppingDistance = enemyType == EnemyType.Charger ? _chargerDistanceFromPlayer : EnemyDistanceFromPlayer;
+
                 // If a player is in DistanceFromPlayer range, stop chasing
                 if (Vector3.Distance(Enemy.transform.position,
-                        ClosestPlayer.transform.position) <= DistanceFromPlayer)
+                        ClosestPlayer.transform.position) <= stoppingDistance)
                 {
                     StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;
