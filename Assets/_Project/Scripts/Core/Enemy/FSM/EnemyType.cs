@@ -4,6 +4,7 @@ namespace _Project.Scripts.Core.Enemy.FSM
     {
         Basic,
         Boss,
+        Charger,
         // Add other types as needed (e.g., Elite, Flying, etc.)
     }
 }
