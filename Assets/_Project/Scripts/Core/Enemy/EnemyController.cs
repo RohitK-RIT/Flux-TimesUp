@@ -1,4 +1,5 @@
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -37,9 +38,9 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.OnAttackInputEnded -= EndAttack;
         }
 
-        protected override void Die(PlayerController enemyPlayer)
+        protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
-            base.Die(enemyPlayer);
+            base.Die(enemyPlayer, weaponKilledBy);
             gameObject.SetActive(false);
         }
     }

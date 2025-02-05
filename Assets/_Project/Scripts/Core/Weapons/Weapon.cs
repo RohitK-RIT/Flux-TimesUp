@@ -25,7 +25,6 @@ namespace _Project.Scripts.Core.Weapons
         public PlayerController CurrentPlayerController { get; private set; }
         
         public abstract string WeaponID { get; }
-        
 
         /// <summary>
         /// Function called when the weapon is picked up.

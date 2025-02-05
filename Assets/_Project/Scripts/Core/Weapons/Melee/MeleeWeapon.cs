@@ -15,6 +15,8 @@ namespace _Project.Scripts.Core.Weapons.Melee
         [SerializeField] private MeleeWeaponStats stats;
 
         public override string WeaponID  => stats.WeaponID;
+        
+        public MeleeWeaponStats Stats => stats;
 
         /// <summary>
         /// Coroutine for attacking.

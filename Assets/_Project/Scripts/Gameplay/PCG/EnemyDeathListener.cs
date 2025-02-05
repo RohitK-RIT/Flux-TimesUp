@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.PCG
@@ -38,11 +39,11 @@ namespace _Project.Scripts.Gameplay.PCG
                 enemy.OnDeath += OnEnemyDeath;
         }
 
-        private void OnEnemyDeath(PlayerController enemy)
+        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
         {
             // Remove the enemy from the list and unsubscribe from the event
-            _enemies.Remove((EnemyController)enemy);
-            enemy.OnDeath -= OnEnemyDeath;
+            _enemies.Remove((EnemyController)playerKilled);
+            playerKilled.OnDeath -= OnEnemyDeath;
 
             // If there are no enemies left, invoke the event
             if (_enemies.Count == 0)

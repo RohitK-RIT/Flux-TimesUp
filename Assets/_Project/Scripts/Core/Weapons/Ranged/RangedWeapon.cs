@@ -36,6 +36,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Bullet impact prefab.
         /// </summary>
         [SerializeField] private GameObject bulletImpactPrefab;
+        
+        public RangedWeaponStats Stats => stats;
 
         /// <summary>
         /// Property to access current number of bullets in the magazine.
