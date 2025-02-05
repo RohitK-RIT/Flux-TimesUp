@@ -931,7 +931,7 @@ GameObject:
   - component: {fileID: 7881729464612551882}
   m_Layer: 11
   m_Name: Enemy Anim
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3069,6 +3069,7 @@ MonoBehaviour:
   muzzle: {fileID: 7480933145652931046}
   trailRendererPrefab: {fileID: 3577689957102526741, guid: 86b5e158990bad84f84846c77f2c6e70,
     type: 3}
+  bulletImpactPrefab: {fileID: 0}
 --- !u!1 &6817745066688306286
 GameObject:
   m_ObjectHideFlags: 0
