@@ -58,5 +58,21 @@ namespace _Project.Scripts.Core.Loadout
         {
             return _selectedWeapons;
         }
+        
+        //Retrieves the info of a weapon based on its ID.
+        
+        public WeaponData GetWeaponInfo(string weaponID)
+        {
+            foreach (var weaponData in weaponDatabase) // Iterate through weapon database
+            {
+                if (weaponData.weaponStats.WeaponID == weaponID) // Check the WeaponID property
+                {
+                    return weaponData; // Return the weapon stats from the current weapon data
+                }
+                
+            }
+            Debug.LogWarning($"Weapon with ID {weaponID} not found in the database!");
+            return null;
+        }
     }
 }
