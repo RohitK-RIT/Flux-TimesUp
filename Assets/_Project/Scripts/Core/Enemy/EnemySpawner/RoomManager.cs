@@ -31,24 +31,38 @@ public class RoomManager : MonoBehaviour
         {
             Debug.Log($"Spawning wave for stability 50");
             _spawnedWaves.Add(50);
-            SpawnEnemies();
+            SpawnEnemyWave();
         }
         if (stabilityThreshold <= 25 && !_spawnedWaves.Contains(25) && _enemyInputController.IsPlayerOnNavMesh())
         {
             Debug.Log($"Spawning wave for stability 25");
             _spawnedWaves.Add(25);
-            SpawnEnemies();
+            SpawnEnemyWave();
         }
     }
     
-    internal void SpawnEnemies()
+    // internal void SpawnEnemies()
+    // {
+    //    Debug.Log("Spawning enemies");
+    //     List<Vector3> spawnPoints = GetSpawnPoints();
+    //     foreach (var point in spawnPoints)
+    //     {
+    //         _spawnManager.WaveEnemySpawner(point);
+    //     }
+    // }
+    
+    private void SpawnEnemyWave()
     {
-       Debug.Log("Spawning enemies");
-        List<Vector3> spawnPoints = GetSpawnPoints();
-        foreach (var point in spawnPoints)
+        for (int i = 0; i < enemiesInRoom.Count; i++)
         {
-            _spawnManager.WaveEnemySpawner(point);
+            if (enemiesInRoom[i] != null)
+            {
+                enemiesInRoom[i].transform.position = originalSpawnPoints[i]; // Reset position
+                enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
+            }
         }
+            
+        Debug.Log($"Reactivated {enemiesInRoom.Count} enemies in room {gameObject.name}.");
     }
 
     private void StoreEnemyPositions()
