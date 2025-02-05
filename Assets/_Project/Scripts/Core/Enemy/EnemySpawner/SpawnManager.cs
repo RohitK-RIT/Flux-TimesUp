@@ -9,6 +9,7 @@ namespace _Project.Scripts.Core.Enemy
         [SerializeField] private GameObject basicEnemyPrefab;
         private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from enemy
         private readonly float _spawnOffsetFromPlayer = 3f;   // Distance in front of the player
+        [SerializeField] private Transform checking;
     
         internal void ChargerSpawner(Vector3 enemyPosition)
         {
@@ -33,7 +34,7 @@ namespace _Project.Scripts.Core.Enemy
         
         internal void WaveEnemySpawner(Vector3 spawnPoint)
         {
-            Instantiate(basicEnemyPrefab, spawnPoint, Quaternion.identity);
+            Instantiate(basicEnemyPrefab, spawnPoint, Quaternion.identity, checking);
             Debug.Log($"Spawned at {spawnPoint} enemies.");
         }
     }

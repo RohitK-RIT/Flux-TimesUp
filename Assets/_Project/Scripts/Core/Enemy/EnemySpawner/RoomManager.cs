@@ -18,15 +18,25 @@ public class RoomManager : MonoBehaviour
     {
         _enemyInputController = GetComponentInChildren<EnemyInputController>();
         _spawnManager = GetComponentInChildren<SpawnManager>();
+        StoreEnemyPositions(); // Store spawn points at the start
+
     }
     private void Update()
     {
+        if(!_enemyInputController) return;
+        if(!_enemyInputController.IsPlayerOnNavMesh()) return;
         int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
-        if(_enemyInputController == null) return;
-        if (stabilityThreshold <= 50 && !_spawnedWaves.Contains(stabilityThreshold) && _enemyInputController.IsPlayerOnNavMesh())
+        
+        if (stabilityThreshold <= 50 && stabilityThreshold > 25 && !_spawnedWaves.Contains(50) && _enemyInputController.IsPlayerOnNavMesh())
         {
-            Debug.Log($"Spawning wave for stability {stabilityThreshold}");
-            _spawnedWaves.Add(stabilityThreshold);
+            Debug.Log($"Spawning wave for stability 50");
+            _spawnedWaves.Add(50);
+            SpawnEnemies();
+        }
+        if (stabilityThreshold <= 25 && !_spawnedWaves.Contains(25) && _enemyInputController.IsPlayerOnNavMesh())
+        {
+            Debug.Log($"Spawning wave for stability 25");
+            _spawnedWaves.Add(25);
             SpawnEnemies();
         }
     }
@@ -55,16 +65,10 @@ public class RoomManager : MonoBehaviour
 
         //Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
     }
-
-    private void Start()
-    {
-        
-        //Debug.Log("Enemies: " + string.Join(", ", GetEnemies().ConvertAll(e => e.name)));
-    }
-
+    
     public List<Vector3> GetSpawnPoints()
     {
-        StoreEnemyPositions();
+        //StoreEnemyPositions();
         Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
         return originalSpawnPoints;
     }
