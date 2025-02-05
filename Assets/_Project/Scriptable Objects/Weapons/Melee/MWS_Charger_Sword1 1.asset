@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6132a83c799842a2adb74574aca1345a, type: 3}
   m_Name: MWS_Charger_Sword1 1
   m_EditorClassIdentifier: 
-  weaponID: Sword1
+  weaponID: EnemySword
   weaponType: 2
-  weaponName: Knight Sword
-  damage: 5
+  weaponName: ChargerSword
+  damage: 2
   range: 3
   attackSpeed: 2
+  weaponEra: 1
+  timeStabilityEffect: 30
   attackFOV: 45

@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: RWS_Pistol5
   m_EditorClassIdentifier: 
   weaponID: Pistol5
-  weaponType: 1
+  weaponType: 0
   weaponName: Flintlock
   damage: 30
   range: 75
   attackSpeed: 9
+  weaponEra: 1
+  timeStabilityEffect: 16
   fireModes: 01000000
-  reloadTime: 4
+  reloadTime: 1.5
   spread: 0.02
   recoil: 0.02
   magazineSize: 2
