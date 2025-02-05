@@ -55,8 +55,10 @@ namespace _Project.Scripts.Core.Enemy
         internal float FleeTimeout { get; private set; } = 5f; // Timeout threshold for FleeState
         
         public EnemyType enemyType; // The enemy type
-        
-        internal readonly float DistanceFromPlayer = 5.0f; // Distance between the player and enemy
+
+        internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
+
+        private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
         
         private void Awake()
         {
@@ -163,7 +165,6 @@ namespace _Project.Scripts.Core.Enemy
         // ReSharper disable Unity.PerformanceAnalysis
         internal void StartChasing()
         {
-            var chk1 = IsPlayerInCone();
             if (IsPlayerInCone())
             {
                 StartCoroutine(FollowPlayer()); // Start following the player
@@ -271,18 +272,11 @@ namespace _Project.Scripts.Core.Enemy
                 Enemy.SetDestination(ClosestPlayer.position);
                 OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
-                float StoppingDistance;
-                if (enemyType == EnemyType.Charger)
-                {
-                    StoppingDistance = 2.0f;
-                }
-                else
-                {
-                    StoppingDistance = DistanceFromPlayer;
-                }
+                var stoppingDistance = enemyType == EnemyType.Charger ? _chargerDistanceFromPlayer : EnemyDistanceFromPlayer;
+
                 // If a player is in DistanceFromPlayer range, stop chasing
                 if (Vector3.Distance(Enemy.transform.position,
-                        ClosestPlayer.transform.position) <= StoppingDistance)
+                        ClosestPlayer.transform.position) <= stoppingDistance)
                 {
                     StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;

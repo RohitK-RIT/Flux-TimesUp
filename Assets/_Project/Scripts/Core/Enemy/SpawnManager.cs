@@ -1,34 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+namespace _Project.Scripts.Core.Enemy
 {
-    public static SpawnManager Instance { get; private set; }
-
-    [SerializeField] private GameObject chargerPrefab;
-    private float spawnDistanceFromEnemy = 4f;  // Distance from enemy
-    private float spawnOffsetFromPlayer = 3f;   // Distance in front of the player
-    
-    internal void ChargerSpawner(Vector3 enemyPosition)
+    public class SpawnManager : MonoBehaviour
     {
-        Debug.Log("Spawning charger");
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
+        [SerializeField] private GameObject chargerPrefab;
+        private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from enemy
+        private readonly float _spawnOffsetFromPlayer = 3f;   // Distance in front of the player
+    
+        internal void ChargerSpawner(Vector3 enemyPosition)
         {
-            Debug.Log("Player not found while Spawning!");
-            return;
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (!player)
+            {
+                Debug.Log("Player not found while Spawning!");
+                return;
+            }
+        
+            Vector3 playerForward = player.transform.forward.normalized; // Direction the player is facing
+            Vector3 spawnCenter = player.transform.position + (playerForward * _spawnOffsetFromPlayer); // In front of player
+        
+            // Calculate spawn positions around the enemy
+            Vector3 spawnPos1 = enemyPosition + (Vector3.right * _spawnDistanceFromEnemy);
+            Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
+        
+            // Instantiate Chargers
+            Instantiate(chargerPrefab, spawnPos1, Quaternion.identity);
+            Instantiate(chargerPrefab, spawnPos2, Quaternion.identity);
         }
-        
-        Vector3 playerForward = player.transform.forward.normalized; // Direction the player is facing
-        Vector3 spawnCenter = player.transform.position + (playerForward * spawnOffsetFromPlayer); // In front of player
-        
-        // Calculate spawn positions around the enemy
-        Vector3 spawnPos1 = enemyPosition + (Vector3.right * spawnDistanceFromEnemy);
-        Vector3 spawnPos2 = enemyPosition + (Vector3.left * spawnDistanceFromEnemy);
-        
-        // Instantiate Chargers
-        Instantiate(chargerPrefab, spawnPos1, Quaternion.identity);
-        Instantiate(chargerPrefab, spawnPos2, Quaternion.identity);
     }
 }

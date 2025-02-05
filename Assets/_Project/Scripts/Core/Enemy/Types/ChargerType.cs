@@ -1,39 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
-using _Project.Scripts.Core.Enemy;
 using UnityEngine;
 
-public class ChargerType : MonoBehaviour
+namespace _Project.Scripts.Core.Enemy.Types
 {
-    [SerializeField] private float lowHealthThreshold = 20f; // Trigger when health drops below this
-    private EnemyInputController _enemyInputController;
-    private SpawnManager _spawnManager;
-    private bool hasSpawnedChargers = false; // Ensure Chargers spawn only once
-
-    void Awake()
+    public class ChargerType : MonoBehaviour
     {
-        _enemyInputController = GetComponent<EnemyInputController>();
-        _spawnManager = GetComponent<SpawnManager>();
-    }
+        [SerializeField] private float lowHealthThreshold = 20f; // Trigger when health drops below this
+        private EnemyInputController _enemyInputController;
+        private SpawnManager _spawnManager;
+        private bool hasSpawnedChargers = false; // Ensure Chargers spawn only once
 
-    private void Update()
-    {
-        if (!hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= lowHealthThreshold)
+        void Awake()
         {
-            hasSpawnedChargers = true;
-            SpawnChargers();
+            _enemyInputController = GetComponent<EnemyInputController>();
+            _spawnManager = GetComponent<SpawnManager>();
         }
-    }
+
+        private void Update()
+        {
+            if (!hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= lowHealthThreshold)
+            {
+                hasSpawnedChargers = true;
+                SpawnChargers();
+            }
+        }
     
-    private void SpawnChargers()
-    {
-        if (_spawnManager != null)
+        private void SpawnChargers()
         {
-            _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position);
-        }
-        else
-        {
-            Debug.LogWarning("SpawnManager not found in the scene!");
+            if (_spawnManager != null)
+            {
+                _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position);
+            }
+            else
+            {
+                Debug.LogWarning("SpawnManager not found in the scene!");
+            }
         }
     }
 }
