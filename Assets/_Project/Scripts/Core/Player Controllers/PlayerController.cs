@@ -164,7 +164,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         protected virtual void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             // Handle the character's death
-            enemyPlayer.OnKillConfirmed(this);
+            enemyPlayer?.OnKillConfirmed(this);
 
             OnDeath?.Invoke(enemyPlayer, this, weaponKilledBy);
         }
