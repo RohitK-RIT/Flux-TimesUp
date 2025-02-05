@@ -1,10 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private GameObject chargerPrefab;
+        [SerializeField] private GameObject chargerEnemyPrefab;
+        [SerializeField] private GameObject basicEnemyPrefab;
         private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from enemy
         private readonly float _spawnOffsetFromPlayer = 3f;   // Distance in front of the player
     
@@ -25,8 +27,16 @@ namespace _Project.Scripts.Core.Enemy
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
         
             // Instantiate Chargers
-            Instantiate(chargerPrefab, spawnPos1, Quaternion.identity);
-            Instantiate(chargerPrefab, spawnPos2, Quaternion.identity);
+            Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+            Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+        }
+        
+        internal void WaveEnemySpawner(Vector3 spawnPoint)
+        {
+            Instantiate(basicEnemyPrefab, spawnPoint, Quaternion.identity);
+            Debug.Log($"Spawned at {spawnPoint} enemies.");
         }
     }
+    
+    
 }

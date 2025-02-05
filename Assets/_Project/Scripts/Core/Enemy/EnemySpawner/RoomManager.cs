@@ -10,7 +10,7 @@ public class RoomManager : MonoBehaviour
 
     private void Awake()
     {
-        StoreEnemyPositions();
+        //StoreEnemyPositions();
     }
 
     private void StoreEnemyPositions()
@@ -25,17 +25,19 @@ public class RoomManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
+        //Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
     }
 
     private void Start()
     {
-        Debug.Log("Spawn Points: " + string.Join(", ", GetSpawnPoints().ConvertAll(p => p.ToString())));
-        Debug.Log("Enemies: " + string.Join(", ", GetEnemies().ConvertAll(e => e.name)));
+        
+        //Debug.Log("Enemies: " + string.Join(", ", GetEnemies().ConvertAll(e => e.name)));
     }
 
     public List<Vector3> GetSpawnPoints()
     {
+        StoreEnemyPositions();
+        Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
         return originalSpawnPoints;
     }
 

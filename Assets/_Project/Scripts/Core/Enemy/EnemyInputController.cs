@@ -5,6 +5,7 @@ using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -60,12 +61,21 @@ namespace _Project.Scripts.Core.Enemy
 
         private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
         
+        private RoomManager _roomManager;
+        
+        private SpawnManager _spawnManager;
+        private bool _hasSpawnedEnemies;
+        private HashSet<int> _spawnedWaves = new HashSet<int>(); // Stores triggered waves
+
+        
         private void Awake()
         {
             Enemy = GetComponent<NavMeshAgent>();
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
+            _roomManager = GetComponentInParent<RoomManager>();
+            _spawnManager = GetComponent<SpawnManager>();
         }
 
         private void InitializeState()
@@ -368,6 +378,27 @@ namespace _Project.Scripts.Core.Enemy
         private void Update()
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
+
+            int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
+
+            if (stabilityThreshold <= 80 && !_spawnedWaves.Contains(stabilityThreshold) && IsPlayerOnNavMesh())
+            {
+                Debug.Log($"Spawning wave for stability {stabilityThreshold}");
+                _spawnedWaves.Add(stabilityThreshold);
+                SpawnEnemies();
+            }
+        }
+
+        private void SpawnEnemies()
+        {
+            if (_roomManager != null)
+            {
+                List<Vector3> spawnPoints = _roomManager.GetSpawnPoints();
+                foreach (var point in spawnPoints)
+                {
+                    _spawnManager.WaveEnemySpawner(point);
+                }
+            }
         }
     }
 }
