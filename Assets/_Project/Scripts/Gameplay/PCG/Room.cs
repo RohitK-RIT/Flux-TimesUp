@@ -36,13 +36,13 @@ namespace _Project.Scripts.Gameplay.PCG
                 Debug.Log($"Exit at {exit.localPosition} mapped to world position {exit.worldPosition}");
             }
             
-            if (roomType == RoomType.Exploration)
+            /*if (roomType == RoomType.Exploration)
             {
                 _enemyDeathListener = new EnemyDeathListener(gameObject);
-            }
+            }*/
         }
 
-        private void OnEnable()
+        /*private void OnEnable()
         {
             if(_enemyDeathListener != null)
                 _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
@@ -52,11 +52,11 @@ namespace _Project.Scripts.Gameplay.PCG
         {
             if(_enemyDeathListener != null)
                 _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
-        }
+        }*/
         
         private void OnAllEnemiesDead()
         {
-            AbilitySpawner.SpawnRandomAbilities(transform, size);
+            //AbilitySpawner.SpawnRandomAbilities(transform, size);
         }
     }
 }

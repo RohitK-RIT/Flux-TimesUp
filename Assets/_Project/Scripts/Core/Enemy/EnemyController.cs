@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Backend;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace _Project.Scripts.Core.Enemy
             base.Awake();
 
             _enemyInputController = GetComponent<EnemyInputController>();
+            
         }
 
         protected override void Start()
@@ -42,6 +44,9 @@ namespace _Project.Scripts.Core.Enemy
         {
             base.Die(enemyPlayer, weaponKilledBy);
             gameObject.SetActive(false);
+            
+            // Spawn loot
+            LootSpawner.Instance.LootDrop(_enemyInputController.Enemy.transform.position);
         }
     }
 }
