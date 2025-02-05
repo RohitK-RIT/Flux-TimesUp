@@ -4,10 +4,10 @@ namespace _Project.Scripts.Core.Enemy.Types
 {
     public class ChargerType : MonoBehaviour
     {
-        [SerializeField] private float lowHealthThreshold = 20f; // Trigger when health drops below this
+        private readonly float _lowHealthThreshold = 40f; // Trigger when health drops below this
         private EnemyInputController _enemyInputController;
         private SpawnManager _spawnManager;
-        private bool hasSpawnedChargers = false; // Ensure Chargers spawn only once
+        private bool _hasSpawnedChargers; // Ensure Chargers spawn only once
 
         void Awake()
         {
@@ -17,9 +17,9 @@ namespace _Project.Scripts.Core.Enemy.Types
 
         private void Update()
         {
-            if (!hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= lowHealthThreshold)
+            if (!_hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= _lowHealthThreshold)
             {
-                hasSpawnedChargers = true;
+                _hasSpawnedChargers = true;
                 SpawnChargers();
             }
         }
