@@ -1,6 +1,7 @@
 using _Project.Scripts.Core.Backend;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -39,12 +40,23 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
         }
+        
+        public void Reset()
+        {
+            currentHealth = Stats.maxHealth;
+            var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
+            if (!currentRangedWeapon) return;
+            currentRangedWeapon.AddAmmo(240);
+            currentRangedWeapon.Reload();
+            Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
+            Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
+            Debug.Log("Enemy reset to initial state.");
+        }
 
         protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             base.Die(enemyPlayer, weaponKilledBy);
             gameObject.SetActive(false);
-            
             // Spawn loot
             LootSpawner.Instance.LootDrop(_enemyInputController.Enemy.transform.position);
         }

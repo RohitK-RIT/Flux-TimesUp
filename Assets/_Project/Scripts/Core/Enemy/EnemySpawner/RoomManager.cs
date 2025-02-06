@@ -13,11 +13,13 @@ public class RoomManager : MonoBehaviour
     private HashSet<int> _spawnedWaves = new HashSet<int>(); // Stores triggered waves
     private EnemyInputController _enemyInputController;
     private SpawnManager _spawnManager;
+    private EnemyController _enemyController;
 
     private void Awake()
     {
         _enemyInputController = GetComponentInChildren<EnemyInputController>();
         _spawnManager = GetComponentInChildren<SpawnManager>();
+        _enemyController = GetComponentInChildren<EnemyController>();
         StoreEnemyPositions(); // Store spawn points at the start
 
     }
@@ -59,6 +61,7 @@ public class RoomManager : MonoBehaviour
             {
                 enemiesInRoom[i].transform.position = originalSpawnPoints[i]; // Reset position
                 enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
+                _enemyController.Reset();
             }
         }
             

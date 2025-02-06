@@ -71,7 +71,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Player's current health.
         /// </summary>
-        [SerializeField] private float currentHealth;
+        [SerializeField] internal float currentHealth;
 
         protected virtual void Awake()
         {
