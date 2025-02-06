@@ -35,19 +35,23 @@ namespace _Project.Scripts.Core.Enemy
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
         
             // Instantiate Chargers
-            Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
-            Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+            // Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+            // Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
         }
         
         internal void WaveEnemySpawner()
         {
-            for (int i = 0; i < _roomWaveController.EnemiesInRoom.Count; i++)
+            for (int i = 0; i < _roomWaveController.enemiesInRoom.Count; i++)
             {
-                if (_roomWaveController.EnemiesInRoom[i] != null)
+                if (_roomWaveController.enemiesInRoom[i] != null)
                 {
-                    var enemy = _roomWaveController.EnemiesInRoom[i]; // Store reference
+                    // _roomWaveController.enemiesInRoom[i].transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
+                    // _roomWaveController.enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
+                    // _roomWaveController.Reset();
+                    
+                    var enemy = _roomWaveController.enemiesInRoom[i]; // Store reference
             
-                    enemy.transform.position = _roomWaveController.OriginalSpawnPoints[i]; // Reset position
+                    enemy.transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
                     enemy.gameObject.SetActive(true); // Reactivate enemy
                     
             
@@ -56,7 +60,7 @@ namespace _Project.Scripts.Core.Enemy
             }
             _roomWaveController.ResetEnemiesInRoom();
             
-            Debug.Log($"Reactivated {_roomWaveController.EnemiesInRoom.Count} enemies in room {gameObject.name}.");
+            Debug.Log($"Reactivated {_roomWaveController.enemiesInRoom.Count} enemies in room {gameObject.name}.");
         }
     }
     

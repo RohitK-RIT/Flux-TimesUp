@@ -33,6 +33,7 @@ namespace _Project.Scripts.Core.Enemy
             // Subscribe to attack input events on enable
             _enemyInputController.OnAttackInputBegan += BeginAttack;
             _enemyInputController.OnAttackInputEnded += EndAttack;
+            //_enemyInputController.OnReloadInput += Reload;
         }
 
         private void OnDisable()
@@ -41,6 +42,7 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.Disable();
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
+            //_enemyInputController.OnReloadInput -= Reload;
         }
         
         public void Reset()
