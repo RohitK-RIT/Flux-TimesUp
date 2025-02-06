@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Project.Scripts.Core.Enemy.EnemySpawner;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -10,6 +11,12 @@ namespace _Project.Scripts.Core.Enemy
         private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from enemy
         private readonly float _spawnOffsetFromPlayer = 3f;   // Distance in front of the player
         [SerializeField] private Transform checking;
+        private RoomWaveController _roomWaveController;
+
+        private void Awake()
+        {
+            _roomWaveController = GetComponentInParent<RoomWaveController>();
+        }
     
         internal void ChargerSpawner(Vector3 enemyPosition)
         {
@@ -32,10 +39,19 @@ namespace _Project.Scripts.Core.Enemy
             Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
         }
         
-        internal void WaveEnemySpawner(Vector3 spawnPoint)
+        internal void WaveEnemySpawner()
         {
-            Instantiate(basicEnemyPrefab, spawnPoint, Quaternion.identity, checking);
-            Debug.Log($"Spawned at {spawnPoint} enemies.");
+            for (int i = 0; i < _roomWaveController.enemiesInRoom.Count; i++)
+            {
+                if (_roomWaveController.enemiesInRoom[i] != null)
+                {
+                    _roomWaveController.enemiesInRoom[i].transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
+                    _roomWaveController.enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
+                    _roomWaveController.Reset();
+                }
+            }
+            
+            Debug.Log($"Reactivated {_roomWaveController.enemiesInRoom.Count} enemies in room {gameObject.name}.");
         }
     }
     
