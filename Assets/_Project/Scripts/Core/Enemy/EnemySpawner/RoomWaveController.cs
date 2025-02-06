@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using _Project.Scripts.Core.Enemy.FSM;
+using _Project.Scripts.Gameplay.PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
@@ -13,6 +16,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
         private EnemyInputController _enemyInputController;
         private SpawnManager _spawnManager;
         private EnemyController _enemyController;
+        private EnemyDeathListener _enemyDeathListener;
 
         private void Awake()
         {
@@ -20,7 +24,31 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             _spawnManager = GetComponentInChildren<SpawnManager>();
             _enemyController = GetComponentInChildren<EnemyController>();
             StoreEnemyPositions(); // Store spawn points at the start
-
+            
+            if(_enemyInputController==null) return;
+            if (_enemyInputController.enemyType == EnemyType.Basic)
+            {
+                _enemyDeathListener = new EnemyDeathListener(gameObject);
+                Debug.Log("Initialized enemy death listener");
+            }
+        }
+        
+        private void OnEnable()
+        {
+            if(_enemyDeathListener != null)
+                _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
+        }
+        
+        private void OnDisable()
+        {
+            if(_enemyDeathListener != null)
+                _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
+        }
+        
+        private void OnAllEnemiesDead()
+        {
+            Debug.Log("All enemies dead");
+            CanSpawnEnemies();
         }
 
         private void Update()
@@ -103,6 +131,15 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
         internal void Reset()
         {
             _enemyController.Reset();
+        }
+
+        internal void ResetEnemiesInRoom()
+        {
+            _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
+            _enemyDeathListener = new EnemyDeathListener(gameObject);
+            if(_enemyDeathListener != null)
+                _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
+            
         }
     }
 }

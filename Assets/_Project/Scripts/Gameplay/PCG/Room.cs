@@ -42,7 +42,7 @@ namespace _Project.Scripts.Gameplay.PCG
             
             if (roomType == RoomType.Exploration)
             {
-                _enemyDeathListener = new EnemyDeathListener(gameObject);
+                //_enemyDeathListener = new EnemyDeathListener(gameObject);
             }
         }
 
@@ -60,8 +60,8 @@ namespace _Project.Scripts.Gameplay.PCG
         
         private void OnAllEnemiesDead()
         {
-            Debug.Log("All enemies dead");
-            _roomWaveController.CanSpawnEnemies();
+            // Debug.Log("All enemies dead");
+            // _roomWaveController.CanSpawnEnemies();
         }
         
         

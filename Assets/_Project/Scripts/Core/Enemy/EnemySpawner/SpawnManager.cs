@@ -53,10 +53,12 @@ namespace _Project.Scripts.Core.Enemy
             
                     enemy.transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
                     enemy.gameObject.SetActive(true); // Reactivate enemy
+                    
             
                     enemy.gameObject.GetComponent<EnemyController>().Reset(); // Ensure Reset() is being called for each enemy
                 }
             }
+            _roomWaveController.ResetEnemiesInRoom();
             
             Debug.Log($"Reactivated {_roomWaveController.enemiesInRoom.Count} enemies in room {gameObject.name}.");
         }

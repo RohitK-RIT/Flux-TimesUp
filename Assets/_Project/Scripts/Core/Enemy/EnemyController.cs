@@ -1,7 +1,9 @@
 using _Project.Scripts.Core.Backend;
+using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Ranged;
+using _Project.Scripts.Gameplay.PCG;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -31,7 +33,7 @@ namespace _Project.Scripts.Core.Enemy
             // Subscribe to attack input events on enable
             _enemyInputController.OnAttackInputBegan += BeginAttack;
             _enemyInputController.OnAttackInputEnded += EndAttack;
-            //_localInputController.OnReloadInput += Reload;
+            //_enemyInputController.OnReloadInput += Reload;
         }
 
         private void OnDisable()
@@ -40,7 +42,7 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.Disable();
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
-            //_localInputController.OnReloadInput -= Reload;
+            //_enemyInputController.OnReloadInput -= Reload;
         }
         
         public void Reset()
