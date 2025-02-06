@@ -177,8 +177,8 @@ GameObject:
   - component: {fileID: 4787149921203261469}
   - component: {fileID: 4758229347648240867}
   - component: {fileID: 4767627839408215347}
-  - component: {fileID: 4799236510648377591}
   - component: {fileID: 6110949050291553439}
+  - component: {fileID: 7716751480322877762}
   m_Layer: 0
   m_Name: Grenade Pickup
   m_TagString: Untagged
@@ -254,8 +254,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4799236510648377591
-MeshCollider:
+--- !u!114 &6110949050291553439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4790854831345996537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3096d3a3afb4a0b90604ca784ae1c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityType: 2
+--- !u!135 &7716751480322877762
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -272,23 +285,9 @@ MeshCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43168765717077360, guid: e9d5b69050ca3d3488a70c72ad0aace6, type: 2}
---- !u!114 &6110949050291553439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4790854831345996537}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3096d3a3afb4a0b90604ca784ae1c8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  abilityType: 2
+  serializedVersion: 3
+  m_Radius: 0.27
+  m_Center: {x: -0.000000024214387, y: 0.012620566, z: 0}
 --- !u!1001 &2168699521133823782
 PrefabInstance:
   m_ObjectHideFlags: 0
