@@ -4653,12 +4653,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 410222100}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &411397822 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2031708532397748803, guid: fa2d0ea1a7d63a4429ad577f03bc7d2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1103105604}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &413544063
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12129,11 +12123,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 174725283}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4558896335896552660, guid: fa2d0ea1a7d63a4429ad577f03bc7d2d,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1139300455}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa2d0ea1a7d63a4429ad577f03bc7d2d, type: 3}
 --- !u!1 &1103105605 stripped
 GameObject:
@@ -12494,37 +12484,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1134908231}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1139300445 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4558896335896552660, guid: fa2d0ea1a7d63a4429ad577f03bc7d2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1103105604}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1139300449 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1537559192975480893, guid: fa2d0ea1a7d63a4429ad577f03bc7d2d,
     type: 3}
   m_PrefabInstance: {fileID: 1103105604}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139300445}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e559bbdc9b3e45678a387662f720f87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1139300455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139300445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b3f055ab0b5f4df19ef1d30fe4f712c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigRoot: {fileID: 411397822}
 --- !u!1001 &1143516049
 PrefabInstance:
   m_ObjectHideFlags: 0
