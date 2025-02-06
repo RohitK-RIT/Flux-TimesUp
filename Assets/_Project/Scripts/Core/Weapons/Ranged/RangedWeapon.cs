@@ -310,8 +310,14 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             await Task.Delay(3000);
 
-            impact.SetActive(false);
-            _bulletImpactPool.Release(impact);
+            // impact.SetActive(false);
+            // _bulletImpactPool.Release(impact);
+            
+            if (impact != null && impact.activeInHierarchy) // Ensure the object still exists before disabling
+            {
+                impact.SetActive(false);
+                _bulletImpactPool.Release(impact);
+            }
         }
 
         /// <summary>

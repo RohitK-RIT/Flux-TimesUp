@@ -22,19 +22,33 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             StoreEnemyPositions(); // Store spawn points at the start
 
         }
+
+        private void Update()
+        {
+            int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
+
+            if (stabilityThreshold <= 50 && stabilityThreshold > 25)
+            {
+                Debug.Log($"Spawning wave for stability 50");
+            }
+            if (stabilityThreshold <= 25)
+            {
+                Debug.Log($"Spawning wave for stability 25");
+            }
+        }
         internal void CanSpawnEnemies()
         {
             if(!_enemyInputController) return;
-            if(!_enemyInputController.IsPlayerOnNavMesh()) return;
+            //if(!_enemyInputController.IsPlayerOnNavMesh()) return;
             int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
         
-            if (stabilityThreshold <= 50 && stabilityThreshold > 25 && !_spawnedWaves.Contains(50) && _enemyInputController.IsPlayerOnNavMesh())
+            if (stabilityThreshold <= 50 && stabilityThreshold > 25 && !_spawnedWaves.Contains(50))
             {
                 Debug.Log($"Spawning wave for stability 50");
                 _spawnedWaves.Add(50);
                 _spawnManager.WaveEnemySpawner();
             }
-            if (stabilityThreshold <= 25 && !_spawnedWaves.Contains(25) && _enemyInputController.IsPlayerOnNavMesh())
+            if (stabilityThreshold <= 25 && !_spawnedWaves.Contains(25))
             {
                 Debug.Log($"Spawning wave for stability 25");
                 _spawnedWaves.Add(25);
