@@ -35,8 +35,8 @@ namespace _Project.Scripts.Core.Enemy
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
         
             // Instantiate Chargers
-            // Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
-            // Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+            Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+            Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
         }
         
         internal void WaveEnemySpawner()
