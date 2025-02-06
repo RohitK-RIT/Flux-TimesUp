@@ -430,7 +430,7 @@ GameObject:
   - component: {fileID: 4970503776410383831}
   m_Layer: 11
   m_Name: BossEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -537,8 +537,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 6695076461426248051}
-  currentWeapon: {fileID: 0}
-  weapons: []
+  currentWeapon: {fileID: 4372811483543633570}
+  weapons:
+  - {fileID: 4372811483543633570}
+  - {fileID: 4372811483543633570}
+  hasPreMadeLoadout: 1
 --- !u!114 &532219490356528344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,13 +859,25 @@ PrefabInstance:
         type: 3}
       propertyPath: stats
       value: 
-      objectReference: {fileID: 11400000, guid: b5e2c6694d9df4c5da50771b1a71374a,
+      objectReference: {fileID: 11400000, guid: acc01987f984a4bba8a2972d726fc48d,
         type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa63e3324934bac429ef80736eae850f, type: 3}
+--- !u!114 &4372811483543633570 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7052611767422597503, guid: aa63e3324934bac429ef80736eae850f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6733077059178547165}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4fc3311e76f4111a7ecdc958de43ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7279744566858579662 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4068554712008636691, guid: aa63e3324934bac429ef80736eae850f,

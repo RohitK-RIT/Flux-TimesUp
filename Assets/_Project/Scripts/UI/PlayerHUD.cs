@@ -33,7 +33,7 @@ namespace _Project.Scripts.UI
         [SerializeField] public GameObject reloadingText;
 
         //[SerializeField] private TMP_Text objectiveText;
-        [SerializeField] private TMP_Text coinsText;
+        //[SerializeField] private TMP_Text coinsText;
         
         private GameObject primaryOverlay;
         private GameObject secondaryOverlay;
@@ -63,7 +63,7 @@ namespace _Project.Scripts.UI
             UpdateAmmoDisplay();
             UpdateReloadingText();
             //UpdateObjectiveText();
-            UpdateCoinsText();
+            //UpdateCoinsText();
             UpdateLoadoutInfo();
         }
         public void ShowAbilityHUD(AbilityType abilityType)
@@ -163,7 +163,7 @@ namespace _Project.Scripts.UI
 
         private void UpdateCoinsText()
         {
-            coinsText.text = player?.GetCoins().ToString();
+            //coinsText.text = player?.GetCoins().ToString();
         }
         
         /// <summary>

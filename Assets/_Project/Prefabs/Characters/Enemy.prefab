@@ -554,6 +554,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 3286456909812954785, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 3569496227156943954, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -854,7 +859,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b794b47521bc44818b73d1e19582d539, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lowHealthThreshold: 30
 --- !u!114 &6538187122326004899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,10 +871,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e465ed16c90f41ae80d9b147f8ee544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chargerPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
+  chargerEnemyPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
     type: 3}
-  spawnDistanceFromEnemy: 2
-  spawnOffsetFromPlayer: 3
+  basicEnemyPrefab: {fileID: 4518910825798227448}
 --- !u!114 &6995247377189928667 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8230801370227858818, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,

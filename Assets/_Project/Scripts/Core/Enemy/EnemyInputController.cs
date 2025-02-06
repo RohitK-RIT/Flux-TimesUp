@@ -5,6 +5,7 @@ using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -60,12 +61,16 @@ namespace _Project.Scripts.Core.Enemy
 
         private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
         
+        private bool _hasSpawnedEnemies;
+
+        
         private void Awake()
         {
             Enemy = GetComponent<NavMeshAgent>();
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
+           
         }
 
         private void InitializeState()
@@ -123,7 +128,7 @@ namespace _Project.Scripts.Core.Enemy
         
 
         //Method to check if the player in present on the navmesh rooms
-        private bool IsPlayerOnNavMesh()
+        internal bool IsPlayerOnNavMesh()
         {
             NavMeshHit hit;
             // Ensure the ClosestPlayer object exists before proceeding.
