@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4787149921203261469}
   - component: {fileID: 4758229347648240867}
   - component: {fileID: 4767627839408215347}
-  - component: {fileID: 4799236510648377591}
   - component: {fileID: 3883724034526622099}
+  - component: {fileID: 5536485037193560177}
   m_Layer: 0
   m_Name: Ammo Pickup
   m_TagString: Untagged
@@ -86,8 +86,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4799236510648377591
-MeshCollider:
+--- !u!114 &3883724034526622099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4790854831345996537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c77cf82ba1bc964980eb6b182a0121b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: 5
+--- !u!135 &5536485037193560177
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -104,23 +117,9 @@ MeshCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43168765717077360, guid: e9d5b69050ca3d3488a70c72ad0aace6, type: 2}
---- !u!114 &3883724034526622099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4790854831345996537}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c77cf82ba1bc964980eb6b182a0121b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ammo: 5
+  serializedVersion: 3
+  m_Radius: 15.64
+  m_Center: {x: 0.07, y: -2.24, z: -1.098938}
 --- !u!1001 &2168699521133823782
 PrefabInstance:
   m_ObjectHideFlags: 0
