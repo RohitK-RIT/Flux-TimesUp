@@ -35,8 +35,8 @@ namespace _Project.Scripts.Core.Enemy
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
         
             // Instantiate Chargers
-            Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
-            Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+            // Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+            // Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
         }
         
         internal void WaveEnemySpawner()
@@ -45,9 +45,16 @@ namespace _Project.Scripts.Core.Enemy
             {
                 if (_roomWaveController.enemiesInRoom[i] != null)
                 {
-                    _roomWaveController.enemiesInRoom[i].transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
-                    _roomWaveController.enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
-                    _roomWaveController.Reset();
+                    // _roomWaveController.enemiesInRoom[i].transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
+                    // _roomWaveController.enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
+                    // _roomWaveController.Reset();
+                    
+                    var enemy = _roomWaveController.enemiesInRoom[i]; // Store reference
+            
+                    enemy.transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
+                    enemy.gameObject.SetActive(true); // Reactivate enemy
+            
+                    enemy.gameObject.GetComponent<EnemyController>().Reset(); // Ensure Reset() is being called for each enemy
                 }
             }
             
