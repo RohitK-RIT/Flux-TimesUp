@@ -35,7 +35,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The wallet ID for the player.
         /// </summary>
-        private string _walletID;
+        //private string _walletID;
 
         protected override void Awake()
         {
@@ -55,7 +55,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             _cameraController.Initialize(this);
 
             // Create a wallet for the player
-            _walletID = CurrencySystem.Instance.CreateWallet();
+            //_walletID = CurrencySystem.Instance.CreateWallet();
         }
 
         private void OnEnable()
@@ -134,7 +134,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             if (enemyPlayer is EnemyController enemyController)
             {
                 // Add coins to the player's wallet
-                CurrencySystem.Instance.AddCoins(_walletID, 10); // 10 coins for now, eventually this will be based on enemy type
+                //CurrencySystem.Instance.AddCoins(_walletID, 10); // 10 coins for now, eventually this will be based on enemy type
             }
         }
 
@@ -152,7 +152,8 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <returns></returns>
         public int GetCoins()
         {
-            return CurrencySystem.Instance.GetCoins(_walletID);
+            //return CurrencySystem.Instance.GetCoins(_walletID);
+            return 0;
         }
 
         private void OnTriggerEnter(Collider other)

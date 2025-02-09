@@ -7,7 +7,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities
     public class AbilityPickup : MonoBehaviour, IPickupItem
     {
         [SerializeField] private AbilityType abilityType;
-
         public void OnItemPickup()
         {
             var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
@@ -27,6 +26,15 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
             // Destroy the pickup item.
             Destroy(gameObject);
+        }
+        public void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                var msg = "You picked up " + abilityType.ToString() + " ability.";
+                LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
+                LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
+            }
         }
     }
 }

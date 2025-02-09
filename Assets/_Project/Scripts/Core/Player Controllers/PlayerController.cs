@@ -14,7 +14,9 @@ namespace _Project.Scripts.Core.Player_Controllers
     [RequireComponent(typeof(MovementController), typeof(WeaponController), typeof(AnimationController))]
     public abstract class PlayerController : MonoBehaviour, IDamageable
     {
-        public event Action<PlayerController> OnDeath;
+        public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
+
+        public event PlayerDeath OnDeath;
 
         /// <summary>
         /// Component that handles movement.
@@ -69,7 +71,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Player's current health.
         /// </summary>
-        [SerializeField] private float currentHealth;
+        [SerializeField] internal float currentHealth;
 
         protected virtual void Awake()
         {
@@ -138,10 +140,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             currentHealth -= damageDealt;
             currentHealth = Mathf.Clamp(currentHealth, 0f, Stats.maxHealth);
-            OnHitConfirmed(weapon.CurrentPlayerController);
+            OnHitConfirmed(weapon?.CurrentPlayerController);
 
             if (currentHealth <= 0)
-                Die(weapon.CurrentPlayerController);
+                Die(weapon?.CurrentPlayerController, weapon);
         }
 
         /// <summary>
@@ -158,12 +160,13 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Function to handle the character's death.
         /// </summary>
         /// <param name="enemyPlayer"></param>
-        protected virtual void Die(PlayerController enemyPlayer)
+        /// <param name="weaponKilledBy"></param>
+        protected virtual void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             // Handle the character's death
-            enemyPlayer.OnKillConfirmed(this);
-            
-            OnDeath?.Invoke(this);
+            enemyPlayer?.OnKillConfirmed(this);
+
+            OnDeath?.Invoke(enemyPlayer, this, weaponKilledBy);
         }
 
         protected virtual void OnKillConfirmed(PlayerController enemyPlayer)

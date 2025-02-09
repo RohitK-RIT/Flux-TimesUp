@@ -5,12 +5,14 @@ using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Backend.Scene_Control
 {
     //General class to manage the game
     public class LevelSceneController : BaseSystem<LevelSceneController>
     {
+        [SerializeField] public PlayerHUD playerHUD;
         protected override bool IsPersistent => false;
         public LocalPlayerController Player => player;
         public GameObject WinPage => winPage;

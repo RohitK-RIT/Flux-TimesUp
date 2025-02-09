@@ -69,11 +69,18 @@ namespace _Project.Scripts.Core.Character
         /// Multiplier to adjust the strength of gravity
         /// </summary>
         private readonly float _gravityMultiplier = 3f;
+        
+        private Camera _camera;
 
         private void Awake()
         {
             // Get and store the CharacterController component attached to the player
             _characterController = GetComponent<CharacterController>();
+        }
+
+        private void Start()
+        {
+            _camera = Camera.main;
         }
 
         private void Update()
@@ -92,7 +99,7 @@ namespace _Project.Scripts.Core.Character
             if (MoveInput == Vector2.zero) return;
 
             // Assign horizontal and vertical inputs to the movement vector
-            _moveDirection = (body.right * MoveInput.x + body.forward * MoveInput.y) * PlayerController.Stats.movementSpeed;
+            _moveDirection = (_camera.transform.right * MoveInput.x + _camera.transform.forward * MoveInput.y) * PlayerController.Stats.movementSpeed;
 
             // Applying gravity for the y value
             HandleGravity();

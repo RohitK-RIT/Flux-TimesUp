@@ -36,6 +36,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Bullet impact prefab.
         /// </summary>
         [SerializeField] private GameObject bulletImpactPrefab;
+        
+        public RangedWeaponStats Stats => stats;
 
         /// <summary>
         /// Property to access current number of bullets in the magazine.
@@ -230,7 +232,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             fireDirection = (fireDirection + recoilOffset * _recoilFactor).normalized;
 
             // Raycast to check if the bullet hits something. If it does, play the trail to that point, else play the trail to the miss distance.
-            if (Physics.Raycast(muzzle.position, fireDirection, out var hit, stats.MissDistance, _opponentLayer))
+            if (Physics.Raycast(muzzle.position, fireDirection, out var hit, stats.MissDistance, _opponentLayer, QueryTriggerInteraction.Ignore))
             {
                 StartCoroutine(PlayTrail(muzzle.position, hit.point));
                 OnBulletImpact(hit.point, hit.normal);
@@ -334,6 +336,15 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             if (Attacking)
                 BeginAttack();
+        }
+
+        /// <summary>
+        /// Function to Add ammo to the weapon when the ammo is picked up.
+        /// </summary>
+        /// <param name="ammo">the ammo to be added</param>
+        public void AddAmmo(int ammo)
+        {
+            MaxAmmo += ammo;
         }
     }
 }

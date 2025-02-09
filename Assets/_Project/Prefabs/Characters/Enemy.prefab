@@ -554,6 +554,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 3286456909812954785, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 3569496227156943954, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -577,17 +582,17 @@ PrefabInstance:
     - target: {fileID: 6952407069893139989, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.8
+      value: -18.1
       objectReference: {fileID: 0}
     - target: {fileID: 6952407069893139989, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.03
+      value: 1.285
       objectReference: {fileID: 0}
     - target: {fileID: 6952407069893139989, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -51
+      value: -44.9
       objectReference: {fileID: 0}
     - target: {fileID: 6952407069893139989, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
         type: 3}
@@ -689,6 +694,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6257153499608317289}
+    - targetCorrespondingSourceObject: {fileID: 3286456909812954785, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2063535824608031212}
+    - targetCorrespondingSourceObject: {fileID: 3286456909812954785, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6538187122326004899}
   m_SourcePrefab: {fileID: 100100000, guid: c45c0f2125881ab4abfe55c2eb6f5ec0, type: 3}
 --- !u!4 &4083512241357911797 stripped
 Transform:
@@ -834,6 +847,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8705841408824501866}
+--- !u!114 &2063535824608031212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518910825798227448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b794b47521bc44818b73d1e19582d539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6538187122326004899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518910825798227448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e465ed16c90f41ae80d9b147f8ee544, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chargerEnemyPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
+    type: 3}
+  basicEnemyPrefab: {fileID: 4518910825798227448}
 --- !u!114 &6995247377189928667 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8230801370227858818, guid: c45c0f2125881ab4abfe55c2eb6f5ec0,
