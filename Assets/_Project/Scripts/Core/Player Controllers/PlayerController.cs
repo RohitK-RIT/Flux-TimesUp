@@ -1,10 +1,8 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
