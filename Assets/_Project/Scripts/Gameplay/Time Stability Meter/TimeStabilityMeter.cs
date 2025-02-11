@@ -28,15 +28,17 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             TimeStability = initialTimeStability;
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            foreach (var enemy in LevelSceneController.Instance.enemies)
-            {
-                enemy.OnDeath += OnEnemyDeath;
-            }
+            PlayerController.OnDeath += OnPlayerDeath;
+        }
+        
+        private void OnDisable()
+        {
+            PlayerController.OnDeath -= OnPlayerDeath;
         }
 
-        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
+        private void OnPlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
         {
             if(killingPlayer != LevelSceneController.Instance.Player)
                 return;

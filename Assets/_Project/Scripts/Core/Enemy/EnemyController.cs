@@ -61,9 +61,6 @@ namespace _Project.Scripts.Core.Enemy
         {
             gameObject.SetActive(false);
             base.Die(enemyPlayer, weaponKilledBy);
-            
-            // Spawn loot
-            LootSpawner.Instance.LootDrop(_enemyInputController.Enemy.transform.position);
         }
     }
 }

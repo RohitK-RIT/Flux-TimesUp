@@ -16,7 +16,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     {
         public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
 
-        public event PlayerDeath OnDeath;
+        public static event PlayerDeath OnDeath;
 
         /// <summary>
         /// Component that handles movement.

@@ -1,8 +1,10 @@
 using System;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Backend
@@ -11,28 +13,36 @@ namespace _Project.Scripts.Core.Backend
     {
         [SerializeField] private GameObject[] lootPrefabs;
 
-        /// <summary>
-        /// Singleton instance of LootSpawner.
-        /// </summary>
-        private void Awake()
+        private void OnEnable()
         {
-            if (Instance && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
+            PlayerController.OnDeath += OnPlayerDeath;
+        }
+        
+        private void OnDisable()
+        {
+            PlayerController.OnDeath -= OnPlayerDeath;
         }
 
-        public static LootSpawner Instance { get; private set; }
+        /// <summary>
+        /// Function to spawn loot on Player Death.
+        /// </summary>
+        /// <param name="killingplayer"></param>
+        /// <param name="playerkilled"></param>
+        /// <param name="weaponkilledby"></param>
+        private void OnPlayerDeath(PlayerController killingplayer, PlayerController playerkilled, Weapon weaponkilledby)
+        {
+            if (killingplayer != LevelSceneController.Instance.Player)
+                return;
+            
+            DropLoot(playerkilled.transform.position);
+        }
 
         /// <summary>
         /// Function to spawn loot on Enemy Death.
         /// </summary>
         /// <param name="lootDropPosition"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void LootDrop(Vector3 lootDropPosition)
+        private void DropLoot(Vector3 lootDropPosition)
         {
             var dropType = Random.Range(0, 2);
             switch (dropType)
