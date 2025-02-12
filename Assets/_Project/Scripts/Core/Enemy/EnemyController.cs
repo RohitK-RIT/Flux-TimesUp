@@ -49,7 +49,6 @@ namespace _Project.Scripts.Core.Enemy
             currentHealth = Stats.maxHealth;
             var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
             if (!currentRangedWeapon) return;
-            currentRangedWeapon.AddAmmo(240);
             currentRangedWeapon.InitializeAmo();
             Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
             Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
