@@ -34,7 +34,6 @@ namespace _Project.Scripts.Core.Enemy
             // Subscribe to attack input events on enable
             _enemyInputController.OnAttackInputBegan += BeginAttack;
             _enemyInputController.OnAttackInputEnded += EndAttack;
-            //_enemyInputController.OnReloadInput += Reload;
         }
 
         private void OnDisable()
@@ -43,7 +42,6 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.Disable();
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
-            //_enemyInputController.OnReloadInput -= Reload;
         }
         
         public void Reset()
@@ -61,10 +59,6 @@ namespace _Project.Scripts.Core.Enemy
         protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             gameObject.SetActive(false);
-            var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
-            Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
-            Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
-            Debug.Log("Enemy died");
             base.Die(enemyPlayer, weaponKilledBy);
             
             // Spawn loot

@@ -1,23 +1,22 @@
-using System.Collections.Generic;
-using _Project.Scripts.Core.Enemy.EnemySpawner;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Enemy
+namespace _Project.Scripts.Core.Enemy.EnemySpawner
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private GameObject chargerEnemyPrefab;
-        [SerializeField] private GameObject basicEnemyPrefab;
-        private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from enemy
-        private readonly float _spawnOffsetFromPlayer = 3f;   // Distance in front of the player
-        [SerializeField] private Transform checking;
+        [SerializeField] private GameObject chargerEnemyPrefab; // Reference to charger enemy prefab
+        [SerializeField] private GameObject basicEnemyPrefab; // Reference to basic enemy prefab
+        private readonly float _spawnDistanceFromEnemy = 4f;  // Distance from an enemy
         private RoomWaveController _roomWaveController;
 
         private void Awake()
         {
+            // Get reference to the RoomWaveController in the parent object
             _roomWaveController = GetComponentInParent<RoomWaveController>();
         }
     
+        // Spawns two Charger enemies near the given enemy position.
+        // One Charger appears to the right, and the other appears to the left.
         internal void ChargerSpawner(Vector3 enemyPosition)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -26,10 +25,7 @@ namespace _Project.Scripts.Core.Enemy
                 Debug.Log("Player not found while Spawning!");
                 return;
             }
-        
-            Vector3 playerForward = player.transform.forward.normalized; // Direction the player is facing
-            Vector3 spawnCenter = player.transform.position + (playerForward * _spawnOffsetFromPlayer); // In front of player
-        
+            
             // Calculate spawn positions around the enemy
             Vector3 spawnPos1 = enemyPosition + (Vector3.right * _spawnDistanceFromEnemy);
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
@@ -39,28 +35,31 @@ namespace _Project.Scripts.Core.Enemy
             Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
         }
         
+        // Respawns all enemies in the current room at their original positions.
+        // Resets their state and reactivates them.
         internal void WaveEnemySpawner()
         {
-            for (int i = 0; i < _roomWaveController.enemiesInRoom.Count; i++)
+            for (int i = 0; i < _roomWaveController.EnemiesInRoom.Count; i++)
             {
-                if (_roomWaveController.enemiesInRoom[i] != null)
+                if (_roomWaveController.EnemiesInRoom[i] != null)
                 {
-                    // _roomWaveController.enemiesInRoom[i].transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
-                    // _roomWaveController.enemiesInRoom[i].gameObject.SetActive(true); // Reactivate enemy
-                    // _roomWaveController.Reset();
-                    
-                    var enemy = _roomWaveController.enemiesInRoom[i]; // Store reference
+                    // Get enemy reference
+                    var enemy = _roomWaveController.EnemiesInRoom[i];
             
-                    enemy.transform.position = _roomWaveController.originalSpawnPoints[i]; // Reset position
-                    enemy.gameObject.SetActive(true); // Reactivate enemy
+                    // Reset enemy position to its original spawn point
+                    enemy.transform.position = _roomWaveController.OriginalSpawnPoints[i]; 
                     
-            
-                    enemy.gameObject.GetComponent<EnemyController>().Reset(); // Ensure Reset() is being called for each enemy
+                    // Reactivate the enemy GameObject
+                    enemy.gameObject.SetActive(true);
+                    
+                    // Call Reset() on the enemy controller
+                    enemy.gameObject.GetComponent<EnemyController>().Reset();
                 }
             }
+            // Reset the enemy list in RoomWaveController to reflect the changes
             _roomWaveController.ResetEnemiesInRoom();
             
-            Debug.Log($"Reactivated {_roomWaveController.enemiesInRoom.Count} enemies in room {gameObject.name}.");
+            Debug.Log($"Reactivated {_roomWaveController.EnemiesInRoom.Count} enemies in room {gameObject.name}.");
         }
     }
     
