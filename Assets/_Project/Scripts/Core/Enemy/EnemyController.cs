@@ -4,6 +4,7 @@ using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.PCG;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -51,7 +52,7 @@ namespace _Project.Scripts.Core.Enemy
             var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
             if (!currentRangedWeapon) return;
             currentRangedWeapon.AddAmmo(240);
-            WeaponController.ReloadWeapon();
+            currentRangedWeapon.InitializeAmo();
             Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
             Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
             Debug.Log("Enemy reset to initial state.");
@@ -60,6 +61,10 @@ namespace _Project.Scripts.Core.Enemy
         protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             gameObject.SetActive(false);
+            var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
+            Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
+            Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
+            Debug.Log("Enemy died");
             base.Die(enemyPlayer, weaponKilledBy);
             
             // Spawn loot
