@@ -33,6 +33,7 @@ namespace _Project.Scripts.UI
         [SerializeField] private GameObject overlay;
 
         [SerializeField] public GameObject reloadingText;
+        [SerializeField] public GameObject reloadingIcon;
 
         //[SerializeField] private TMP_Text objectiveText;
         //[SerializeField] private TMP_Text coinsText;
@@ -155,16 +156,16 @@ namespace _Project.Scripts.UI
                 return;
 
             reloadingText.SetActive(currentRangedWeapon.IsReloading);
+            StartCoroutine(UpdateReloadingIcon(currentRangedWeapon.IsReloading, currentRangedWeapon));
         }
-
-        /*private void UpdateObjectiveText()
+        
+        private System.Collections.IEnumerator UpdateReloadingIcon(bool isReloading, RangedWeapon currentRangedWeapon)
         {
-            objectiveText.text = LevelSceneController.Instance.NumberOfEnemies.ToString();
-        }*/
-
-        private void UpdateCoinsText()
-        {
-            //coinsText.text = player?.GetCoins().ToString();
+            if (isReloading)
+            {
+                reloadingIcon.transform.Rotate(Vector3.forward, 80 * Time.deltaTime);
+                yield return new WaitForSeconds(currentRangedWeapon.Stats.ReloadTime);
+            }
         }
         
         /// <summary>
