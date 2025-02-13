@@ -7,6 +7,7 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -21,13 +22,14 @@ namespace _Project.Scripts.UI
         [SerializeField] private Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
-        [SerializeField] public TMP_Text PickupText;
+        [SerializeField] public TMP_Text pickupText;
         [SerializeField] public LocalPlayerController player;
         
-        [SerializeField] public Image primaryWeaponSlotHolder;
-        [SerializeField] public Image secondaryWeaponSlotHolder;
-        [SerializeField] public Image meleeWeaponSlotHolder;
-        [SerializeField] public Image abilitySlotHolder;
+        [SerializeField] public Image primaryIconSlot;
+        [SerializeField] public Image secondaryIconSlot;
+        [SerializeField] public Image meleeIconSlot;
+        [SerializeField] public Image abilityIconSlot;
+        [SerializeField] public GameObject abilitySlotHolder;
         [SerializeField] private GameObject overlay;
 
         [SerializeField] public GameObject reloadingText;
@@ -48,29 +50,28 @@ namespace _Project.Scripts.UI
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
-            primaryOverlay = Instantiate(overlay, primaryWeaponSlotHolder.rectTransform);
-            secondaryOverlay = Instantiate(overlay, secondaryWeaponSlotHolder.rectTransform);
-            meleeOverlay = Instantiate(overlay, meleeWeaponSlotHolder.rectTransform);
-            abilityOverlay = Instantiate(overlay, abilitySlotHolder.rectTransform);
-            abilitySlotHolder.gameObject.SetActive(false);
+            primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform);
+            secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform);
+            meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform);
+            abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform);
+            abilityIconSlot.gameObject.SetActive(false);
+            abilitySlotHolder.SetActive(false);
         }
 
         private void Update()
         {
-            // Update the health bar and ammo display in real-time
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
             UpdateReloadingText();
-            //UpdateObjectiveText();
-            //UpdateCoinsText();
             UpdateLoadoutInfo();
         }
         public void ShowAbilityHUD(AbilityType abilityType)
         {
             abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
-            abilitySlotHolder.sprite = abilityData.Icon;
-            abilitySlotHolder.gameObject.SetActive(true);
+            abilityIconSlot.sprite = abilityData.Icon;
+            abilitySlotHolder.SetActive(true);
+            abilityIconSlot.gameObject.SetActive(true);
         }
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
@@ -79,19 +80,19 @@ namespace _Project.Scripts.UI
 
             if (player.WeaponController.CurrentWeapon is Ability)
             {
-                abilitySlotHolder.enabled = true;
-                abilitySlotHolder.sprite = abilityData.Icon;
+                abilityIconSlot.enabled = true;
+                abilityIconSlot.sprite = abilityData.Icon;
                 primaryOverlay.SetActive(true);
                 secondaryOverlay.SetActive(true);
                 meleeOverlay.SetActive(true);
                 abilityOverlay.SetActive(false);
             }
-            primaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
-            secondaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
-            meleeWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
-            primaryWeaponSlotHolder.enabled = true;
-            secondaryWeaponSlotHolder.enabled = true;
-            meleeWeaponSlotHolder.enabled = true;
+            primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
+            secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
+            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
+            primaryIconSlot.enabled = true;
+            secondaryIconSlot.enabled = true;
+            meleeIconSlot.enabled = true;
             ShowActiveWeaponSlot();
         }
         
@@ -172,8 +173,8 @@ namespace _Project.Scripts.UI
         /// <param name="msg">Message to display on loot pickup.</param>
         public void ShowPickupFeedback(string msg)
         {
-            PickupText.text = msg;
-            PickupText.gameObject.SetActive(true);
+            pickupText.text = msg;
+            pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);
         }
         
@@ -182,7 +183,7 @@ namespace _Project.Scripts.UI
         /// </summary>
         private void HidePickupFeedback()
         {
-            PickupText.gameObject.SetActive(false);
+            pickupText.gameObject.SetActive(false);
         }
     }
 }

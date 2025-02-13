@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.UI;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
@@ -31,7 +32,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         {
             if (other.CompareTag("Player"))
             {
-                var msg = "You picked up " + abilityType.ToString() + " ability.";
+                var msg = "You switched to " + abilityType.ToString() + " ability.";
                 LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
                 LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
             }
