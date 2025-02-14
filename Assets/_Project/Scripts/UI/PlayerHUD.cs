@@ -161,12 +161,19 @@ namespace _Project.Scripts.UI
         
         private System.Collections.IEnumerator UpdateReloadingIcon(bool isReloading, RangedWeapon currentRangedWeapon)
         {
+            var originalRotation = reloadingIcon.transform.rotation; // Store original rotation
+            var reloadTime = currentRangedWeapon.Stats.ReloadTime;
+            const float totalRotation = 360f; // Full circle rotation
+
             if (isReloading)
             {
-                reloadingIcon.transform.Rotate(Vector3.forward, 80 * Time.deltaTime);
-                yield return new WaitForSeconds(currentRangedWeapon.Stats.ReloadTime);
+                reloadingIcon.transform.Rotate(Vector3.forward, totalRotation * Time.deltaTime / reloadTime);
+                yield return new WaitForSeconds(reloadTime);
             }
+            // Ensure it resets exactly to the original rotation
+            reloadingIcon.transform.rotation = originalRotation;
         }
+
         
         /// <summary>
         /// Function to show pickup feedback.
