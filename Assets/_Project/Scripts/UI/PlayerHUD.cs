@@ -1,5 +1,5 @@
-using System;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
@@ -7,7 +7,6 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -35,15 +34,15 @@ namespace _Project.Scripts.UI
         [SerializeField] public GameObject reloadingText;
         [SerializeField] public GameObject reloadingIcon;
 
-        //[SerializeField] private TMP_Text objectiveText;
-        //[SerializeField] private TMP_Text coinsText;
-        
         private GameObject primaryOverlay;
         private GameObject secondaryOverlay;
         private GameObject meleeOverlay;
         private GameObject abilityOverlay;
 
         private AbilityData abilityData;
+        private AbilityCooldown abilityCooldown;
+
+        //private Ability currentAbility;
 
         private void Start()
         {
@@ -55,6 +54,7 @@ namespace _Project.Scripts.UI
             secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform);
             meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform);
             abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform);
+            abilityCooldown = abilityOverlay.GetComponent<AbilityCooldown>();
             abilityIconSlot.gameObject.SetActive(false);
             abilitySlotHolder.SetActive(false);
         }
@@ -67,6 +67,7 @@ namespace _Project.Scripts.UI
             UpdateReloadingText();
             UpdateLoadoutInfo();
         }
+        
         public void ShowAbilityHUD(AbilityType abilityType)
         {
             abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
@@ -77,6 +78,7 @@ namespace _Project.Scripts.UI
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
+            var currentAbility = player.WeaponController.CurrentWeapon as Ability;
             if (!player) return;
 
             if (player.WeaponController.CurrentWeapon is Ability)
@@ -88,6 +90,13 @@ namespace _Project.Scripts.UI
                 meleeOverlay.SetActive(true);
                 abilityOverlay.SetActive(false);
             }
+
+            if (currentAbility != null && currentAbility.IsCooldownActive)
+            {
+                Debug.Log("Current ability is on cooldown" + currentAbility.name);
+                abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
+            }
+
             primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
             secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
             meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
