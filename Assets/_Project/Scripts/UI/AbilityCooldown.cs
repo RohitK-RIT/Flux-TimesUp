@@ -11,6 +11,7 @@ namespace _Project.Scripts.UI
         private bool isCooldownActive = false;
 
         private float cooldownTimer = 0f;
+        private float cooldownDuration;
 
         private void Start()
         {
@@ -21,11 +22,11 @@ namespace _Project.Scripts.UI
         {
             if (isCooldownActive)
             {
-                ApplyCooldown(cooldownTimer);
+                ApplyCooldown();
             }
         }
 
-        private void ApplyCooldown(float cooldownDuration)
+        private void ApplyCooldown()
         {
             cooldownTimer -= Time.deltaTime;
             if (cooldownTimer < 0f)
@@ -40,12 +41,12 @@ namespace _Project.Scripts.UI
                 cooldownImage.fillAmount = cooldownTimer / cooldownDuration;
             }
         }
-        public void ActivateCooldown(float cooldownDuration)
+        public void ActivateCooldown(float cooldown)
         {
             cooldownText.gameObject.SetActive(true);
             cooldownText.text = Mathf.CeilToInt(cooldownDuration).ToString();
-            cooldownTimer = cooldownDuration;
-            cooldownImage.fillAmount = 1f;
+            cooldownTimer = cooldown;
+            cooldownDuration = cooldown;
             isCooldownActive = true;
         }
     }
