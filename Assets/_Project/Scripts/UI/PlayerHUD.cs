@@ -1,5 +1,4 @@
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
@@ -7,6 +6,7 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -16,6 +16,8 @@ namespace _Project.Scripts.UI
     /// </summary>
     public class PlayerHUD : MonoBehaviour
     {
+        private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
+
         // References to the UI components
         [SerializeField] public Slider healthBar;
         [SerializeField] private Slider timeStabilityBar;
@@ -41,6 +43,11 @@ namespace _Project.Scripts.UI
 
         private AbilityData abilityData;
         private AbilityCooldown abilityCooldown;
+
+        [SerializeField] private Animator animator;
+
+        [SerializeField] private TMP_Text healthText;
+        [SerializeField] private TMP_Text tmsValueText;
 
         //private Ability currentAbility;
 
@@ -137,6 +144,7 @@ namespace _Project.Scripts.UI
         {
             healthBar.value = player.CurrentHealth;
             healthBar.maxValue = player.Stats.maxHealth;
+            healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
         }
         
         /// <summary>
@@ -146,6 +154,18 @@ namespace _Project.Scripts.UI
         {
             timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
             timeStabilityBar.maxValue = TimeStabilityMeter.Instance.InitialTimeStability;
+            tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
+            animator.SetBool(IsBlinking, false);
+            if (timeStabilityBar.value < 50)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 0.5f;
+            }
+            else if(timeStabilityBar.value < 25)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 1f;
+            }
         }
 
         // Updates the ammo display based on the player's current and total ammo
