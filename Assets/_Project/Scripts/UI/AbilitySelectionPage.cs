@@ -49,6 +49,9 @@ namespace _Project.Scripts.UI
         public void OnYesButtonClicked()
         {
             LevelSceneController.Instance.Player.WeaponController.SwitchAbility(NextAbilityType);
+            var msg = "You switched to " + NextAbilityType.ToString() + " ability.";
+            LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
+            LevelSceneController.Instance.playerHUD.ShowAbilityHUD(NextAbilityType);
             Hide();
         }
     }

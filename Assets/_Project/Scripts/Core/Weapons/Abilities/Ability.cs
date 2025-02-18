@@ -13,11 +13,13 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         /// </summary>
         public abstract AbilityType Type { get; }
         public override string WeaponID  => Type.ToString();
+        
+        public bool IsCooldownActive => _isCooldownActive;
 
         /// <summary>
         /// Indicates if the cooldown is active.
         /// </summary>
-        protected bool IsCooldownActive;
+        private bool _isCooldownActive;
 
         /// <summary>
         /// Indicates if the ability is active.
@@ -28,7 +30,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         /// Indicates if the ability has been used.
         /// </summary>
         public bool Used { get; protected set; }
-
+        
+        public float CooldownTime { get; private set; }
+        
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
@@ -47,11 +51,12 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         /// Starts the cooldown period for the ability.
         /// </summary>
         /// <returns>An IEnumerator for the coroutine.</returns>
-        protected IEnumerator StartCooldown(float cooldownTime)
+        protected IEnumerator StartCooldown(float cooldown)
         {
-            IsCooldownActive = true;
-            yield return new WaitForSeconds(cooldownTime); // Wait for the cooldown period
-            IsCooldownActive = false;
+            CooldownTime = cooldown;
+            _isCooldownActive = true;
+            yield return new WaitForSeconds(cooldown); // Wait for the cooldown period
+            _isCooldownActive = false;
             IsAbilityActive = false; // Allow a new attack after cooldown
             Debug.Log("Ability is on cooldown!!");
         }
