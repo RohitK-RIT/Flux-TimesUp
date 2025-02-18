@@ -16,6 +16,11 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
         [SerializeField] private float initialTimeStability = 100f;
         [SerializeField] private float decreaseRate = 0.01f;
 
+#if UNITY_EDITOR
+        [Header("Editor Only")]
+        [SerializeField] private bool pauseTimeStability;
+#endif
+
         private void Awake()
         {
             if (Instance && Instance != this)
@@ -56,6 +61,10 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void Update()
         {
+#if UNITY_EDITOR
+            if (pauseTimeStability)
+                return;
+#endif
             TimeStability -= decreaseRate * Time.deltaTime;
             TimeStability = Mathf.Clamp(TimeStability, 0, initialTimeStability);
             if(TimeStability <= 0)

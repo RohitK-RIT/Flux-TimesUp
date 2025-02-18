@@ -1,4 +1,3 @@
-using _Project.Scripts.Core.Backend.Currency;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
@@ -11,7 +10,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// <summary>
     /// This class is responsible for handling the player's input.
     /// </summary>
-    [RequireComponent(typeof(LocalInputController), typeof(CameraController))]
+    [RequireComponent(typeof(LocalInputController))]
     public sealed class LocalPlayerController : PlayerController
     {
         /// <summary>
