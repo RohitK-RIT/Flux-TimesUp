@@ -1,7 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Core.Character;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
@@ -14,16 +13,19 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         [SerializeField] private Transform cinemachineCameraTarget;
 
-        [SerializeField] private Camera mainCamera;
+        private Camera _mainCamera;
 
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
+        private readonly Vector3 _rayOrigin = new(0.5f, 0.5f, 0f);
+
         private const float Threshold = 0.01f;
+        const float RaycastDistance = 1000f;
 
         private void Start()
         {
-            mainCamera = Camera.main;
+            _mainCamera = Camera.main;
         }
 
         private void LateUpdate()
@@ -36,7 +38,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         private void RotateCamera()
         {
-            if (!mainCamera)
+            if (!_mainCamera)
                 return;
 
             // if there is an input and camera position is not fixed
@@ -58,9 +60,8 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Cinemachine will follow this target
             cinemachineCameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
 
-            PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 1000f,~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore)
-                ? hit.point
-                : mainCamera.transform.position + mainCamera.transform.forward * 50f;
+            Physics.Raycast(_mainCamera.ViewportPointToRay(_rayOrigin), out var hit, RaycastDistance, ~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore);
+            PlayerController.MovementController.AimTransform.position = hit.point;
         }
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

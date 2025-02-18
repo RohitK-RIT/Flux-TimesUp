@@ -1,5 +1,4 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Scene_Control;
+﻿using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -16,6 +15,11 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
         [SerializeField] private float initialTimeStability = 100f;
         [SerializeField] private float decreaseRate = 0.01f;
 
+#if UNITY_EDITOR
+        [Header("Editor Only")]
+        [SerializeField] private bool pauseTimeStability;
+#endif
+
         private void Awake()
         {
             if (Instance && Instance != this)
@@ -30,6 +34,11 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void Start()
         {
+            if(LevelSceneController.Instance.enemies.Length == 0)
+            {
+                Debug.LogError("No enemies found in the scene.");
+                return;
+            }
             foreach (var enemy in LevelSceneController.Instance.enemies)
             {
                 enemy.OnDeath += OnEnemyDeath;
@@ -54,6 +63,10 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void Update()
         {
+#if UNITY_EDITOR
+            if (pauseTimeStability)
+                return;
+#endif
             TimeStability -= decreaseRate * Time.deltaTime;
             TimeStability = Mathf.Clamp(TimeStability, 0, initialTimeStability);
             if(TimeStability <= 0)
