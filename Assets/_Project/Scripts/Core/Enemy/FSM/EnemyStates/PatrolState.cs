@@ -47,6 +47,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         public override EnemyState GetNextState()
         {
             // Check if players are in the detection range
+            if (_enemyInputController.RangedWeapon.IsReloading)
+            {
+                return EnemyState.Patrol;
+            }
             return _enemyInputController.FindPlayer()? EnemyState.Detect :
                 EnemyState.Patrol;
         }
