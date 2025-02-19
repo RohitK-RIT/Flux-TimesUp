@@ -46,11 +46,12 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 
         public override EnemyState GetNextState()
         {
-            // Check if players are in the detection range
+            // If enemy is reloading stay in patrol state
             if (_enemyInputController.RangedWeapon.IsReloading)
             {
                 return EnemyState.Patrol;
             }
+            // Check if players are in the detection range
             return _enemyInputController.FindPlayer()? EnemyState.Detect :
                 EnemyState.Patrol;
         }
