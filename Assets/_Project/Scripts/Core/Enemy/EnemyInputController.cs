@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
@@ -63,6 +65,10 @@ namespace _Project.Scripts.Core.Enemy
         
         private bool _hasSpawnedEnemies;
 
+        private WeaponController _weaponController;
+
+        internal RangedWeapon RangedWeapon;
+
         
         private void Awake()
         {
@@ -70,7 +76,9 @@ namespace _Project.Scripts.Core.Enemy
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
-           
+            _weaponController = GetComponent<WeaponController>();
+            RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
+
         }
 
         private void InitializeState()
