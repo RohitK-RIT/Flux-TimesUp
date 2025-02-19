@@ -46,7 +46,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             {
                 //Press F to pick up new ability
                 abilityPickUpInstruction.gameObject.SetActive(true);
-                abilityPickUpInstruction.text = "Press 'F' for " + abilityType.ToString();
+                abilityPickUpInstruction.text = "Press 'F' for \"" + abilityType.ToString() + "\" Ability";
             }
             else
             {
