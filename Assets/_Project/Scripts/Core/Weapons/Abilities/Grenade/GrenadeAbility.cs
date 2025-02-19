@@ -15,7 +15,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         /// The stats for the heal ability.
         /// </summary>
         [SerializeField] private GrenadeAbilityStats stats;
-        public override AbilityType Type => AbilityType.Attack;
+        public override AbilityType Type => AbilityType.Grenades;
 
         [SerializeField] private Grenade grenade;
         

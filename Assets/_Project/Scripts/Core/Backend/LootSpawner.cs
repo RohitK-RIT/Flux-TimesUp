@@ -57,7 +57,7 @@ namespace _Project.Scripts.Core.Backend
                     {
                         0 => AbilityType.Heal,
                         1 => AbilityType.Shield,
-                        2 => AbilityType.Attack,
+                        2 => AbilityType.Grenades,
                         3 => AbilityType.Teleport,
                         _ => throw new ArgumentOutOfRangeException()
                     };

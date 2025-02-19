@@ -12,7 +12,6 @@ namespace _Project.Scripts.Core.Weapons
         
         public void OnItemPickup()
         {
-            
             var currentWeapon = LevelSceneController.Instance.Player.WeaponController.CurrentWeapon;
 
             switch (currentWeapon)
@@ -23,12 +22,10 @@ namespace _Project.Scripts.Core.Weapons
                         case WeaponType.Secondary:
                             // add ammo to secondary weapon
                             rangedWeapon.AddAmmo(ammo);
-                            //Debug.Log("Added ammo to secondary weapon.");
                             break;
                         // add ammo to primary weapon by default
                         case WeaponType.Primary:
                             rangedWeapon.AddAmmo(ammo);
-                            //Debug.Log("Added ammo to primary weapon.");
                             break;
                     }
                     break;
@@ -39,17 +36,17 @@ namespace _Project.Scripts.Core.Weapons
                     if (primaryWeapon != null) primaryWeapon.AddAmmo(ammo);
                     break;
             }
-            
+            var msg = "You picked up " + ammo + " ammo.";
+            LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
             Destroy(gameObject);
         }
-
-        public void OnTriggerEnter(Collider other)
+        public void OnItemEnterRange()
         {
-            if (other.CompareTag("Player"))
-            {
-                var msg = "You picked up " + ammo + " ammo.";
-                LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
-            }
+            this.OnItemPickup();
+        }
+
+        public void OnItemExitRange()
+        {
         }
     }
 }
