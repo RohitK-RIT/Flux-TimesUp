@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.UI;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
@@ -15,6 +16,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             {
                 // If not, switch to the new ability.
                 playerWeaponController.SwitchAbility(abilityType);
+                var msg = "You picked up " + abilityType.ToString() + " ability.";
+                LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
+                LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
             }
             // Check if the player has the same ability.
             else if (playerWeaponController.CurrentAbility.Type != abilityType)
@@ -27,14 +31,10 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             // Destroy the pickup item.
             Destroy(gameObject);
         }
+
         public void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
-            {
-                var msg = "You picked up " + abilityType.ToString() + " ability.";
-                LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
-                LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
-            }
+            
         }
     }
 }

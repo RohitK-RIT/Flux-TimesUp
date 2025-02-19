@@ -1,10 +1,8 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
@@ -16,7 +14,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     {
         public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
 
-        public event PlayerDeath OnDeath;
+        public static event PlayerDeath OnDeath;
 
         /// <summary>
         /// Component that handles movement.

@@ -15,11 +15,13 @@ namespace _Project.Scripts.Core.Player_Controllers
         [SerializeField] private Transform cinemachineCameraTarget;
 
         [SerializeField] private Camera mainCamera;
+        [SerializeField] private float ignoreWallsDist = 4f;
 
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
         private const float Threshold = 0.01f;
+        private readonly Vector3 _raycastOrigin = new(0.5f, 0.5f, 0f);
 
         private void Start()
         {
@@ -58,9 +60,40 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Cinemachine will follow this target
             cinemachineCameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
 
-            PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 1000f,~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore)
-                ? hit.point
-                : mainCamera.transform.position + mainCamera.transform.forward * 50f;
+            // PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(_raycastOrigin), out var hit, 1000f,~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore)
+            //     ? hit.point
+            //     : mainCamera.transform.position + mainCamera.transform.forward * 50f;
+
+            var aimPosition = Vector3.zero;
+            var ray = mainCamera.ViewportPointToRay(_raycastOrigin);
+
+            if (Physics.Raycast(ray, out var hit, 1000f, PlayerController.OpponentLayer, QueryTriggerInteraction.Ignore))
+            {
+                aimPosition = hit.point;
+            }
+            // If no enemy is found, check for other objects, but ignore very close hits (like doors)
+            else if (Physics.Raycast(ray, out hit, 1000f, ~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore))
+            {
+                var hitDistance = Vector3.Distance(transform.position, hit.point);
+
+                // Ignore hits that are too close (e.g., doors, walls in tight spaces)
+                if (hitDistance > ignoreWallsDist)
+                {
+                    aimPosition = hit.point;
+                }
+                else
+                {
+                    // If the hit is too close, just aim forward at a default distance
+                    aimPosition = mainCamera.transform.position + mainCamera.transform.forward * 50f;
+                }
+            }
+            // Default fallback if nothing is hit
+            else
+            {
+                aimPosition = mainCamera.transform.position + mainCamera.transform.forward * 50f;
+            }
+
+            PlayerController.MovementController.AimTransform.position = aimPosition;
         }
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
