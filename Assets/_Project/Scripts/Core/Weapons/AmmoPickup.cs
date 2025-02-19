@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -9,7 +10,15 @@ namespace _Project.Scripts.Core.Weapons
     public class AmmoPickup : MonoBehaviour, IPickupItem
     {
         [SerializeField] private int ammo;
-        
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                OnItemEnterRange();
+            }
+        }
+
         public void OnItemPickup()
         {
             var currentWeapon = LevelSceneController.Instance.Player.WeaponController.CurrentWeapon;
