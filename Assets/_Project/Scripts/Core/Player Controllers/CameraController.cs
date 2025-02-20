@@ -1,7 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Core.Character;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {

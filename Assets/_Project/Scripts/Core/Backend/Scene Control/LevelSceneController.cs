@@ -5,7 +5,6 @@ using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Backend.Scene_Control
 {
@@ -17,10 +16,8 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         public LocalPlayerController Player => player;
         public GameObject WinPage => winPage;
         public GameObject LoosePage => loosePage;
-        public AbilitySelectionPage AbilitySelectionPage => abilitySelectionPage;
 
         [SerializeField] private GameObject pauseMenuPage, winPage, loosePage; // Drag your game scene UI panel here
-        [SerializeField] private AbilitySelectionPage abilitySelectionPage; // Drag your ability selection page here
 
         [Space(25f), Header("Players in Scene")] [SerializeField]
         private LocalPlayerController player; // Drag your player here
@@ -88,13 +85,13 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         }
 
         // Call this function to pause the game
-        public void Pause()
+        private void Pause()
         {
             PauseGame();
             pauseMenuPage.SetActive(true); // Show pause menu
         }
 
-        public void PauseGame()
+        private void PauseGame()
         {
             Cursor.visible = true; // Show the cursor
             Cursor.lockState = CursorLockMode.None; // Unlock the cursor
@@ -102,7 +99,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             _isPaused = true; // Update pause state
         }
 
-        public void ResumeGame()
+        private void ResumeGame()
         {
             Cursor.visible = false; // Show the cursor
             Cursor.lockState = CursorLockMode.Locked; // Unlock the cursor

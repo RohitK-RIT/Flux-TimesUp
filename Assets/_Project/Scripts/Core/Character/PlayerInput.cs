@@ -80,6 +80,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Loot Pick Up"",
+                    ""type"": ""Button"",
+                    ""id"": ""d304de04-5e98-4879-b703-dbcf8f6657f1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -192,6 +201,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""90435148-8770-4526-8f3e-2529bf800b9a"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Loot Pick Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -217,6 +237,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerControl_EquipAbility = m_PlayerControl.FindAction("EquipAbility", throwIfNotFound: true);
         m_PlayerControl_SwitchWeapon = m_PlayerControl.FindAction("Switch Weapon", throwIfNotFound: true);
         m_PlayerControl_Reload = m_PlayerControl.FindAction("Reload", throwIfNotFound: true);
+        m_PlayerControl_LootPickUp = m_PlayerControl.FindAction("Loot Pick Up", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,6 +305,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControl_EquipAbility;
     private readonly InputAction m_PlayerControl_SwitchWeapon;
     private readonly InputAction m_PlayerControl_Reload;
+    private readonly InputAction m_PlayerControl_LootPickUp;
     public struct PlayerControlActions
     {
         private @PlayerInput m_Wrapper;
@@ -294,6 +316,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @EquipAbility => m_Wrapper.m_PlayerControl_EquipAbility;
         public InputAction @SwitchWeapon => m_Wrapper.m_PlayerControl_SwitchWeapon;
         public InputAction @Reload => m_Wrapper.m_PlayerControl_Reload;
+        public InputAction @LootPickUp => m_Wrapper.m_PlayerControl_LootPickUp;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControl; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -321,6 +344,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Reload.started += instance.OnReload;
             @Reload.performed += instance.OnReload;
             @Reload.canceled += instance.OnReload;
+            @LootPickUp.started += instance.OnLootPickUp;
+            @LootPickUp.performed += instance.OnLootPickUp;
+            @LootPickUp.canceled += instance.OnLootPickUp;
         }
 
         private void UnregisterCallbacks(IPlayerControlActions instance)
@@ -343,6 +369,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Reload.started -= instance.OnReload;
             @Reload.performed -= instance.OnReload;
             @Reload.canceled -= instance.OnReload;
+            @LootPickUp.started -= instance.OnLootPickUp;
+            @LootPickUp.performed -= instance.OnLootPickUp;
+            @LootPickUp.canceled -= instance.OnLootPickUp;
         }
 
         public void RemoveCallbacks(IPlayerControlActions instance)
@@ -386,5 +415,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnEquipAbility(InputAction.CallbackContext context);
         void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnLootPickUp(InputAction.CallbackContext context);
     }
 }
