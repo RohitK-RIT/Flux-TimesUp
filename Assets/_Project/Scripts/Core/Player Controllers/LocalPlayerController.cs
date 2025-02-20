@@ -68,6 +68,15 @@ namespace _Project.Scripts.Core.Player_Controllers
             else if(CurrentPickupItem != null)
             {
                 CurrentPickupItem.OnItemExitRange();
+                var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
+                foreach (var ability in abilitiesInRange)
+                {
+                    if (ability.TryGetComponent<IPickupItem>(out var pickupItem))
+                    {
+                        CurrentPickupItem = pickupItem;
+                        CurrentPickupItem.OnItemExitRange();
+                    }
+                }
                 CurrentPickupItem = null;
             }
         }
