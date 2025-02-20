@@ -1,10 +1,9 @@
-using _Project.Scripts.Core.Backend.Currency;
-using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
+using IPickupItem = _Project.Scripts.Core.Backend.Interfaces.IPickupItem;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
@@ -31,11 +30,8 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         // This will go in player info eventually.
         [SerializeField] private float aimSensitivity = 1f;
-
-        /// <summary>
-        /// The wallet ID for the player.
-        /// </summary>
-        //private string _walletID;
+        
+        //private bool hasPickedUpAnItem = false;
 
         protected override void Awake()
         {
@@ -58,6 +54,33 @@ namespace _Project.Scripts.Core.Player_Controllers
             //_walletID = CurrencySystem.Instance.CreateWallet();
         }
 
+        private void Update()
+        {
+            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 8f,
+                    LayerMask.GetMask("Pickup")))
+            {
+                if (hit.collider.TryGetComponent<IPickupItem>(out var pickupItem))
+                {
+                    CurrentPickupItem = pickupItem;
+                    CurrentPickupItem.OnItemEnterRange();
+                }
+            }
+            else if(CurrentPickupItem != null)
+            {
+                CurrentPickupItem.OnItemExitRange();
+                var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
+                foreach (var ability in abilitiesInRange)
+                {
+                    if (ability.TryGetComponent<IPickupItem>(out var pickupItem))
+                    {
+                        CurrentPickupItem = pickupItem;
+                        CurrentPickupItem.OnItemExitRange();
+                    }
+                }
+                CurrentPickupItem = null;
+            }
+        }
+
         private void OnEnable()
         {
             // Subscribe to input events
@@ -72,6 +95,8 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
             _localInputController.OnReloadInput += Reload;
+            
+            _localInputController.OnLootPickupInput += PickUpItem;
         }
 
         private void OnDisable()
@@ -88,6 +113,8 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
+            
+            _localInputController.OnLootPickupInput -= PickUpItem;
         }
 
         /// <summary>
@@ -133,8 +160,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Cast the enemyPlayer to an enemy controller
             if (enemyPlayer is EnemyController enemyController)
             {
-                // Add coins to the player's wallet
-                //CurrencySystem.Instance.AddCoins(_walletID, 10); // 10 coins for now, eventually this will be based on enemy type
+                
             }
         }
 
@@ -145,26 +171,12 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Empty for now
         }
-
-        /// <summary>
-        /// Get the player's coins.
-        /// </summary>
-        /// <returns></returns>
-        public int GetCoins()
+        
+        private void PickUpItem()
         {
-            //return CurrencySystem.Instance.GetCoins(_walletID);
-            return 0;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            // Check if player has picked up a pickup
-            if (other.TryGetComponent(out IPickupItem pickupItem))
-            {
-                // Call the OnPickup method
-                pickupItem.OnItemPickup();
-                CurrentPickupItem = pickupItem;
-            }
+            if (CurrentPickupItem == null) return;
+            CurrentPickupItem.OnItemPickup();
+            CurrentPickupItem = null;
         }
     }
 }
