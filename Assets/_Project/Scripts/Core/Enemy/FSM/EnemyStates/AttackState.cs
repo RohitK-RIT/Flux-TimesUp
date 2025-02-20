@@ -33,7 +33,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
-            Debug.Log("is reloading"+ _enemyInputController.RangedWeapon.IsReloading);
             // Check if the player health is low
             if (_enemyInputController.EnemyHUD.enemy.CurrentHealth < 50)
             {
@@ -86,12 +85,15 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
-            Debug.Log("is reloading"+ _enemyInputController.RangedWeapon.IsReloading);
-            if (_enemyInputController.RangedWeapon.IsReloading)
+            if (_enemyInputController.enemyType == EnemyType.Basic)
             {
-                Debug.Log("is reloading going to patrol");
-                return EnemyState.Patrol;
+                if (_enemyInputController.RangedWeapon.IsReloading)
+                {
+                    Debug.Log("is reloading going to patrol");
+                    return EnemyState.Patrol;
+                }
             }
+            
             // If a player is still in attack range, stay in attack state
 
             if (_enemyInputController.IsPlayerInAttackRange())
