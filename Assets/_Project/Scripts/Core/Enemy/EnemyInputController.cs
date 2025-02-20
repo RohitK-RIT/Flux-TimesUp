@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
@@ -59,9 +61,13 @@ namespace _Project.Scripts.Core.Enemy
 
         internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
 
-        private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
+        private readonly float _chargerDistanceFromPlayer = 1.5f; // Distance between the player and charger enemy
         
         private bool _hasSpawnedEnemies;
+
+        private WeaponController _weaponController;
+
+        internal RangedWeapon RangedWeapon;
 
         
         private void Awake()
@@ -70,7 +76,9 @@ namespace _Project.Scripts.Core.Enemy
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
-           
+            _weaponController = GetComponent<WeaponController>();
+            RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
+
         }
 
         private void InitializeState()
@@ -138,7 +146,11 @@ namespace _Project.Scripts.Core.Enemy
             // NavMesh.GetAreaFromName("Room") fetches the index of the "Room" area,
             // and the bitwise shift (1 << index) creates a mask for this area.
             int roomAreaMask = 1 << NavMesh.GetAreaFromName("Room");
-            bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 1.0f, roomAreaMask);
+            bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 3.0f, roomAreaMask);
+            if (isOnNavMesh)
+            {
+                Debug.Log("Player On NavMesh");
+            }
 
             // Return true if the player's position is on the NavMesh within the specified area.
             return isOnNavMesh;
@@ -373,6 +385,7 @@ namespace _Project.Scripts.Core.Enemy
         private void Update()
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
+            IsPlayerOnNavMesh();
         }
     }
 }
