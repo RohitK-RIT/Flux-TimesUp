@@ -61,7 +61,7 @@ namespace _Project.Scripts.Core.Enemy
 
         internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
 
-        private readonly float _chargerDistanceFromPlayer = 2.0f; // Distance between the player and charger enemy
+        private readonly float _chargerDistanceFromPlayer = 1.5f; // Distance between the player and charger enemy
         
         private bool _hasSpawnedEnemies;
 
