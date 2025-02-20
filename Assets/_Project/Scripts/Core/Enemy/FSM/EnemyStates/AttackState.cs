@@ -1,3 +1,4 @@
+using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
@@ -84,7 +85,17 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.enemyType == EnemyType.Basic)
+            {
+                if (_enemyInputController.RangedWeapon.IsReloading)
+                {
+                    Debug.Log("is reloading going to patrol");
+                    return EnemyState.Patrol;
+                }
+            }
+            
             // If a player is still in attack range, stay in attack state
+
             if (_enemyInputController.IsPlayerInAttackRange())
             {
                 return EnemyState.Attack;
