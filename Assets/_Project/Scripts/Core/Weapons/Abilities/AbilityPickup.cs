@@ -37,7 +37,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities
                 LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
             }
             // Destroy the pickup item.
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            gameObject.SetActive(false);
         }
         
         public void OnItemEnterRange()
