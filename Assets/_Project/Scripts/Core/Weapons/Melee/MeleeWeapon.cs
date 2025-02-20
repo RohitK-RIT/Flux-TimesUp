@@ -39,7 +39,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
         {
             // Check for enemies in the attack range
             var enemiesColliders = new Collider[20];
-            var count = Physics.OverlapSphereNonAlloc(CurrentPlayerController.transform.position, stats.Range, enemiesColliders, CurrentPlayerController.OpponentLayer);
+            var count = Physics.OverlapSphereNonAlloc(CurrentPlayerController.transform.position, stats.Range, enemiesColliders, ~CurrentPlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore);
 
             // Remove the enemies that are out of attack FOV
             for (var i = 0; i < count; i++)
@@ -52,6 +52,9 @@ namespace _Project.Scripts.Core.Weapons.Melee
 
                 // Deal damage to the enemies in the attack FOV
                 if (angle > stats.AttackFOV)
+                    continue;
+                    
+                if(!Physics.Raycast(CurrentPlayerController.transform.position, direction, stats.Range, CurrentPlayerController.OpponentLayer, QueryTriggerInteraction.Ignore))
                     continue;
 
                 // Check if the enemy is a player and deal damage
