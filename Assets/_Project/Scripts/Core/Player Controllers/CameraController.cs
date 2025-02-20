@@ -12,10 +12,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         [NonSerialized] public Vector2 LookInput;
 
         [SerializeField] private Transform cinemachineCameraTarget;
-
-        [SerializeField] private Camera mainCamera;
         [SerializeField] private float ignoreWallsDist = 4f;
 
+        private Camera _mainCamera;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
@@ -24,7 +23,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void Start()
         {
-            mainCamera = Camera.main;
+            _mainCamera = Camera.main;
         }
 
         private void LateUpdate()
@@ -37,7 +36,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         private void RotateCamera()
         {
-            if (!mainCamera)
+            if (!_mainCamera)
                 return;
 
             // if there is an input and camera position is not fixed
@@ -59,12 +58,12 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Cinemachine will follow this target
             cinemachineCameraTarget.rotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
 
-            // PlayerController.MovementController.AimTransform.position = Physics.Raycast(mainCamera.ViewportPointToRay(_raycastOrigin), out var hit, 1000f,~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore)
+            // PlayerController.MovementController.AimTransform.position = Physics.Raycast(_mainCamera.ViewportPointToRay(_raycastOrigin), out var hit, 1000f,~PlayerController.FriendlyLayer, QueryTriggerInteraction.Ignore)
             //     ? hit.point
-            //     : mainCamera.transform.position + mainCamera.transform.forward * 50f;
+            //     : _mainCamera.transform.position + _mainCamera.transform.forward * 50f;
 
             var aimPosition = Vector3.zero;
-            var ray = mainCamera.ViewportPointToRay(_raycastOrigin);
+            var ray = _mainCamera.ViewportPointToRay(_raycastOrigin);
 
             if (Physics.Raycast(ray, out var hit, 1000f, PlayerController.OpponentLayer, QueryTriggerInteraction.Ignore))
             {
@@ -83,13 +82,13 @@ namespace _Project.Scripts.Core.Player_Controllers
                 else
                 {
                     // If the hit is too close, just aim forward at a default distance
-                    aimPosition = mainCamera.transform.position + mainCamera.transform.forward * 50f;
+                    aimPosition = _mainCamera.transform.position + _mainCamera.transform.forward * 50f;
                 }
             }
             // Default fallback if nothing is hit
             else
             {
-                aimPosition = mainCamera.transform.position + mainCamera.transform.forward * 50f;
+                aimPosition = _mainCamera.transform.position + _mainCamera.transform.forward * 50f;
             }
 
             PlayerController.MovementController.AimTransform.position = aimPosition;

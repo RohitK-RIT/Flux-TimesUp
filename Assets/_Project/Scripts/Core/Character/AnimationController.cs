@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using UnityEngine;
 
@@ -8,13 +9,21 @@ namespace _Project.Scripts.Core.Character
         private static readonly int Horizontal = Animator.StringToHash("DirectionX");
         private static readonly int Vertical = Animator.StringToHash("DirectionZ");
         private static readonly int IsFighting = Animator.StringToHash("IsFighting");
-        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
+        private static readonly int Speed = Animator.StringToHash("Speed");
         [SerializeField] private Animator animator;
         private InputController _inputController;
         private void Awake()
         {
             _inputController = GetComponent<InputController>();
         }
+
+        public override void Initialize(PlayerController playerController)
+        {
+            base.Initialize(playerController);
+            
+            animator.SetFloat(Speed, playerController.Stats.movementSpeed);
+        }
+
         private void OnEnable()
         {
             // Subscribe to events
@@ -44,10 +53,9 @@ namespace _Project.Scripts.Core.Character
         }
         private void SetMovementAnimation(Vector2 moveInput)
         {
-            animator.SetBool(IsWalking, moveInput.magnitude > 0);
             //Set Movement Blend Tree Parameters
-            animator.SetFloat(Horizontal, moveInput.x * PlayerController.Stats.movementSpeed , 0.1f, Time.deltaTime);
-            animator.SetFloat(Vertical, moveInput.y * PlayerController.Stats.movementSpeed, 0.1f, Time.deltaTime);
+            animator.SetFloat(Horizontal, moveInput.x);
+            animator.SetFloat(Vertical, moveInput.y);
         }
         private void SetMeleeAttackAnimation(bool isFighting)
         {
