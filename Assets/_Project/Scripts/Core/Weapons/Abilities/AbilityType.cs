@@ -4,7 +4,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         {
             None,
             Shield,
-            Attack,
+            Grenades,
             Heal,
             Teleport
         }

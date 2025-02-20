@@ -41,6 +41,8 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
 
         public override event Action OnReloadInput;
 
+        public override event Action OnLootPickupInput;
+
         /// <summary>
         /// Component that handles player input Unity API calls.
         /// </summary>
@@ -73,6 +75,8 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             _playerInput.PlayerControl.SwitchWeapon.performed += OnSwitchWeaponInputReceived;
             
             _playerInput.PlayerControl.Reload.performed += OnReloadInputReceived;
+            
+            _playerInput.PlayerControl.LootPickUp.performed += OnLootPickupInputReceived;
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -103,6 +107,8 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             _playerInput.PlayerControl.SwitchWeapon.performed -= OnSwitchWeaponInputReceived;
             
             _playerInput.PlayerControl.Reload.performed -= OnReloadInputReceived;
+            
+            _playerInput.PlayerControl.LootPickUp.performed -= OnLootPickupInputReceived;
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -117,6 +123,13 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         }
 
         // Input Event Handlers
+        
+        #region Loot Pickup Input
+        private void OnLootPickupInputReceived(InputAction.CallbackContext context)
+        {
+            OnLootPickupInput?.Invoke();
+        }
+        #endregion
 
         #region Equip Ability Input
 

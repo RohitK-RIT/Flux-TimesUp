@@ -6,7 +6,6 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
