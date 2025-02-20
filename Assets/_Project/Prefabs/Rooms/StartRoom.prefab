@@ -79,7 +79,7 @@ Transform:
   m_GameObject: {fileID: 853963156336960557}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.01, y: 2.644, z: 5.3999996}
+  m_LocalPosition: {x: -10.41, y: 1.579, z: 7.8999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 3803135753067349969}
   m_Lens:
-    FieldOfView: 30
+    FieldOfView: 50
     OrthographicSize: 10
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -1458,8 +1458,8 @@ MonoBehaviour:
   Damping: {x: 0, y: 0, z: 0}
   ShoulderOffset: {x: 1, y: 0.25, z: -2.5}
   VerticalArmLength: 0
-  CameraSide: 1
-  CameraDistance: 3
+  CameraSide: 0.8
+  CameraDistance: 0.5
   CameraCollisionFilter:
     serializedVersion: 2
     m_Bits: 328
