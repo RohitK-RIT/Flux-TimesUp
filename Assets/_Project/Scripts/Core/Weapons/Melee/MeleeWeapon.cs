@@ -7,7 +7,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
     /// <summary>
     /// Melee weapon class.
     /// </summary>
-    public class MeleeWeapon : Weapon
+    public sealed class MeleeWeapon : Weapon
     {
         /// <summary>
         /// Melee weapon stats.
