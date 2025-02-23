@@ -263,6 +263,10 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             if (CurrentAmmo == stats.MagazineSize || _reloading || MaxAmmo == 0)
                 return;
+            
+            if(AttackCoroutine != null)
+                StopCoroutine(AttackCoroutine);
+            
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
 
