@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -17,7 +18,7 @@ namespace _Project.Scripts.Core.Character.IK_Points
         
         void Start()
         {
-            UpdateIKPoints();
+            // UpdateIKPoints();
         }
         
         //Method to assign and update the IK points as per the current weapon

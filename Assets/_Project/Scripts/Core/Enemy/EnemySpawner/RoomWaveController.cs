@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Gameplay.PCG;
@@ -9,10 +8,14 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
 {
     public class RoomWaveController : MonoBehaviour
     {
-        internal List<Vector3> originalSpawnPoints = new List<Vector3>(); // Stores enemy spawn positions
-        internal List<GameObject> enemiesInRoom = new List<GameObject>(); // Stores references to original enemies
+        // Stores the original spawn positions of enemies in the room
+        internal readonly List<Vector3> OriginalSpawnPoints = new List<Vector3>();
+        
+        // Stores references to enemy GameObjects in the room
+        internal readonly List<GameObject> EnemiesInRoom = new List<GameObject>();
     
-        private HashSet<int> _spawnedWaves = new HashSet<int>(); // Stores triggered waves
+        // Keeps track of which waves have been triggered to prevent duplicate spawns
+        private readonly HashSet<int> _spawnedWaves = new HashSet<int>();
         private EnemyInputController _enemyInputController;
         private SpawnManager _spawnManager;
         private EnemyController _enemyController;
@@ -23,8 +26,11 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             _enemyInputController = GetComponentInChildren<EnemyInputController>();
             _spawnManager = GetComponentInChildren<SpawnManager>();
             _enemyController = GetComponentInChildren<EnemyController>();
-            StoreEnemyPositions(); // Store spawn points at the start
             
+            // Store enemy spawn points at the beginning
+            StoreEnemyPositions();
+            
+            // Initialize death listener only for Basic enemies
             if(_enemyInputController==null) return;
             if (_enemyInputController.enemyType == EnemyType.Basic)
             {
@@ -45,30 +51,20 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
                 _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
         }
         
+        // Called when all enemies in the room are dead. Triggers the next wave if conditions are met.
         private void OnAllEnemiesDead()
         {
             Debug.Log("All enemies dead");
             CanSpawnEnemies();
         }
-
-        private void Update()
-        {
-            int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
-
-            if (stabilityThreshold <= 50 && stabilityThreshold > 25)
-            {
-                Debug.Log($"Spawning wave for stability 50");
-            }
-            if (stabilityThreshold <= 25)
-            {
-                Debug.Log($"Spawning wave for stability 25");
-            }
-        }
-        internal void CanSpawnEnemies()
+        
+        // Checks if a new wave can be spawned based on the time stability meter.
+        private void CanSpawnEnemies()
         {
             if(!_enemyInputController) return;
-            //if(!_enemyInputController.IsPlayerOnNavMesh()) return;
-            int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10; // Round to nearest 10
+            
+            // Get the current stability threshold rounded down to the nearest 10
+            int stabilityThreshold = Mathf.FloorToInt(TimeStabilityMeter.Instance.TimeStability / 10) * 10;
         
             if (stabilityThreshold <= 50 && stabilityThreshold > 25 && !_spawnedWaves.Contains(50))
             {
@@ -84,17 +80,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             }
         }
     
-        // internal void SpawnEnemies()
-        // {
-        //    Debug.Log("Spawning enemies");
-        //     List<Vector3> spawnPoints = GetSpawnPoints();
-        //     foreach (var point in spawnPoints)
-        //     {
-        //         _spawnManager.WaveEnemySpawner(point);
-        //     }
-        // }
-    
-        
+        // Stores the initial positions of all enemies in the room for respawning purposes.
         private void StoreEnemyPositions()
         {
             // Get all enemies that are children of the room prefab
@@ -102,37 +88,19 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             {
                 if (child.CompareTag("Enemy")) // Ensure enemies have the "Enemy" tag
                 {
-                    originalSpawnPoints.Add(child.position);
-                    enemiesInRoom.Add(child.gameObject);
+                    OriginalSpawnPoints.Add(child.position);
+                    EnemiesInRoom.Add(child.gameObject);
                 }
             }
-
-            //Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
-        }
-    
-        public List<Vector3> GetSpawnPoints()
-        {
-            //StoreEnemyPositions();
-            Debug.Log($"Room '{gameObject.name}' initialized with {originalSpawnPoints.Count} enemies.");
-            return originalSpawnPoints;
-        }
-
-        public List<GameObject> GetEnemies()
-        {
-            return enemiesInRoom;
         }
         
-        public void SpawnEnemyWavechk()
-        {
-            // Your logic to spawn enemies
-            Debug.Log("Spawning wave in RoomManager...");
-        }
-
+        // Resets the health & ammo of all enemies in the room.
         internal void Reset()
         {
             _enemyController.Reset();
         }
 
+        // Resets the enemy death listener and re-subscribes to the event.
         internal void ResetEnemiesInRoom()
         {
             _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;

@@ -16,6 +16,11 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
         [SerializeField] private float initialTimeStability = 100f;
         [SerializeField] private float decreaseRate = 0.01f;
 
+#if UNITY_EDITOR
+        [Header("Editor Only")]
+        [SerializeField] private bool pauseTimeStability;
+#endif
+
         private void Awake()
         {
             if (Instance && Instance != this)
@@ -28,15 +33,17 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             TimeStability = initialTimeStability;
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            foreach (var enemy in LevelSceneController.Instance.enemies)
-            {
-                enemy.OnDeath += OnEnemyDeath;
-            }
+            PlayerController.OnDeath += OnPlayerDeath;
+        }
+        
+        private void OnDisable()
+        {
+            PlayerController.OnDeath -= OnPlayerDeath;
         }
 
-        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
+        private void OnPlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
         {
             if(killingPlayer != LevelSceneController.Instance.Player)
                 return;
@@ -54,6 +61,10 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void Update()
         {
+#if UNITY_EDITOR
+            if (pauseTimeStability)
+                return;
+#endif
             TimeStability -= decreaseRate * Time.deltaTime;
             TimeStability = Mathf.Clamp(TimeStability, 0, initialTimeStability);
             if(TimeStability <= 0)

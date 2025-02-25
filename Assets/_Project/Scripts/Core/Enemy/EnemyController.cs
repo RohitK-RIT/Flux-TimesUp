@@ -4,6 +4,7 @@ using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.PCG;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -33,7 +34,6 @@ namespace _Project.Scripts.Core.Enemy
             // Subscribe to attack input events on enable
             _enemyInputController.OnAttackInputBegan += BeginAttack;
             _enemyInputController.OnAttackInputEnded += EndAttack;
-            //_enemyInputController.OnReloadInput += Reload;
         }
 
         private void OnDisable()
@@ -42,7 +42,6 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.Disable();
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
-            //_enemyInputController.OnReloadInput -= Reload;
         }
         
         public void Reset()
@@ -50,8 +49,7 @@ namespace _Project.Scripts.Core.Enemy
             currentHealth = Stats.maxHealth;
             var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
             if (!currentRangedWeapon) return;
-            currentRangedWeapon.AddAmmo(240);
-            WeaponController.ReloadWeapon();
+            currentRangedWeapon.InitializeAmo();
             Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
             Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
             Debug.Log("Enemy reset to initial state.");
@@ -61,9 +59,6 @@ namespace _Project.Scripts.Core.Enemy
         {
             gameObject.SetActive(false);
             base.Die(enemyPlayer, weaponKilledBy);
-            
-            // Spawn loot
-            LootSpawner.Instance.LootDrop(_enemyInputController.Enemy.transform.position);
         }
     }
 }

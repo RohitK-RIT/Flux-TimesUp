@@ -103,14 +103,19 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             // Set the default fire mode and magazine count.
             _currentFireMode = _fireModeStrategies.First().Key;
-            CurrentAmmo = stats.MagazineSize;
-            MaxAmmo = stats.MaxBulletCount;
+            InitializeAmo();
 
             // Initialize the trail renderer pool.
             _trailRendererPool = new ObjectPool<TrailRenderer>(CreateTrail);
             _bulletImpactPool = new ObjectPool<GameObject>(CreateBulletImpact);
         }
 
+        internal void InitializeAmo()
+        {
+            CurrentAmmo = stats.MagazineSize;
+            MaxAmmo = stats.MaxBulletCount;
+        }
+        
         private GameObject CreateBulletImpact()
         {
             var impact = Instantiate(bulletImpactPrefab);

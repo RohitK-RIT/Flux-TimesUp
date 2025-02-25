@@ -39,7 +39,7 @@ namespace _Project.Scripts.Core.Character
         /// </summary>
         [SerializeField] private Transform weaponParent;
 
-       
+
         /// <summary>
         /// The CharacterController component attached to the character.
         /// </summary>
@@ -49,27 +49,27 @@ namespace _Project.Scripts.Core.Character
         /// The direction the player is moving in.
         /// </summary>
         private Vector3 _moveDirection;
-        
+
         /// <summary>
         /// Current Movement of the player
         /// </summary>
         private Vector3 _currentMovement;
-        
+
         /// <summary>
         /// Vertical velocity for player's falling speed.
         /// </summary>
         private float _velocity;
-        
+
         /// <summary>
         /// Setting gravity value
         /// </summary>
         private readonly float _gravity = -9.81f;
-        
+
         /// <summary>
         /// Multiplier to adjust the strength of gravity
         /// </summary>
         private readonly float _gravityMultiplier = 3f;
-        
+
         private Camera _camera;
 
         private void Awake()
@@ -103,7 +103,7 @@ namespace _Project.Scripts.Core.Character
 
             // Applying gravity for the y value
             HandleGravity();
-            
+
             // Can add jump here if needed by modifying the y component of the movement vector. 
 
             // Move the character via the character controller.
@@ -116,18 +116,13 @@ namespace _Project.Scripts.Core.Character
         private void HandleLook()
         {
             // Horizontal rotation
-            var horizontalTargetLocation = new Vector3(aimTransform.position.x, body.position.y, aimTransform.position.z);
+            var aimPosition = aimTransform.position;
+            var horizontalTargetLocation = aimPosition;
+            horizontalTargetLocation.y = body.position.y;
             var horizontalDirection = (horizontalTargetLocation - transform.position).normalized;
             body.forward = Vector3.Lerp(body.forward, horizontalDirection, Time.deltaTime * 20f);
-
-            // Vertical rotation
-            var direction = aimTransform.position - weaponParent.position;
-            var horizontalDistance = new Vector3(direction.x, 0f, direction.z).magnitude;
-            var verticalDistance = direction.y;
-            var pitchAngle = Mathf.Atan2(verticalDistance, horizontalDistance) * Mathf.Rad2Deg;
-
-            var weaponTargetRotation = Quaternion.Euler(-pitchAngle, 0f, 0f);
-            weaponParent.localRotation = Quaternion.Slerp(weaponParent.localRotation, weaponTargetRotation, Time.deltaTime * 20f);
+            // Resetting the aim position
+            aimTransform.position = aimPosition;
         }
 
         /// <summary>
@@ -138,17 +133,16 @@ namespace _Project.Scripts.Core.Character
             // Check if the player is on ground
             if (_characterController.isGrounded && _velocity < 0.0f)
             {
-                    _velocity = -1.0f;  // Small negative value to keep the character grounded
+                _velocity = -1.0f; // Small negative value to keep the character grounded
             }
             else
             {
                 // Apply gravity when not grounded
                 _velocity += _gravity * _gravityMultiplier * Time.deltaTime;
             }
-            
+
             // Combine horizontal and vertical movement
             _currentMovement = new Vector3(_moveDirection.x, _velocity, _moveDirection.z);
-
         }
     }
 }

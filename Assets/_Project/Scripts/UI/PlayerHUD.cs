@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
@@ -16,31 +15,40 @@ namespace _Project.Scripts.UI
     /// </summary>
     public class PlayerHUD : MonoBehaviour
     {
+        private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
+
         // References to the UI components
         [SerializeField] public Slider healthBar;
         [SerializeField] private Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
-        [SerializeField] public TMP_Text PickupText;
+        [SerializeField] public TMP_Text pickupText;
         [SerializeField] public LocalPlayerController player;
         
-        [SerializeField] public Image primaryWeaponSlotHolder;
-        [SerializeField] public Image secondaryWeaponSlotHolder;
-        [SerializeField] public Image meleeWeaponSlotHolder;
-        [SerializeField] public Image abilitySlotHolder;
+        [SerializeField] public Image primaryIconSlot;
+        [SerializeField] public Image secondaryIconSlot;
+        [SerializeField] public Image meleeIconSlot;
+        [SerializeField] public Image abilityIconSlot;
+        [SerializeField] public GameObject abilitySlotHolder;
         [SerializeField] private GameObject overlay;
 
         [SerializeField] public GameObject reloadingText;
+        [SerializeField] public GameObject reloadingIcon;
 
-        //[SerializeField] private TMP_Text objectiveText;
-        //[SerializeField] private TMP_Text coinsText;
-        
         private GameObject primaryOverlay;
         private GameObject secondaryOverlay;
         private GameObject meleeOverlay;
         private GameObject abilityOverlay;
 
         private AbilityData abilityData;
+        private AbilityCooldown abilityCooldown;
+
+        [SerializeField] private Animator animator;
+
+        [SerializeField] private TMP_Text healthText;
+        [SerializeField] private TMP_Text tmsValueText;
+
+        //private Ability currentAbility;
 
         private void Start()
         {
@@ -48,50 +56,59 @@ namespace _Project.Scripts.UI
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
-            primaryOverlay = Instantiate(overlay, primaryWeaponSlotHolder.rectTransform);
-            secondaryOverlay = Instantiate(overlay, secondaryWeaponSlotHolder.rectTransform);
-            meleeOverlay = Instantiate(overlay, meleeWeaponSlotHolder.rectTransform);
-            abilityOverlay = Instantiate(overlay, abilitySlotHolder.rectTransform);
-            abilitySlotHolder.gameObject.SetActive(false);
+            primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform);
+            secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform);
+            meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform);
+            abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform);
+            abilityCooldown = abilityOverlay.GetComponent<AbilityCooldown>();
+            abilityIconSlot.gameObject.SetActive(false);
+            abilitySlotHolder.SetActive(false);
         }
 
         private void Update()
         {
-            // Update the health bar and ammo display in real-time
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
             UpdateReloadingText();
-            //UpdateObjectiveText();
-            //UpdateCoinsText();
             UpdateLoadoutInfo();
         }
+        
         public void ShowAbilityHUD(AbilityType abilityType)
         {
             abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
-            abilitySlotHolder.sprite = abilityData.Icon;
-            abilitySlotHolder.gameObject.SetActive(true);
+            abilityIconSlot.sprite = abilityData.Icon;
+            abilitySlotHolder.SetActive(true);
+            abilityIconSlot.gameObject.SetActive(true);
         }
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
+            var currentAbility = player.WeaponController.CurrentWeapon as Ability;
             if (!player) return;
 
             if (player.WeaponController.CurrentWeapon is Ability)
             {
-                abilitySlotHolder.enabled = true;
-                abilitySlotHolder.sprite = abilityData.Icon;
+                abilityIconSlot.enabled = true;
+                abilityIconSlot.sprite = abilityData.Icon;
                 primaryOverlay.SetActive(true);
                 secondaryOverlay.SetActive(true);
                 meleeOverlay.SetActive(true);
                 abilityOverlay.SetActive(false);
             }
-            primaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
-            secondaryWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
-            meleeWeaponSlotHolder.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
-            primaryWeaponSlotHolder.enabled = true;
-            secondaryWeaponSlotHolder.enabled = true;
-            meleeWeaponSlotHolder.enabled = true;
+
+            if (currentAbility != null && currentAbility.IsCooldownActive)
+            {
+                Debug.Log("Current ability is on cooldown" + currentAbility.name);
+                abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
+            }
+
+            primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
+            secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
+            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
+            primaryIconSlot.enabled = true;
+            secondaryIconSlot.enabled = true;
+            meleeIconSlot.enabled = true;
             ShowActiveWeaponSlot();
         }
         
@@ -126,6 +143,7 @@ namespace _Project.Scripts.UI
         {
             healthBar.value = player.CurrentHealth;
             healthBar.maxValue = player.Stats.maxHealth;
+            healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
         }
         
         /// <summary>
@@ -135,6 +153,18 @@ namespace _Project.Scripts.UI
         {
             timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
             timeStabilityBar.maxValue = TimeStabilityMeter.Instance.InitialTimeStability;
+            tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
+            animator.SetBool(IsBlinking, false);
+            if (timeStabilityBar.value < 50)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 0.5f;
+            }
+            else if(timeStabilityBar.value < 25)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 1f;
+            }
         }
 
         // Updates the ammo display based on the player's current and total ammo
@@ -154,17 +184,24 @@ namespace _Project.Scripts.UI
                 return;
 
             reloadingText.SetActive(currentRangedWeapon.IsReloading);
+            StartCoroutine(UpdateReloadingIcon(currentRangedWeapon.IsReloading, currentRangedWeapon));
+        }
+        
+        private System.Collections.IEnumerator UpdateReloadingIcon(bool isReloading, RangedWeapon currentRangedWeapon)
+        {
+            var originalRotation = reloadingIcon.transform.rotation; // Store original rotation
+            var reloadTime = currentRangedWeapon.Stats.ReloadTime;
+            const float totalRotation = 360f; // Full circle rotation
+
+            if (isReloading)
+            {
+                reloadingIcon.transform.Rotate(Vector3.forward, totalRotation * Time.deltaTime / reloadTime);
+                yield return new WaitForSeconds(reloadTime);
+            }
+            // Ensure it resets exactly to the original rotation
+            reloadingIcon.transform.rotation = originalRotation;
         }
 
-        /*private void UpdateObjectiveText()
-        {
-            objectiveText.text = LevelSceneController.Instance.NumberOfEnemies.ToString();
-        }*/
-
-        private void UpdateCoinsText()
-        {
-            //coinsText.text = player?.GetCoins().ToString();
-        }
         
         /// <summary>
         /// Function to show pickup feedback.
@@ -172,8 +209,8 @@ namespace _Project.Scripts.UI
         /// <param name="msg">Message to display on loot pickup.</param>
         public void ShowPickupFeedback(string msg)
         {
-            PickupText.text = msg;
-            PickupText.gameObject.SetActive(true);
+            pickupText.text = msg;
+            pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);
         }
         
@@ -182,7 +219,7 @@ namespace _Project.Scripts.UI
         /// </summary>
         private void HidePickupFeedback()
         {
-            PickupText.gameObject.SetActive(false);
+            pickupText.gameObject.SetActive(false);
         }
     }
 }

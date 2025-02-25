@@ -16,7 +16,6 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
     /// </summary>
     public class WeaponController : CharacterComponent
     {
-
         /// <summary>
         /// The parent transform for the weapons.
         /// </summary>
@@ -26,18 +25,19 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// The currently equipped weapon.
         /// </summary>
         [SerializeField] private Weapon currentWeapon;
-        
+
         ///<summary>
         /// Property to access the weapons.
         /// </summary>
         public Weapon[] Weapons => weapons;
-        
+
         /// <summary>
         /// Array of all available weapons.
         /// </summary>
         [SerializeField] private Weapon[] weapons;
 
         private IKPoints ikPoints;
+
         /// <summary>
         /// Gets or sets the current weapon. Deactivates the previous weapon and activates the new one.
         /// </summary>
@@ -62,6 +62,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
 
                 currentWeapon.gameObject.SetActive(true);
                 currentWeapon.OnEquip();
+                ikPoints?.UpdateIKPoints();
             }
         }
 
@@ -78,7 +79,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// The index of the current weapon.
         /// </summary>
         private int _currentWeaponIndex;
-        
+
         void Awake()
         {
             ikPoints = GetComponent<IKPoints>(); // Fetch the singleton instance of WeaponController
@@ -87,7 +88,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         public override void Initialize(PlayerController playerController)
         {
             base.Initialize(playerController);
-            
+
             // Fetch selected weapons from WeaponDataSystem
             if (!hasPreMadeLoadout)
             {
@@ -101,10 +102,12 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
                     Debug.LogError("No selected weapons found in WeaponDataSystem");
                 }
             }
-            
+
             // The player controller has picked up all the weapons
             foreach (var weapon in weapons)
                 weapon?.OnPickup(PlayerController);
+
+            CurrentWeapon = weapons[_currentWeaponIndex];
         }
 
         /// <summary>
@@ -150,43 +153,28 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
             weapons = new Weapon[weaponIDs.Count];
 
             // Instantiate all weapons but only activate the first one
-            for (int i = 0; i < weaponIDs.Count; i++)
+            for (var i = 0; i < weaponIDs.Count; i++)
             {
                 var weapon = InstantiateWeapon(weaponIDs[i]);
-
-                if (i == 0 & currentWeapon== null)
-                {
-                    // Equip and activate the first weapon
-                    currentWeapon = weapon;
-                    currentWeapon.gameObject.SetActive(true);
-                    currentWeapon.OnEquip();
-                }
-                else
-                {
-                    // Deactivate all other weapons
-                    weapon.gameObject.SetActive(false);
-                }
+                weapon.gameObject.SetActive(false);
 
                 weapons[i] = weapon; // Add weapon to the array
             }
 
             _currentWeaponIndex = 0; // Set the initial index to 0
-
         }
-        
+
         // Method to instantiate a weapon prefab based on weapon ID
         private Weapon InstantiateWeapon(string weaponID)
         {
-            Weapon weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
-            if (weaponPrefab != null)
+            var weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
+            if (weaponPrefab)
             {
                 return Instantiate(weaponPrefab, weaponParent);
             }
-            else
-            {
-                Debug.LogError($"Weapon with ID {weaponID} not found in the database!");
-                return null;
-            }
+
+            Debug.LogError($"Weapon with ID {weaponID} not found in the database!");
+            return null;
         }
 
         /// <summary>
@@ -201,9 +189,8 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
                 _currentWeaponIndex = weapons.Length - 1;
             else if (_currentWeaponIndex >= weapons.Length)
                 _currentWeaponIndex = 0;
-            
+
             CurrentWeapon = weapons[_currentWeaponIndex];
-            ikPoints.UpdateIKPoints();
         }
 
         /// <summary>
@@ -258,7 +245,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         {
             CurrentWeapon.EndAttack();
         }
-        
+
         /// <summary>
         /// Switches the ability to the specified type.
         /// </summary>

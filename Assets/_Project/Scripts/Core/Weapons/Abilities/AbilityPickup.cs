@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
@@ -7,34 +8,62 @@ namespace _Project.Scripts.Core.Weapons.Abilities
     public class AbilityPickup : MonoBehaviour, IPickupItem
     {
         [SerializeField] private AbilityType abilityType;
+        
+        [SerializeField] private TMP_Text abilityPickUpInstruction;
+        
+        private void Start()
+        {
+            abilityPickUpInstruction.gameObject.SetActive(false);
+        }
+
         public void OnItemPickup()
         {
             var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
-            // Check if the player has an ability.
+            
+            // Get the new ability. 
             if (!playerWeaponController.CurrentAbility)
             {
-                // If not, switch to the new ability.
                 playerWeaponController.SwitchAbility(abilityType);
-            }
-            // Check if the player has the same ability.
-            else if (playerWeaponController.CurrentAbility.Type != abilityType)
-            {
-                // If not, show the ability selection page.
-                LevelSceneController.Instance.AbilitySelectionPage.NextAbilityType = abilityType;
-                LevelSceneController.Instance.AbilitySelectionPage.Show();
-            }
-
-            // Destroy the pickup item.
-            Destroy(gameObject);
-        }
-        public void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                var msg = "You picked up " + abilityType.ToString() + " ability.";
+                var msg = "You picked up " + abilityType.ToString();
                 LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
                 LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
             }
+
+            if(playerWeaponController.CurrentAbility.Type != abilityType)
+            {
+                LevelSceneController.Instance.Player.WeaponController.SwitchAbility(abilityType);
+                var msg = "You switched to " + abilityType.ToString();
+                LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
+                LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
+            }
+            // Destroy the pickup item.
+            // Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+        
+        public void OnItemEnterRange()
+        {
+            if (CheckForCurrentAbility())
+            {
+                //Press F to pick up new ability
+                abilityPickUpInstruction.gameObject.SetActive(true);
+                abilityPickUpInstruction.text = "Press 'F' for \"" + abilityType.ToString() + "\" Ability";
+            }
+            else
+            {
+                //Get Ability
+                this.OnItemPickup();
+            }
+        }
+
+        public void OnItemExitRange()
+        {
+            abilityPickUpInstruction.gameObject.SetActive(false);
+        }
+        
+        private bool CheckForCurrentAbility()
+        {
+            return LevelSceneController.Instance.Player.WeaponController.CurrentAbility;
         }
     }
 }
