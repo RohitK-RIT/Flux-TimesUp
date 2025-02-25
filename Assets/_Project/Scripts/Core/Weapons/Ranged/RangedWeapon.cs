@@ -36,7 +36,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Bullet impact prefab.
         /// </summary>
         [SerializeField] private GameObject bulletImpactPrefab;
-        
+
         public RangedWeaponStats Stats => stats;
 
         /// <summary>
@@ -85,6 +85,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         private ObjectPool<GameObject> _bulletImpactPool;
 
         /// <summary>
+        /// Object pool for projectiles.
+        /// </summary>
+        private ObjectPool<Projectile> _projectilePool;
+
+        /// <summary>
         /// Layer mask for the opponent.
         /// </summary>
         private LayerMask _opponentLayer;
@@ -108,20 +113,13 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             // Initialize the trail renderer pool.
             _trailRendererPool = new ObjectPool<TrailRenderer>(CreateTrail);
             _bulletImpactPool = new ObjectPool<GameObject>(CreateBulletImpact);
+            _projectilePool = new ObjectPool<Projectile>(CreateProjectile);
         }
 
         internal void InitializeAmo()
         {
             CurrentAmmo = stats.MagazineSize;
             MaxAmmo = stats.MaxBulletCount;
-        }
-        
-        private GameObject CreateBulletImpact()
-        {
-            var impact = Instantiate(bulletImpactPrefab);
-            impact.SetActive(false);
-
-            return impact;
         }
 
         /// <summary>
@@ -136,6 +134,26 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
             return trail;
+        }
+
+        private GameObject CreateBulletImpact()
+        {
+            var impact = Instantiate(bulletImpactPrefab);
+            impact.SetActive(false);
+
+            return impact;
+        }
+
+        /// <summary>
+        /// Function to crate a projectile.
+        /// </summary>
+        /// <returns>projectile instance</returns>
+        private Projectile CreateProjectile()
+        {
+            var projectile = Instantiate(stats.ProjectilePrefab);
+            projectile.gameObject.SetActive(false);
+
+            return projectile;
         }
 
         public override void OnPickup(PlayerController currentPlayerController)
@@ -153,8 +171,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         public override void OnEquip()
         {
             base.OnEquip();
-            
-            if(CurrentAmmo == 0)
+
+            if (CurrentAmmo == 0)
                 Reload();
         }
 
@@ -162,8 +180,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         public override void OnUnequip()
         {
             base.OnUnequip();
-            
-            if(IsReloading)
+
+            if (IsReloading)
             {
                 StopCoroutine(_reloadCoroutine);
                 _reloading = false;
@@ -183,7 +201,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _currentFireMode = stats.FireModes[indexOf];
         }
 
-        public override string WeaponID  => stats.WeaponID;
+        public override string WeaponID => stats.WeaponID;
 
         /// <summary>
         /// Start attacking.
@@ -207,12 +225,12 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             // Find a fire mode strategy and wait for it to finish, else show an error.
             if (_fireModeStrategies.TryGetValue(_currentFireMode, out var strategy))
-                yield return strategy.Fire(stats, FireBullet);
+                yield return strategy.Fire(stats, FireProjectile);
             else
                 Debug.LogError($"No fire mode set for {stats.WeaponName}", stats);
         }
 
-        protected override float GetDamage()
+        public override float GetDamage()
         {
             // TODO: Implement era specific damage calculation
             return stats.Damage;
@@ -250,10 +268,24 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
 
             // Decrease the magazine count and reload if it's empty.
-            if (--CurrentAmmo != 0)
+            if (--CurrentAmmo == 0)
+                Reload();
+        }
+
+        private void FireProjectile()
+        {
+            if (CurrentAmmo <= 0)
                 return;
 
-            Reload();
+            var projectile = _projectilePool.Get();
+            projectile.transform.position = muzzle.position;
+            projectile.transform.rotation = muzzle.rotation;
+            projectile.Initialize(this);
+            projectile.gameObject.SetActive(true);
+            projectile.OnHit += theProjectile => { _projectilePool.Release(theProjectile); };
+
+            if (--CurrentAmmo <= 0)
+                Reload();
         }
 
         /// <summary>
@@ -263,6 +295,10 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             if (CurrentAmmo == stats.MagazineSize || _reloading || MaxAmmo == 0)
                 return;
+
+            if (AttackCoroutine != null)
+                StopCoroutine(AttackCoroutine);
+
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
 
