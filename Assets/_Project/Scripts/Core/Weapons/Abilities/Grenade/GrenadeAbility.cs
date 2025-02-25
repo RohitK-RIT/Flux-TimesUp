@@ -33,8 +33,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
 
             var grenadeInstance = Instantiate(grenade, transform.position, Quaternion.identity);
             
-            var forceDirection = CurrentPlayerController.MovementController.Body.forward
-                                 + Vector3.up * 0.5f; // Throw the grenade in the forward direction
+            var forceDirection = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)).direction + Vector3.up * 0.5f; // Get the direction from the camera to the center of the screen
+                //CurrentPlayerController.MovementController.Body.forward + Vector3.up * 0.5f; // Throw the grenade in the forward direction
             
             grenadeInstance.ThrowGrenade(forceDirection, this);
             
