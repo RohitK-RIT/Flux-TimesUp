@@ -2,13 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Player_Controllers;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Pool;
-using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Weapons.Ranged
 {
@@ -75,24 +72,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         private Dictionary<FireModes, FiringPin> _fireModeStrategies;
 
         /// <summary>
-        /// Object pool for trail renderers.
-        /// </summary>
-        private ObjectPool<TrailRenderer> _trailRendererPool;
-
-        /// <summary>
-        /// Object pool for bullet impacts.
-        /// </summary>
-        private ObjectPool<GameObject> _bulletImpactPool;
-
-        /// <summary>
         /// Object pool for projectiles.
         /// </summary>
         private ObjectPool<Projectile> _projectilePool;
-
-        /// <summary>
-        /// Layer mask for the opponent.
-        /// </summary>
-        private LayerMask _opponentLayer;
 
         /// <summary>
         /// Coroutine for reloading.
@@ -110,9 +92,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _currentFireMode = _fireModeStrategies.First().Key;
             InitializeAmo();
 
-            // Initialize the trail renderer pool.
-            _trailRendererPool = new ObjectPool<TrailRenderer>(CreateTrail);
-            _bulletImpactPool = new ObjectPool<GameObject>(CreateBulletImpact);
+            // Initialize the projectile pool.
             _projectilePool = new ObjectPool<Projectile>(CreateProjectile);
         }
 
@@ -159,13 +139,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         public override void OnPickup(PlayerController currentPlayerController)
         {
             base.OnPickup(currentPlayerController);
-            _opponentLayer = ~currentPlayerController.FriendlyLayer;
         }
 
         public override void OnDrop()
         {
             base.OnDrop();
-            _opponentLayer = 0;
         }
 
         public override void OnEquip()
@@ -237,41 +215,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         }
 
         /// <summary>
-        /// Fire the bullet.
+        /// Fire a projectile from the weapon.
         /// </summary>
-        private void FireBullet()
-        {
-            if (CurrentAmmo == 0)
-                return;
-
-            var spreadOffset = new Vector3(Random.Range(-stats.Spread, stats.Spread),
-                Random.Range(-stats.Spread, stats.Spread), 0); // Add some spread to the bullet.
-            var recoilOffset = new Vector3(0, Random.Range(0, stats.Recoil), 0); // Add some recoil to the bullet.
-            _recoilFactor = Mathf.Clamp01(_recoilFactor + 0.1f); // Increase the recoil factor.
-
-            // Get the direction of the bullet.
-            var fireDirection = muzzle.forward;
-            fireDirection = (fireDirection + spreadOffset).normalized;
-            fireDirection = (fireDirection + recoilOffset * _recoilFactor).normalized;
-
-            // Raycast to check if the bullet hits something. If it does, play the trail to that point, else play the trail to the miss distance.
-            if (Physics.Raycast(muzzle.position, fireDirection, out var hit, stats.MissDistance, _opponentLayer, QueryTriggerInteraction.Ignore))
-            {
-                StartCoroutine(PlayTrail(muzzle.position, hit.point));
-                OnBulletImpact(hit.point, hit.normal);
-                if (hit.transform.TryGetComponent<IDamageable>(out var damageable))
-                    damageable.TakeDamage(this, GetDamage());
-            }
-            else
-            {
-                StartCoroutine(PlayTrail(muzzle.position, muzzle.position + fireDirection * stats.MissDistance));
-            }
-
-            // Decrease the magazine count and reload if it's empty.
-            if (--CurrentAmmo == 0)
-                Reload();
-        }
-
         private void FireProjectile()
         {
             if (CurrentAmmo <= 0)
@@ -300,59 +245,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 StopCoroutine(AttackCoroutine);
 
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
-        }
-
-        /// <summary>
-        /// Coroutine for playing the trail.
-        /// </summary>
-        /// <param name="startPos">Start position of the trail</param>
-        /// <param name="endPos">End position of the trail</param>
-        private IEnumerator PlayTrail(Vector3 startPos, Vector3 endPos)
-        {
-            // Get a trail renderer from the pool and set its position.
-            var trail = _trailRendererPool.Get();
-            trail.transform.position = startPos;
-            trail.emitting = true;
-            trail.gameObject.SetActive(true);
-
-            // Play the trail from the start position to the end position.
-            var distance = Vector3.Distance(startPos, endPos);
-            var remainingDistance = distance;
-            while (remainingDistance > 0)
-            {
-                trail.transform.position = Vector3.Lerp(startPos, endPos,
-                    Mathf.Clamp01((distance - remainingDistance) / distance));
-                remainingDistance -= stats.TrailSpeed * Time.deltaTime;
-
-                yield return null;
-            }
-
-            trail.transform.position = endPos;
-
-            // Wait for the trail to finish emitting and then release it back to the pool.
-            yield return new WaitForSeconds(trail.time);
-
-            trail.emitting = false;
-            trail.gameObject.SetActive(false);
-            _trailRendererPool.Release(trail);
-        }
-
-        /// <summary>
-        /// Function to show the impact of the bullet.
-        /// </summary>
-        /// <param name="impactPoint">the point at which the bullet is impacted</param>
-        /// <param name="impactNormal"></param>
-        private async void OnBulletImpact(Vector3 impactPoint, Vector3 impactNormal)
-        {
-            var impact = _bulletImpactPool.Get();
-            impact.transform.position = impactPoint + impactNormal * 0.01f;
-            impact.transform.rotation = Quaternion.LookRotation(impactNormal);
-            impact.SetActive(true);
-
-            await Task.Delay(3000);
-
-            impact.SetActive(false);
-            _bulletImpactPool.Release(impact);
         }
 
         /// <summary>
