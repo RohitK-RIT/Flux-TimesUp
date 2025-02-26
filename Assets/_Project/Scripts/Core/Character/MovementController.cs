@@ -96,7 +96,7 @@ namespace _Project.Scripts.Core.Character
         private void HandleMovement()
         {
             // If movement input is zero then return.
-            if (MoveInput == Vector2.zero) return;
+            if (MoveInput == Vector2.zero && _characterController.isGrounded) return;
 
             // Assign horizontal and vertical inputs to the movement vector
             _moveDirection = (_camera.transform.right * MoveInput.x + _camera.transform.forward * MoveInput.y) * PlayerController.Stats.movementSpeed;
