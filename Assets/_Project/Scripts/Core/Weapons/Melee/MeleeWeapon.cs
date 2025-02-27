@@ -70,7 +70,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
             }
         }
 
-        protected override float GetDamage()
+        public override float GetDamage()
         {
             // TODO: Implement era specific damage calculation
             return stats.Damage;

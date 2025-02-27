@@ -16,11 +16,6 @@ namespace _Project.Scripts.Core.Character.IK_Points
             _weaponController = GetComponent<WeaponController>();
         }
         
-        void Start()
-        {
-            // UpdateIKPoints();
-        }
-        
         //Method to assign and update the IK points as per the current weapon
         internal void UpdateIKPoints()
         {

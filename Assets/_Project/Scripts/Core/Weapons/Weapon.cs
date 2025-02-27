@@ -90,7 +90,7 @@ namespace _Project.Scripts.Core.Weapons
         /// Get the damage of the weapon.
         /// </summary>
         /// <returns>damage dealt by the weapon</returns>
-        protected virtual float GetDamage()
+        public virtual float GetDamage()
         {
             // TODO: Implement damage calculation in base classes
             return 0f;

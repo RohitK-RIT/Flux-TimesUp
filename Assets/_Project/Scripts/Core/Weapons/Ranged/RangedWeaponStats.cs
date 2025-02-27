@@ -16,6 +16,16 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         public FireModes[] FireModes => fireModes;
 
         /// <summary>
+        /// Projectile prefab of the weapon.
+        /// </summary>
+        public Projectile ProjectilePrefab => projectilePrefab;
+        
+        /// <summary>
+        /// Bullet speed of the weapon.
+        /// </summary>
+        public float ProjectileSpeed => projectileSpeed;
+        
+        /// <summary>
         /// Reload time of the weapon.
         /// </summary>
         public float ReloadTime => reloadTime;
@@ -63,6 +73,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         [Header("Ranged Weapon Stats")] [SerializeField]
         private FireModes[] fireModes = { Ranged.FireModes.Auto };
 
+        [SerializeField] private Projectile projectilePrefab;
+        [SerializeField] private float projectileSpeed = 100f;
         [SerializeField] private float reloadTime;
         [SerializeField] private float spread;
         [SerializeField] private float recoil;
