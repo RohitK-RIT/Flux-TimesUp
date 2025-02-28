@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Scripts.Core.Player_Controllers;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -23,16 +22,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Muzzle of the weapon.
         /// </summary>
         [SerializeField] private Transform muzzle;
-
-        /// <summary>
-        /// Trail renderer prefab.
-        /// </summary>
-        [SerializeField] private TrailRenderer trailRendererPrefab;
-
-        /// <summary>
-        /// Bullet impact prefab.
-        /// </summary>
-        [SerializeField] private GameObject bulletImpactPrefab;
 
         public RangedWeaponStats Stats => stats;
 
@@ -103,28 +92,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         }
 
         /// <summary>
-        /// Create a bullet trail renderer.
-        /// </summary>
-        /// <returns></returns>
-        private TrailRenderer CreateTrail()
-        {
-            // Instantiate a trail renderer and set its properties.
-            var trail = Instantiate(trailRendererPrefab);
-            trail.emitting = false;
-            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-
-            return trail;
-        }
-
-        private GameObject CreateBulletImpact()
-        {
-            var impact = Instantiate(bulletImpactPrefab);
-            impact.SetActive(false);
-
-            return impact;
-        }
-
-        /// <summary>
         /// Function to crate a projectile.
         /// </summary>
         /// <returns>projectile instance</returns>
@@ -134,16 +101,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             projectile.gameObject.SetActive(false);
 
             return projectile;
-        }
-
-        public override void OnPickup(PlayerController currentPlayerController)
-        {
-            base.OnPickup(currentPlayerController);
-        }
-
-        public override void OnDrop()
-        {
-            base.OnDrop();
         }
 
         public override void OnEquip()
