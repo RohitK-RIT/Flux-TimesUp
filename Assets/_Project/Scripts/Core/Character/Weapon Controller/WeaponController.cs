@@ -36,7 +36,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// </summary>
         [SerializeField] private Weapon[] weapons;
 
-        private IKPoints ikPoints;
+        private IKController _ikController;
 
         /// <summary>
         /// Gets or sets the current weapon. Deactivates the previous weapon and activates the new one.
@@ -62,7 +62,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
 
                 currentWeapon.gameObject.SetActive(true);
                 currentWeapon.OnEquip();
-                ikPoints?.UpdateIKPoints();
+                _ikController?.UpdateIKPoints();
             }
         }
 
@@ -82,7 +82,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
 
         void Awake()
         {
-            ikPoints = GetComponent<IKPoints>(); // Fetch the singleton instance of WeaponController
+            _ikController = GetComponent<IKController>(); // Fetch the singleton instance of WeaponController
         }
 
         public override void Initialize(PlayerController playerController)
