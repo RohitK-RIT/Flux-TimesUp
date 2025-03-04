@@ -77,7 +77,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Get the MovementController, WeaponController and AnimationController component attached to the player
             MovementController = GetComponent<MovementController>();
             WeaponController = GetComponent<WeaponController>();
-            AnimationController = GetComponent<AnimationController>();
+            AnimationController = GetComponentInChildren<AnimationController>();
         }
 
         protected virtual void Start()
