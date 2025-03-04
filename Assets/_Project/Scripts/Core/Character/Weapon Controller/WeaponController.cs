@@ -62,7 +62,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
 
                 currentWeapon.gameObject.SetActive(true);
                 currentWeapon.OnEquip();
-                _ikController?.UpdateIKPoints();
+                _ikController?.UpdateIKPoints(currentWeapon);
             }
         }
 

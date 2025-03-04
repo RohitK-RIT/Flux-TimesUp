@@ -1,4 +1,4 @@
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -6,25 +6,25 @@ namespace _Project.Scripts.Core.Character.Animation
 {
     public class IKController : MonoBehaviour
     {
+        /// <summary>
+        /// Reference to the hand rig root
+        /// </summary>
         [SerializeField] private GameObject rigRoot; // Reference to the root of the rig
-        private WeaponController _weaponController;
 
-        void Awake()
+        /// <summary>
+        /// Method to assign and update the IK points as per the current weapon
+        /// </summary>
+        /// <param name="weapon">The weapon for which the IK points should be updated</param>
+        public void UpdateIKPoints(Weapon weapon)
         {
-            _weaponController = GetComponent<WeaponController>();
-        }
-
-        //Method to assign and update the IK points as per the current weapon
-        internal void UpdateIKPoints()
-        {
-            if (!rigRoot || !_weaponController)
+            if (!rigRoot || !weapon)
             {
                 Debug.LogError("Rig root or prefab is not assigned!");
                 return;
             }
 
             // Fetch all Two Bone IK Constraints under the rig root
-            TwoBoneIKConstraint[] ikConstraints = rigRoot.GetComponentsInChildren<TwoBoneIKConstraint>();
+            var ikConstraints = rigRoot.GetComponentsInChildren<TwoBoneIKConstraint>();
 
             if (ikConstraints.Length == 0)
             {
@@ -36,11 +36,11 @@ namespace _Project.Scripts.Core.Character.Animation
             foreach (var ikConstraint in ikConstraints)
             {
                 // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
-                string constraintName = ikConstraint.gameObject.name; // Name of the GameObject with the constraint
+                var constraintName = ikConstraint.gameObject.name; // Name of the GameObject with the constraint
 
                 // Fetch source, target, and hint transforms based on the prefab structure
-                Transform targetObject = _weaponController.CurrentWeapon.transform.Find($"IK Points/{constraintName}_target");
-                Transform hintObject = _weaponController.CurrentWeapon.transform.Find($"IK Points/{constraintName}_hint");
+                var targetObject = weapon.transform.Find($"IK Points/{constraintName}_target");
+                var hintObject = weapon.transform.Find($"IK Points/{constraintName}_hint");
 
                 if (!hintObject || !targetObject)
                 {
