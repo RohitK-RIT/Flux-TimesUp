@@ -2,7 +2,7 @@ using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Character
+namespace _Project.Scripts.Core.Character.Animation
 {
     public class AnimationController: CharacterComponent
     {

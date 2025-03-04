@@ -1,5 +1,6 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
+using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;

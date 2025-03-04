@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Character.IK_Points;
+using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
