@@ -11,6 +11,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// Base class for player controllers.
     /// </summary>
     [RequireComponent(typeof(MovementController), typeof(WeaponController), typeof(AnimationController))]
+    [RequireComponent(typeof(IKController))]
     public abstract class PlayerController : MonoBehaviour, IDamageable
     {
         public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
@@ -31,6 +32,8 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Property to access the animation controller.
         /// </summary>
         public AnimationController AnimationController { get; private set; }
+        
+        public IKController IKController { get; private set; }
 
         /// <summary>
         /// Property to access the char stats.
@@ -78,6 +81,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             MovementController = GetComponent<MovementController>();
             WeaponController = GetComponent<WeaponController>();
             AnimationController = GetComponentInChildren<AnimationController>();
+            IKController = GetComponent<IKController>();
         }
 
         protected virtual void Start()
@@ -86,6 +90,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             MovementController.Initialize(this);
             WeaponController.Initialize(this);
             AnimationController.Initialize(this);
+            IKController.Initialize(this);
 
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
