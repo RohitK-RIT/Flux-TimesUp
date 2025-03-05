@@ -9,7 +9,7 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance { get; private set; }
 
     internal EnemyInputController broadcasterEnemy = null;
-    private List<EnemyInputController> helperEnemies = new List<EnemyInputController>();
+    internal List<EnemyInputController> helperEnemies = new List<EnemyInputController>();
 
     private void Awake()
     {
@@ -38,8 +38,8 @@ public class EnemyManager : MonoBehaviour
         {
             broadcasterEnemy = enemy;
             enemy.memberType = MemberType.Broadcaster;
-            BroadcastEnemyDetected(playerPosition);
         }
+        BroadcastEnemyDetected(playerPosition);
     }
 
     private void BroadcastEnemyDetected(Vector3 playerPosition)

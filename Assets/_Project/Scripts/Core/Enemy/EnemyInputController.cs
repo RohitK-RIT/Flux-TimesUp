@@ -401,12 +401,12 @@ namespace _Project.Scripts.Core.Enemy
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
             IsPlayerOnNavMesh();
-            if (FindPlayer() && EnemyManager.Instance.broadcasterEnemy == null)
-            {
-                
-                //memberType = MemberType.Broadcaster;
-                EnemyManager.Instance.EnemyDetected(this, ClosestPlayer.transform.position);
-            }
+            // if (FindPlayer() && EnemyManager.Instance.broadcasterEnemy == null)
+            // {
+            //     
+            //     //memberType = MemberType.Broadcaster;
+            //     EnemyManager.Instance.EnemyDetected(this, ClosestPlayer.transform.position);
+            // }
         }
         
         internal void EngagePlayer()

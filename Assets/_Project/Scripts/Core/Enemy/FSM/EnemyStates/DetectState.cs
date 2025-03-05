@@ -32,6 +32,12 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // If the player is detected, rotate towards them
             _enemyInputController.RotateTowardsPlayer();
+            if (EnemyManager.Instance.helperEnemies.Count <=3)
+            {
+                
+                //memberType = MemberType.Broadcaster;
+                EnemyManager.Instance.EnemyDetected(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+            }
         }
         
         public override EnemyState GetNextState()
