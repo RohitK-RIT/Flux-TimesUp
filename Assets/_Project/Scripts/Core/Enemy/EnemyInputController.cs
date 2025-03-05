@@ -68,6 +68,12 @@ namespace _Project.Scripts.Core.Enemy
         private WeaponController _weaponController;
 
         internal RangedWeapon RangedWeapon;
+        
+        [SerializeField] internal MemberType memberType = MemberType.Standalone; 
+        public float detectionRadius = 10f;
+        internal float engagementDistance = 30f;
+        private bool playerSpotted = false;
+        private Vector3 lastKnownPlayerPosition;
 
         
         private void Awake()
@@ -79,6 +85,11 @@ namespace _Project.Scripts.Core.Enemy
             _weaponController = GetComponent<WeaponController>();
             RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
 
+        }
+
+        private void Start()
+        {
+            EnemyManager.Instance.RegisterEnemy(this);
         }
 
         private void InitializeState()
@@ -132,6 +143,7 @@ namespace _Project.Scripts.Core.Enemy
         {
             // Disable AI logic
             _currentTarget = null;
+            EnemyManager.Instance.DeregisterEnemy(this);
         }
         
 
@@ -305,13 +317,13 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to make the enemy move towards roam position
-        private IEnumerator MoveToRoamPosition()
+        private IEnumerator MoveToRoamPosition(Vector3 targetPosition)
         {
             // Set flag to prevent multiple coroutines
             _isRoaming = true;
 
             // move enemy towards roam position
-            Enemy.SetDestination(RoamingPosition);
+            Enemy.SetDestination(targetPosition);
 
             while (Enemy.remainingDistance > 0.5f)
             {
@@ -338,11 +350,11 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to start the coroutine to move the enemy to roam position
-        internal void StartRoaming()
+        internal void StartRoaming(Vector3 targetPosition)
         {
             if (!_isRoaming)
             {
-                StartCoroutine(MoveToRoamPosition());
+                StartCoroutine(MoveToRoamPosition(targetPosition));
             }
         }
 
@@ -361,6 +373,9 @@ namespace _Project.Scripts.Core.Enemy
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, engagementDistance);
 
             // Visualization of the field of view (cone)
             Gizmos.color = Color.yellow;
@@ -386,6 +401,46 @@ namespace _Project.Scripts.Core.Enemy
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
             IsPlayerOnNavMesh();
+            if (FindPlayer() && EnemyManager.Instance.broadcasterEnemy == null)
+            {
+                
+                //memberType = MemberType.Broadcaster;
+                EnemyManager.Instance.EnemyDetected(this, ClosestPlayer.transform.position);
+            }
+        }
+        
+        internal void EngagePlayer()
+        {
+            if (memberType == MemberType.Helper)
+            {
+                Vector3 helperPos = GroupManager.Instance.GetHelperPosition(transform.position, lastKnownPlayerPosition);
+                _isRoaming = false;
+                StartRoaming(helperPos);
+            }
+            else if (memberType == MemberType.Broadcaster)
+            {
+                StartChasing();
+            }
+        }
+        
+        public void OnEnemyDetected(Vector3 playerPos)
+        {
+            if (memberType == MemberType.Broadcaster) return;
+        
+            // lastKnownPlayerPosition = playerPos;
+            // if (Vector3.Distance(transform.position, playerPos) <= engagementDistance)
+            // {
+            //     playerSpotted = true;
+            //     memberType = MemberType.Helper;
+            //     EnemyManager.Instance.AssignHelper(this);
+            // }
+            EnemyManager.Instance.AssignHelper(this);
+            
+        }
+        
+        public void SetDefaultRole()
+        {
+            memberType = MemberType.Standalone;
         }
     }
 }
