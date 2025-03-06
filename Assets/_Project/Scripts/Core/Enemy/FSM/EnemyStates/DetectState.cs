@@ -18,12 +18,20 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // Resets player movement when entering the state
             _enemyInputController.StopChasing(); 
+            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.broadcasterEnemy = null;
+            }
         }
 
         // Called when the enemy exits the DetectState
         public override void ExitState()
         {
             Debug.Log("Exiting Detect State");
+            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.broadcasterEnemy = null;
+            }
         }
 
         // Called every frame while the enemy is in the ChaseState
@@ -37,6 +45,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 
                 //memberType = MemberType.Broadcaster;
                 EnemyManager.Instance.EnemyDetected(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+                //BroadcastSystem.BroadcastMessage(_enemyInputController, BroadcastType.Detect);
             }
         }
         

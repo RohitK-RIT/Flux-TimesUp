@@ -19,6 +19,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // Stop chasing the player when entering attack state
             _enemyInputController.StopChasing();
+            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.broadcasterEnemy = null;
+            }
         }
 
         // Called when the enemy exits the AttackState
@@ -27,12 +31,24 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             // Stop any ongoing attack actions
             _enemyInputController.StopAttack();
             _enemyInputController.StopChasing();
+            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.broadcasterEnemy = null;
+            }
 
         }
 
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
+            if (EnemyManager.Instance.helperEnemies.Count <=3 && _enemyInputController.EnemyHUD.enemy.CurrentHealth < 60)
+            {
+                
+                //memberType = MemberType.Broadcaster;
+                EnemyManager.Instance.EnemyDetected(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+                //BroadcastSystem.BroadcastMessage(_enemyInputController, BroadcastType.Detect);
+            }
+            
             // Check if the player health is low
             if (_enemyInputController.EnemyHUD.enemy.CurrentHealth < 50)
             {

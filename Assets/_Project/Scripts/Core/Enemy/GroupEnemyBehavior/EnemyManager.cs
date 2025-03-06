@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.Enemy;
+using _Project.Scripts.Core.Enemy.FSM;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class EnemyManager : MonoBehaviour
 
     internal EnemyInputController broadcasterEnemy = null;
     internal List<EnemyInputController> helperEnemies = new List<EnemyInputController>();
+    private List<EnemyInputController> allEnemies = new List<EnemyInputController>();
 
     private void Awake()
     {
@@ -46,14 +48,16 @@ public class EnemyManager : MonoBehaviour
     {
         List<EnemyInputController> allEnemies = FindObjectsOfType<EnemyInputController>().ToList();
 
+        List<EnemyInputController> potentialHelpers = EnemyManager.Instance.GetEligibleHelpers(broadcasterEnemy, playerPosition);
         // Filter out enemies outside engagement distance
-        List<EnemyInputController> potentialHelpers = allEnemies
-            .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.engagementDistance)
-            .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
-            .Take(3) // Only take the 3 closest
-            .ToList();
+        // List<EnemyInputController> potentialHelpers = allEnemies
+        //     .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.engagementDistance)
+        //     .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
+        //     .Take(3) // Only take the 3 closest
+        //     .ToList();
 
         helperEnemies.Clear();
+        ClearRoles();
         helperEnemies.AddRange(potentialHelpers);
 
         // foreach (var enemy in allEnemies)
@@ -67,6 +71,8 @@ public class EnemyManager : MonoBehaviour
             enemy.EngagePlayer();
         }
     }
+    
+    
 
     private void AssignNewBroadcaster()
     {
@@ -87,5 +93,30 @@ public class EnemyManager : MonoBehaviour
         // }
         
         enemy.memberType = MemberType.Helper;
+    }
+    
+    public List<EnemyInputController> GetEligibleHelpers(EnemyInputController broadcaster, Vector3 playerPosition)
+    {
+        // Filter out enemies outside engagement distance
+        List<EnemyInputController> potentialHelpers = allEnemies
+            .Where(e => e != broadcaster && e.memberType == MemberType.Standalone)
+            .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.engagementDistance)
+            .Where(e => e.EnemyHUD.enemy.CurrentHealth >= e.attackHealthThreshold)
+            .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
+            .Take(3) // Only take the 3 closest
+            .ToList();
+        
+        return potentialHelpers;
+    }
+    
+    public void ClearRoles()
+    {
+        foreach (var enemy in allEnemies)
+        {
+            if (enemy.memberType == MemberType.Helper)
+            {
+                enemy.SetDefaultRole();
+            }
+        }
     }
 }

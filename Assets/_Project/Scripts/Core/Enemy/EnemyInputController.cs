@@ -7,7 +7,6 @@ using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
-using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -74,6 +73,7 @@ namespace _Project.Scripts.Core.Enemy
         internal float engagementDistance = 30f;
         private bool playerSpotted = false;
         private Vector3 lastKnownPlayerPosition;
+        internal float attackHealthThreshold = 60;
 
         
         private void Awake()
@@ -442,5 +442,6 @@ namespace _Project.Scripts.Core.Enemy
         {
             memberType = MemberType.Standalone;
         }
+        
     }
 }
