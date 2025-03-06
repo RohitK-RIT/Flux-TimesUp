@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,27 +8,23 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
     public class RandomRoomGeneration : MonoBehaviour
     {
         [SerializeField] private DungeonRoom[] poolOfRoomPrefabs;
-        [SerializeField] private DungeonRoom bossRoom;
-        //private List<DungeonRoom> _spawnedRooms;
+        [SerializeField] private BossEnemyRoom bossRoom;
         private DungeonRoom _currentRoom;
-
-        private List<GameObject> _enemiesInRoom;
         
-        /*private void Awake()
-        {
-            //_spawnedRooms = new List<DungeonRoom>();
-            //InitializeRoomGeneration();
-        }*/
-
         private void Start()
         {
             InitializeRoomGeneration();
-            //TSM will resume if player has crossed that entrance collider and will pause if room is cleared
-            //check if TSM is 100 => spawn boss room
         }
 
         private void Update()
         {
+            //check if the room if cleared of enemies and the TSM is 100
+            if (_currentRoom.CheckIfRoomIsCleared() && Mathf.Approximately(TimeStabilityMeter.Instance.TimeStability, TimeStabilityMeter.Instance.InitialTimeStability))
+            {
+                //spawn boss room
+                InstantiateBossRoom(bossRoom);
+            }
+            
             //if the player enters the portal, generate a new room
             if (_currentRoom.CheckIfPlayerEntersPortal())
             {
@@ -46,10 +42,9 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             
             var randomRoomIndex = Random.Range(0, poolOfRoomPrefabs.Length);
             var spawnedRoom = InstantiateRoom(poolOfRoomPrefabs[randomRoomIndex]);
-            //_spawnedRooms.Add(spawnedRoom);
             _currentRoom = spawnedRoom;
             
-            //Instantiate Player 
+            //Instantiate Player in the new room at the entry point
             LevelSceneController.Instance.InstantiatePlayerAtEntrance(_currentRoom.EntryPoint.transform.position);
             
             //TODO: all enemies killed => spawn loot
@@ -57,6 +52,14 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private DungeonRoom InstantiateRoom(DungeonRoom roomToSpawn)
         {
             return Instantiate(roomToSpawn, transform.position, Quaternion.identity, transform);
+        }
+        
+        private void InstantiateBossRoom(BossEnemyRoom bossRoomToSpawn)
+        {
+            var bossRoomInstance = Instantiate(bossRoomToSpawn, transform.position, Quaternion.identity, transform);
+            
+            //Instantiate Player in the new room at the entry point
+            LevelSceneController.Instance.InstantiatePlayerAtEntrance(bossRoomInstance.EntryPoint.transform.position);
         }
     }
 }

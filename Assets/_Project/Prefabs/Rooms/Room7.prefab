@@ -363,6 +363,8 @@ MonoBehaviour:
   - {fileID: 2759745246758634475}
   roomEra: 2
   portal: {fileID: 287593767423765626}
+  combatArenaColliders:
+  - {fileID: 2692222050528517060}
 --- !u!114 &8061234314831351632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,9 +422,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

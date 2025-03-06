@@ -1,7 +1,9 @@
 using System;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Gameplay.PCG;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Gameplay.Revamp_PCG
 {
@@ -12,7 +14,8 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
     {
         WorldWar,
         Medieval,
-        Futuristic
+        Futuristic,
+        WildWest
     }
     public class DungeonRoom : MonoBehaviour
     {
@@ -21,12 +24,16 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         public GameObject[] LootSpawnPoints => lootSpawnPoints;
         public RoomEra RoomEra => roomEra;
         public GameObject Portal => portal;
+        public Collider[] CombatArenaColliders => combatArenaColliders;
         
         [SerializeField] private GameObject entryPoint;
         [SerializeField] private GameObject exitPoint;
         [SerializeField] private GameObject[] lootSpawnPoints;
         [SerializeField] private RoomEra roomEra; 
         [SerializeField] private GameObject portal;
+        [SerializeField] private Collider[] combatArenaColliders;
+        
+        private bool _clearRoomCheck = false;
         
         private EnemyDeathListener _enemyDeathListener;
 
@@ -34,12 +41,54 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         {
             _enemyDeathListener = new EnemyDeathListener(this.gameObject);
         }
-
+        private void OnEnable()
+        {
+            if(_enemyDeathListener != null)
+                _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
+        }
+        private void OnDisable()
+        {
+            if(_enemyDeathListener != null)
+                _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
+        }
+        
         private void Start()
         {
             HidePortal();
         }
+
+        private void Update()
+        {
+            //check for any collisions with the combat arena colliders
+            foreach (var combatArenaCollider in combatArenaColliders)
+            {
+                TimeStabilityMeter.Instance.PauseTimeStabilityMeter = !combatArenaCollider.bounds.Contains(LevelSceneController.Instance.Player.transform.position);
+                Debug.Log("Player is in combat area.");
+            }
+            
+        }
         
+        // Called when all enemies in the room are dead.
+        private void OnAllEnemiesDead()
+        {
+            _clearRoomCheck = true;
+            
+            //pause TSM
+            TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
+            
+            //send loot spawn points to loot spawner
+            ShowPortal();
+        }
+        
+        public bool CheckIfPlayerEntersPortal()
+        {
+            var portalCollider = exitPoint.GetComponent<Collider>();
+            if (portalCollider.bounds.Contains(LevelSceneController.Instance.Player.transform.position))
+            {
+                return true;
+            }
+            return false;
+        }
         /// <summary>
         /// Hides the portal object initially.
         /// </summary>
@@ -69,34 +118,10 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
                 Debug.LogWarning("Portal object is not assigned.");
             }
         }
-        
-        private void OnEnable()
+
+        public bool CheckIfRoomIsCleared()
         {
-            if(_enemyDeathListener != null)
-                _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
-        }
-        
-        private void OnDisable()
-        {
-            if(_enemyDeathListener != null)
-                _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
-        }
-        
-        // Called when all enemies in the room are dead.
-        private void OnAllEnemiesDead()
-        {
-            //send loot spawn points to loot spawner
-            ShowPortal();
-        }
-        
-        public bool CheckIfPlayerEntersPortal()
-        {
-            var portalCollider = exitPoint.GetComponent<Collider>();
-            if (portalCollider.bounds.Contains(LevelSceneController.Instance.Player.transform.position))
-            {
-                return true;
-            }
-            return false;
+            return _clearRoomCheck;
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.UI;
@@ -22,15 +21,9 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         [Space(25f), Header("Players in Scene")] [SerializeField]
         private LocalPlayerController player; // Drag your player here
 
-        //[SerializeField] public EnemyController[] enemies; // Array to store all enemies in the scene
-
         private bool _isPaused; // Variable to check if the game is paused
-
-        private void Start()
-        {
-            // Remove all null elements from the array.
-            //enemies = Array.FindAll(enemies, enemy => enemy != null);
-        }
+        
+        public GameObject BossEnemy { get; set; }
 
         private void Update()
         {
@@ -53,8 +46,11 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
                 GameOver(false);
             /*else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
                 GameOver(true);*/
-            /*else if(bossEnemy.CurrentHealth <= 0)
-                GameOver(true);*/
+            else if (!BossEnemy)
+            {
+                if(BossEnemy.GetComponent<EnemyController>().CurrentHealth <= 0)
+                    GameOver(true);
+            }
         }
 
         private void OnDestroy()

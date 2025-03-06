@@ -246,8 +246,10 @@ MonoBehaviour:
   - {fileID: 5211444132769732152}
   - {fileID: 558678585082231968}
   - {fileID: 4453710667007454692}
-  roomEra: 0
-  portal: {fileID: 0}
+  roomEra: 3
+  portal: {fileID: 3775562957969829977}
+  combatArenaColliders:
+  - {fileID: 6993827244973967637}
 --- !u!1 &2666627217464717664
 GameObject:
   m_ObjectHideFlags: 0
@@ -2109,9 +2111,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -76689,6 +76691,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae3bcfd069466ca47ac0045474ba7a3e, type: 3}
+--- !u!1 &3775562957969829977 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5747433154415778150, guid: ae3bcfd069466ca47ac0045474ba7a3e,
+    type: 3}
+  m_PrefabInstance: {fileID: 8910233878802426175}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4394251869581778606 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5141991790381889425, guid: ae3bcfd069466ca47ac0045474ba7a3e,
