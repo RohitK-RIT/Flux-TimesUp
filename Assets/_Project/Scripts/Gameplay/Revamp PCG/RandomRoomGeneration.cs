@@ -21,7 +21,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void Update()
         {
             //check if the room if cleared of enemies and the TSM is 100
-            if (_hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() && Mathf.Approximately(TimeStabilityMeter.Instance.TimeStability, TimeStabilityMeter.Instance.InitialTimeStability))
+            if (_hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() && TimeStabilityMeter.Instance.TimeStability >= TimeStabilityMeter.Instance.InitialTimeStability)
             {
                 TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
                 _currentRoom.ShowPortal();
