@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Backend.Interfaces;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Melee
@@ -71,7 +71,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                     continue;
 
                 // Check if the enemy is a player and deal damage
-                var playerController = collidersFound[i].gameObject.GetComponent<PlayerController>();
+                var playerController = collidersFound[i].gameObject.GetComponent<IDamageable>();
                 playerController?.TakeDamage(this, GetDamage());
             }
         }
