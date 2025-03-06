@@ -49,7 +49,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                     continue;
 
                 var direction = collidersFound[i].transform.position - CurrentPlayerController.transform.position;
-                var angle = Vector3.Angle(CurrentPlayerController.transform.forward, direction);
+                var angle = Vector3.Angle(CurrentPlayerController.MovementController.Body.forward, direction);
 
                 // Deal damage to the enemies in the attack FOV
                 if (angle > stats.AttackFOV)
