@@ -11,6 +11,7 @@ namespace _Project.Scripts.Core.Enemy.Types
         private SpawnManager _spawnManager;
         private bool _hasSpawnedChargers; // Ensure Chargers spawn only once
         private bool _hasSpawnedSecondChargers; // Ensure Chargers spawn only once
+        private bool _hasSpawnedThirdChargers; // Ensure Chargers spawn only once
 
         void Awake()
         {
@@ -38,6 +39,11 @@ namespace _Project.Scripts.Core.Enemy.Types
                 else if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 50)
                 {
                     _hasSpawnedSecondChargers = true;
+                    SpawnChargers(EnemyType.Boss);
+                }
+                else if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 25)
+                {
+                    _hasSpawnedThirdChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
             }
