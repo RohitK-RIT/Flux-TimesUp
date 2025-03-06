@@ -86,7 +86,6 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void OnAllEnemiesDead()
         {
             //send loot spawn points to loot spawner
-            Debug.Log("All enemies dead again");
             ShowPortal();
         }
         
