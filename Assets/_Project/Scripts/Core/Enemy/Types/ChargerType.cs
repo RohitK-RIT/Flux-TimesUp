@@ -32,7 +32,7 @@ namespace _Project.Scripts.Core.Enemy.Types
             if (_spawnManager)
             {
                 // Request the SpawnManager to spawn Chargers near the enemy's position
-                _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position);
+                _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position, _enemyInputController.Enemy.transform.parent);
             }
             else
             {

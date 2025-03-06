@@ -1,10 +1,6 @@
-using _Project.Scripts.Core.Backend;
-using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Ranged;
-using _Project.Scripts.Gameplay.PCG;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy

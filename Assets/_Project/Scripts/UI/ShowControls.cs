@@ -10,15 +10,12 @@ namespace _Project.Scripts.UI
 
         private void Start()
         {
-            // Start the coroutine to disable the GameObject after a delay
-            StartCoroutine(DisableAfterDelay());
+            Invoke(nameof(DisableAfterDelay), disableTime);
         }
 
-        private IEnumerator DisableAfterDelay()
+       
+        private void DisableAfterDelay()
         {
-            // Wait for the specified time
-            yield return new WaitForSeconds(disableTime);
-
             // Disable the GameObject
             gameObject.SetActive(false);
         }
