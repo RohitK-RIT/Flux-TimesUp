@@ -1,6 +1,4 @@
-using System;
 using _Project.Scripts.Core.Character.Weapon_Controller;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Melee;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -10,9 +8,19 @@ namespace _Project.Scripts.Core.Character.Animation
     public class IKController : CharacterComponent
     {
         /// <summary>
-        /// Reference to the hand rig root
+        /// Reference to the gun hand rig
         /// </summary>
-        [SerializeField] private GameObject rigRoot; // Reference to the root of the rig
+        [SerializeField] private Rig gunIKRig;
+
+        /// <summary>
+        /// Reference to the gun aiming rig
+        /// </summary>
+        [SerializeField] private Rig gunAimingIKRig;
+
+        /// <summary>
+        /// Reference to the melee hand rig
+        /// </summary>
+        [SerializeField] private Rig meleeIKRig;
 
         /// <summary>
         /// Reference to the RigBuilder component
@@ -22,14 +30,14 @@ namespace _Project.Scripts.Core.Character.Animation
         /// <summary>
         /// Array of Two Bone IK Constraints
         /// </summary>
-        private TwoBoneIKConstraint[] _ikConstraints;
+        private TwoBoneIKConstraint[] _handIKConstraints;
 
         private WeaponController _weaponController;
 
         private void Awake()
         {
             _rigBuilder = GetComponentInChildren<RigBuilder>();
-            _ikConstraints = rigRoot.GetComponentsInChildren<TwoBoneIKConstraint>();
+            _handIKConstraints = gunIKRig.GetComponentsInChildren<TwoBoneIKConstraint>();
 
             _weaponController = GetComponent<WeaponController>();
         }
@@ -56,47 +64,51 @@ namespace _Project.Scripts.Core.Character.Animation
         private void UpdateIKPoints()
         {
             var weapon = _weaponController.CurrentWeapon;
-            if (!rigRoot || !weapon)
+            if (!gunIKRig || !weapon)
             {
                 Debug.LogError("Rig root or prefab is not assigned!");
                 return;
             }
 
             // Fetch all Two Bone IK Constraints under the rig root
-            if (_ikConstraints.Length == 0)
+            if (_handIKConstraints.Length == 0)
             {
                 Debug.LogError("No Two Bone IK Constraints found under the rig root!");
                 return;
             }
 
-            var isMeleeWeapon = weapon is MeleeWeapon;
-
-            // Assign transforms to each Two Bone IK Constraint
-            foreach (var ikConstraint in _ikConstraints)
+            if (weapon is MeleeWeapon)
             {
-                if (isMeleeWeapon)
+                gunIKRig.weight = 0f;
+                gunAimingIKRig.weight = 0f;
+                meleeIKRig.weight = 1f;
+            }
+            else
+            {
+                gunIKRig.weight = 1f;
+                gunAimingIKRig.weight = 1f;
+                meleeIKRig.weight = 0f;
+                
+                // Assign transforms to each Two Bone IK Constraint
+                foreach (var constraint in _handIKConstraints)
                 {
-                    ikConstraint.weight = 0f;
-                    continue;
+                    // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
+                    var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
+
+                    // Fetch source, target, and hint transforms based on the prefab structure
+                    var targetObject = weapon.transform.Find($"IK Points/{constraintName}_target");
+                    var hintObject = weapon.transform.Find($"IK Points/{constraintName}_hint");
+
+                    if (!hintObject || !targetObject)
+                    {
+                        Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
+                        continue;
+                    }
+
+                    // Assign the transforms to the constraint
+                    constraint.data.target = targetObject;
+                    constraint.data.hint = hintObject;
                 }
-
-                // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
-                var constraintName = ikConstraint.gameObject.name; // Name of the GameObject with the constraint
-
-                // Fetch source, target, and hint transforms based on the prefab structure
-                var targetObject = weapon.transform.Find($"IK Points/{constraintName}_target");
-                var hintObject = weapon.transform.Find($"IK Points/{constraintName}_hint");
-
-                if (!hintObject || !targetObject)
-                {
-                    Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
-                    continue;
-                }
-
-                // Assign the transforms to the constraint
-                ikConstraint.weight = 1f;
-                ikConstraint.data.target = targetObject;
-                ikConstraint.data.hint = hintObject;
             }
 
             RefreshRig();
