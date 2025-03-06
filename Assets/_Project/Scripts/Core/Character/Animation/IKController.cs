@@ -89,6 +89,8 @@ namespace _Project.Scripts.Core.Character.Animation
                 gunAimingIKRig.weight = 1f;
                 meleeIKRig.weight = 0f;
                 
+                weapon.transform.parent.rotation = Quaternion.identity;
+                
                 // Assign transforms to each Two Bone IK Constraint
                 foreach (var constraint in _handIKConstraints)
                 {
