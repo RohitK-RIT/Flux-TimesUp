@@ -1,6 +1,5 @@
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
-using _Project.Scripts.Gameplay.PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
@@ -19,12 +18,8 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
     public class DungeonRoom : MonoBehaviour
     {
         public GameObject EntryPoint => entryPoint;
-        public GameObject ExitPoint => exitPoint;
         public GameObject[] LootSpawnPoints => lootSpawnPoints;
-        public RoomEra RoomEra => roomEra;
-        public GameObject Portal => portal;
-        public Collider[] CombatArenaColliders => combatArenaColliders;
-        
+
         [SerializeField] private GameObject entryPoint;
         [SerializeField] private GameObject exitPoint;
         [SerializeField] private GameObject[] lootSpawnPoints;
@@ -34,23 +29,11 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         
         private bool _clearRoomCheck = false;
         
-        private EnemyDeathListener _enemyDeathListener;
         private RoomWaveController _roomWaveController;
 
         private void Awake()
         {
-            _enemyDeathListener = new EnemyDeathListener(this.gameObject);
             _roomWaveController = GetComponent<RoomWaveController>();
-        }
-        private void OnEnable()
-        {
-            if(_enemyDeathListener != null)
-                _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
-        }
-        private void OnDisable()
-        {
-            if(_enemyDeathListener != null)
-                _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
         }
         
         private void Start()
@@ -71,22 +54,6 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             //TODO: send loot spawn points to loot spawner
             //show portal
             ShowPortal();
-        }
-        
-        // Called when all enemies in the room are dead.
-        private void OnAllEnemiesDead()
-        {
-            /*foreach (var enemy in _roomWaveController.EnemiesInRoom)
-            {
-                if(enemy.activeSelf)
-                    return;
-            }
-            _clearRoomCheck = true;
-            //pause TSM
-            TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
-            //TODO: send loot spawn points to loot spawner
-            //show portal
-            ShowPortal();*/
         }
         
         /// <summary>

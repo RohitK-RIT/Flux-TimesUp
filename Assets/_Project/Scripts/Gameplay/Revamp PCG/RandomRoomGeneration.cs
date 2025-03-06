@@ -64,7 +64,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         {
             var bossRoomInstance = Instantiate(bossRoomToSpawn, transform.position, Quaternion.identity, transform);
             
-            //Instantiate Player in the new room at the entry point
+            //Instantiate Player in the boss room at the entry point
             LevelSceneController.Instance.Player.transform.position = bossRoomInstance.EntryPoint.transform.position;
         }
     }
