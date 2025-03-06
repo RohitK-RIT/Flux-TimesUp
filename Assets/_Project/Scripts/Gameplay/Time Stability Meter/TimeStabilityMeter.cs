@@ -10,16 +10,18 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
     public class TimeStabilityMeter : MonoBehaviour
     {
         public float TimeStability { get; private set; }
-        public float InitialTimeStability => initialTimeStability;
+        public float TotalTimeStability => totalTimeStability;
         public static TimeStabilityMeter Instance { get; private set; }
-        [SerializeField] private float initialTimeStability = 100f;
+
+        [SerializeField] private float totalTimeStability = 100f;
+        [SerializeField] private float startingTimeStability = 100f;
         [SerializeField] private float decreaseRate = 0.01f;
-        
+
         public bool PauseTimeStabilityMeter { get; set; }
 
 #if UNITY_EDITOR
-        [Header("Editor Only")]
-        [SerializeField] private bool pauseTimeStability;
+        [Header("Editor Only")] [SerializeField]
+        private bool pauseTimeStability;
 #endif
 
         private void Awake()
@@ -31,14 +33,15 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             }
 
             Instance = this;
-            TimeStability = initialTimeStability;
+            TimeStability = startingTimeStability;
+            PauseTimeStabilityMeter = true;
         }
 
         private void OnEnable()
         {
             PlayerController.OnDeath += OnPlayerDeath;
         }
-        
+
         private void OnDisable()
         {
             PlayerController.OnDeath -= OnPlayerDeath;
@@ -46,9 +49,9 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void OnPlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
         {
-            if(killingPlayer != LevelSceneController.Instance.Player)
+            if (killingPlayer != LevelSceneController.Instance.Player)
                 return;
-            
+
             switch (weaponKilledBy)
             {
                 case RangedWeapon rangedWeapon:
@@ -69,8 +72,8 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             if (PauseTimeStabilityMeter)
                 return;
             TimeStability -= decreaseRate * Time.deltaTime;
-            TimeStability = Mathf.Clamp(TimeStability, 0, initialTimeStability);
-            if(TimeStability <= 0)
+            TimeStability = Mathf.Clamp(TimeStability, 0, totalTimeStability);
+            if (TimeStability <= 0)
             {
                 TimeStability = 0;
                 var player = LevelSceneController.Instance.Player;
