@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Enemy.FSM;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy.EnemySpawner
@@ -17,7 +18,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
     
         // Spawns two Charger enemies near the given enemy position.
         // One Charger appears to the right, and the other appears to the left.
-        internal void ChargerSpawner(Vector3 enemyPosition, Transform enemyParent)
+        internal void ChargerSpawner(Vector3 enemyPosition, EnemyType type)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (!player)
@@ -29,10 +30,22 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             // Calculate spawn positions around the enemy
             Vector3 spawnPos1 = enemyPosition + (Vector3.right * _spawnDistanceFromEnemy);
             Vector3 spawnPos2 = enemyPosition + (Vector3.left * _spawnDistanceFromEnemy);
+            Vector3 spawnPos3 = enemyPosition + (Vector3.forward * _spawnDistanceFromEnemy);
         
             // Instantiate Chargers
-            Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity, enemyParent);
-            Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity, enemyParent);
+            if (type == EnemyType.Basic)
+            {
+                Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+                Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+            }
+
+            if (type == EnemyType.Boss)
+            {
+                Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity);
+                Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity);
+                Instantiate(chargerEnemyPrefab, spawnPos3, Quaternion.identity);
+            }
+            
         }
         
         // Respawns all enemies in the current room at their original positions.
