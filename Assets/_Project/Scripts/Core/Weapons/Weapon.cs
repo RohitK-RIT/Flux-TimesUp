@@ -33,6 +33,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
+            gameObject.layer = currentPlayerController.gameObject.layer;
         }
 
         /// <summary>
@@ -41,6 +42,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
+            gameObject.layer = LayerMask.NameToLayer("Default");
         }
 
         /// <summary>

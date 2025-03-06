@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Character.IK_Points;
+using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -16,13 +17,14 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
     /// </summary>
     public class WeaponController : CharacterComponent
     {
+        public event Action OnWeaponSwitched;
         /// <summary>
         /// The parent transform for the weapons.
         /// </summary>
         [SerializeField] private Transform weaponParent;
 
         /// <summary>
-        /// The currently equipped weapon.
+        /// The currently equipped weapon.  
         /// </summary>
         [SerializeField] private Weapon currentWeapon;
 
@@ -35,8 +37,6 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// Array of all available weapons.
         /// </summary>
         [SerializeField] private Weapon[] weapons;
-
-        private IKPoints ikPoints;
 
         /// <summary>
         /// Gets or sets the current weapon. Deactivates the previous weapon and activates the new one.
@@ -62,7 +62,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
 
                 currentWeapon.gameObject.SetActive(true);
                 currentWeapon.OnEquip();
-                ikPoints?.UpdateIKPoints();
+                OnWeaponSwitched?.Invoke();
             }
         }
 
@@ -79,11 +79,6 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// The index of the current weapon.
         /// </summary>
         private int _currentWeaponIndex;
-
-        void Awake()
-        {
-            ikPoints = GetComponent<IKPoints>(); // Fetch the singleton instance of WeaponController
-        }
 
         public override void Initialize(PlayerController playerController)
         {

@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using _Project.Scripts.Core.Player_Controllers;
+﻿using System;
+using System.Collections;
+using _Project.Scripts.Core.Backend.Interfaces;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Melee
@@ -17,6 +18,8 @@ namespace _Project.Scripts.Core.Weapons.Melee
         public override string WeaponID => stats.WeaponID;
 
         public MeleeWeaponStats Stats => stats;
+        
+        private DateTime _lastAttackTime = DateTime.MinValue;
 
         /// <summary>
         /// Coroutine for attacking.
@@ -26,8 +29,11 @@ namespace _Project.Scripts.Core.Weapons.Melee
             // Attack until the attack ends
             while (true)
             {
+                // Wait for the attack speed and then fire the bullet.
+                yield return new WaitWhile(() => (DateTime.Now - _lastAttackTime).Seconds < 1 / stats.AttackSpeed);
                 Slash();
-
+                _lastAttackTime = DateTime.Now;
+                
                 yield return new WaitForSeconds(1 / stats.AttackSpeed);
             }
         }
@@ -49,7 +55,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                     continue;
 
                 var direction = collidersFound[i].transform.position - CurrentPlayerController.transform.position;
-                var angle = Vector3.Angle(transform.forward, direction);
+                var angle = Vector3.Angle(CurrentPlayerController.MovementController.Body.forward, direction);
 
                 // Deal damage to the enemies in the attack FOV
                 if (angle > stats.AttackFOV)
@@ -65,7 +71,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                     continue;
 
                 // Check if the enemy is a player and deal damage
-                var playerController = collidersFound[i].gameObject.GetComponent<PlayerController>();
+                var playerController = collidersFound[i].gameObject.GetComponent<IDamageable>();
                 playerController?.TakeDamage(this, GetDamage());
             }
         }
