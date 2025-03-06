@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
 
@@ -17,6 +18,8 @@ namespace _Project.Scripts.Core.Weapons.Melee
         public override string WeaponID => stats.WeaponID;
 
         public MeleeWeaponStats Stats => stats;
+        
+        private DateTime _lastAttackTime = DateTime.MinValue;
 
         /// <summary>
         /// Coroutine for attacking.
@@ -26,8 +29,11 @@ namespace _Project.Scripts.Core.Weapons.Melee
             // Attack until the attack ends
             while (true)
             {
+                // Wait for the attack speed and then fire the bullet.
+                yield return new WaitWhile(() => (DateTime.Now - _lastAttackTime).Seconds < 1 / stats.AttackSpeed);
                 Slash();
-
+                _lastAttackTime = DateTime.Now;
+                
                 yield return new WaitForSeconds(1 / stats.AttackSpeed);
             }
         }
