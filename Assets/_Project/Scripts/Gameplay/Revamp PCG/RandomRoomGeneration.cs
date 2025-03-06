@@ -10,6 +10,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         [SerializeField] private DungeonRoom[] poolOfRoomPrefabs;
         [SerializeField] private BossEnemyRoom bossRoom;
         private DungeonRoom _currentRoom;
+        private bool _hasInstantiatedBossRoom = false;
         
         private void Start()
         {
@@ -19,14 +20,19 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void Update()
         {
             //check if the room if cleared of enemies and the TSM is 100
-            if (_currentRoom.CheckIfRoomIsCleared() && Mathf.Approximately(TimeStabilityMeter.Instance.TimeStability, TimeStabilityMeter.Instance.InitialTimeStability))
+            if (_hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() && Mathf.Approximately(TimeStabilityMeter.Instance.TimeStability, TimeStabilityMeter.Instance.InitialTimeStability))
             {
+                if (_currentRoom != null)
+                {
+                    Destroy(_currentRoom.gameObject);
+                }
+                _hasInstantiatedBossRoom = true;
                 //spawn boss room
                 InstantiateBossRoom(bossRoom);
             }
             
             //if the player enters the portal, generate a new room
-            if (_currentRoom.CheckIfPlayerEntersPortal())
+            if (!_hasInstantiatedBossRoom && _currentRoom.CheckIfPlayerEntersPortal())
             {
                 InitializeRoomGeneration();
             }
@@ -45,7 +51,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             _currentRoom = spawnedRoom;
             
             //Instantiate Player in the new room at the entry point
-            LevelSceneController.Instance.InstantiatePlayerAtEntrance(_currentRoom.EntryPoint.transform.position);
+            LevelSceneController.Instance.Player.transform.position = _currentRoom.EntryPoint.transform.position;
             
             //TODO: all enemies killed => spawn loot
         }
@@ -59,7 +65,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             var bossRoomInstance = Instantiate(bossRoomToSpawn, transform.position, Quaternion.identity, transform);
             
             //Instantiate Player in the new room at the entry point
-            LevelSceneController.Instance.InstantiatePlayerAtEntrance(bossRoomInstance.EntryPoint.transform.position);
+            LevelSceneController.Instance.Player.transform.position = bossRoomInstance.EntryPoint.transform.position;
         }
     }
 }

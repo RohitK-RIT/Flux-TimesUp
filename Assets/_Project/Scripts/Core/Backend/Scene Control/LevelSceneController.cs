@@ -23,7 +23,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
         private bool _isPaused; // Variable to check if the game is paused
         
-        public GameObject BossEnemy { get; set; }
+        public EnemyController BossEnemy { get; set; }
 
         private void Update()
         {
@@ -46,9 +46,9 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
                 GameOver(false);
             /*else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
                 GameOver(true);*/
-            else if (!BossEnemy)
+            else if (BossEnemy)
             {
-                if(BossEnemy.GetComponent<EnemyController>().CurrentHealth <= 0)
+                if(BossEnemy.CurrentHealth <= 0)
                     GameOver(true);
             }
         }
@@ -113,11 +113,6 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
             // Replace "MainMenuScene" with the name of your actual main menu scene
             SceneSystem.Instance.LoadScene(new SceneLoadRequest("UI", LoadSceneMode.Single));
-        }
-        
-        public void InstantiatePlayerAtEntrance(Vector3 position)
-        {
-            player.transform.position = position;
         }
 
         //Function to exit the game when the quit button is clicked

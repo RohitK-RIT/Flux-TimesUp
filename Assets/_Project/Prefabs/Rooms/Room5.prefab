@@ -750,6 +750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6568596036294018593}
   - component: {fileID: 7072393331048434674}
+  - component: {fileID: 3814560857014102294}
   m_Layer: 0
   m_Name: CombatArenaCollider (1)
   m_TagString: Untagged
@@ -793,6 +794,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.1554594, y: 3.0752559, z: 4.6027946}
   m_Center: {x: 0.5777297, y: -0.118438244, z: 1.0489044}
+--- !u!114 &3814560857014102294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4398596039155466333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d385cdae15462429e4275a28bbe323, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5117165118126517234
 GameObject:
   m_ObjectHideFlags: 0
@@ -1601,6 +1614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2037502413802675886}
   - component: {fileID: 8999929251764123930}
+  - component: {fileID: 2292886497411888497}
   m_Layer: 0
   m_Name: CombatArenaCollider
   m_TagString: Untagged
@@ -1644,6 +1658,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.1554594, y: 3.0752559, z: 3.9595795}
   m_Center: {x: 0.5777297, y: -0.118438244, z: 0.7272968}
+--- !u!114 &2292886497411888497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7606946039338343418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d385cdae15462429e4275a28bbe323, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8531953728338137606
 GameObject:
   m_ObjectHideFlags: 0

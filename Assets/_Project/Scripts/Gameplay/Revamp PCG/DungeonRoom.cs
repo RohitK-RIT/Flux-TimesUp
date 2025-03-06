@@ -1,9 +1,8 @@
-using System;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Gameplay.PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Gameplay.Revamp_PCG
 {
@@ -36,10 +35,12 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private bool _clearRoomCheck = false;
         
         private EnemyDeathListener _enemyDeathListener;
+        private RoomWaveController _roomWaveController;
 
         private void Awake()
         {
             _enemyDeathListener = new EnemyDeathListener(this.gameObject);
+            _roomWaveController = GetComponent<RoomWaveController>();
         }
         private void OnEnable()
         {
@@ -59,27 +60,39 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
 
         private void Update()
         {
-            //check for any collisions with the combat arena colliders
-            foreach (var combatArenaCollider in combatArenaColliders)
+            foreach (var enemy in _roomWaveController.EnemiesInRoom)
             {
-                TimeStabilityMeter.Instance.PauseTimeStabilityMeter = !combatArenaCollider.bounds.Contains(LevelSceneController.Instance.Player.transform.position);
-                Debug.Log("Player is in combat area.");
+                if(enemy.activeSelf)
+                    return;
             }
-            
+            _clearRoomCheck = true;
+            //pause TSM
+            TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
+            //TODO: send loot spawn points to loot spawner
+            //show portal
+            ShowPortal();
         }
         
         // Called when all enemies in the room are dead.
         private void OnAllEnemiesDead()
         {
+            /*foreach (var enemy in _roomWaveController.EnemiesInRoom)
+            {
+                if(enemy.activeSelf)
+                    return;
+            }
             _clearRoomCheck = true;
-            
             //pause TSM
             TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
-            
-            //send loot spawn points to loot spawner
-            ShowPortal();
+            //TODO: send loot spawn points to loot spawner
+            //show portal
+            ShowPortal();*/
         }
         
+        /// <summary>
+        /// Function to check if the player enters the portal.  
+        /// </summary>
+        /// <returns></returns>
         public bool CheckIfPlayerEntersPortal()
         {
             var portalCollider = exitPoint.GetComponent<Collider>();
@@ -119,6 +132,10 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             }
         }
 
+        /// <summary>
+        /// Function to check if the room is cleared of enemies.
+        /// </summary>
+        /// <returns></returns>
         public bool CheckIfRoomIsCleared()
         {
             return _clearRoomCheck;

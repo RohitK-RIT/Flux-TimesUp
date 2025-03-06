@@ -1098,6 +1098,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1669339677257749815}
   - component: {fileID: 7190364298937806363}
+  - component: {fileID: 8344152902622618769}
   m_Layer: 0
   m_Name: CombatArenaCollider
   m_TagString: Untagged
@@ -1141,6 +1142,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.0368605, y: 4.717596, z: 3.9595795}
   m_Center: {x: 0.87252855, y: 0.7027316, z: 0.7272968}
+--- !u!114 &8344152902622618769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4991608792592913178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d385cdae15462429e4275a28bbe323, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5564149824797734037
 GameObject:
   m_ObjectHideFlags: 0
