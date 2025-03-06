@@ -12,6 +12,7 @@ namespace _Project.Scripts.Core.Character.Animation
         private static readonly int Vertical = Animator.StringToHash("DirectionZ");
         private static readonly int Speed = Animator.StringToHash("Speed");
         private static readonly int MeleeAttack = Animator.StringToHash("Melee Attack");
+        private static readonly int MeleeAttackSpeed = Animator.StringToHash("Melee Attack Speed");
 
         [SerializeField] private Animator animator;
 
@@ -78,7 +79,7 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             animator.SetBool(MeleeAttack, _hasMeleeWeapon);
         }
-        
+
         private void OnAttackEnd()
         {
             animator.SetBool(MeleeAttack, false);
@@ -86,7 +87,15 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private void OnWeaponSwitched()
         {
-            _hasMeleeWeapon = _weaponController.CurrentWeapon as MeleeWeapon;
+            if (_weaponController.CurrentWeapon is MeleeWeapon meleeWeapon)
+            {
+                _hasMeleeWeapon = true;
+                animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed);
+            }
+            else
+            {
+                _hasMeleeWeapon = false;
+            }
         }
     }
 }
