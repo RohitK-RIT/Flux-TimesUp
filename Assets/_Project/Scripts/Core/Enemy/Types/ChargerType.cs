@@ -31,19 +31,19 @@ namespace _Project.Scripts.Core.Enemy.Types
             // Check if the enemy is a Boss type and should spawn Chargers at 75 and 50 health
             if (_enemyInputController.enemyType == EnemyType.Boss)
             {
-                if (!_hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 75)
+                if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 25)
                 {
-                    _hasSpawnedChargers = true;
+                    _hasSpawnedThirdChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
-                if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 50)
+                else if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 50)
                 {
                     _hasSpawnedSecondChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
-                if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 25)
+                else if (!_hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 75)
                 {
-                    _hasSpawnedThirdChargers = true;
+                    _hasSpawnedChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
             }
