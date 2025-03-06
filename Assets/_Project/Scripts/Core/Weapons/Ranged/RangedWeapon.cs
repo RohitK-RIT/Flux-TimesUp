@@ -105,7 +105,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void OnDestroy()
         {
-            _projectilePool.Dispose();
+            _projectilePool?.Dispose();
         }
 
         public override void OnEquip()
