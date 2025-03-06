@@ -36,12 +36,12 @@ namespace _Project.Scripts.Core.Enemy.Types
                     _hasSpawnedChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
-                else if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 50)
+                if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 50)
                 {
                     _hasSpawnedSecondChargers = true;
                     SpawnChargers(EnemyType.Boss);
                 }
-                else if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 25)
+                if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 25)
                 {
                     _hasSpawnedThirdChargers = true;
                     SpawnChargers(EnemyType.Boss);
