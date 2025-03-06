@@ -1,5 +1,4 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Scene_Control;
+﻿using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Melee;

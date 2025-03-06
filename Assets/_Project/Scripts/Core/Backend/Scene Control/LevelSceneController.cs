@@ -22,14 +22,14 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         [Space(25f), Header("Players in Scene")] [SerializeField]
         private LocalPlayerController player; // Drag your player here
 
-        [SerializeField] public EnemyController[] enemies; // Array to store all enemies in the scene
+        //[SerializeField] public EnemyController[] enemies; // Array to store all enemies in the scene
 
         private bool _isPaused; // Variable to check if the game is paused
 
         private void Start()
         {
             // Remove all null elements from the array.
-            enemies = Array.FindAll(enemies, enemy => enemy != null);
+            //enemies = Array.FindAll(enemies, enemy => enemy != null);
         }
 
         private void Update()
@@ -51,8 +51,10 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
             if (player.CurrentHealth <= 0) // Check if the player is dead
                 GameOver(false);
-            else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
-                GameOver(true);
+            /*else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
+                GameOver(true);*/
+            /*else if(bossEnemy.CurrentHealth <= 0)
+                GameOver(true);*/
         }
 
         private void OnDestroy()
@@ -73,8 +75,8 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             {
                 loosePage.SetActive(true);
             }
-
-            Time.timeScale = 0f; // Freeze the game
+            PauseGame();
+            //Time.timeScale = 0f; // Freeze the game
         }
 
         // Call this function to resume the game
@@ -115,6 +117,11 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
             // Replace "MainMenuScene" with the name of your actual main menu scene
             SceneSystem.Instance.LoadScene(new SceneLoadRequest("UI", LoadSceneMode.Single));
+        }
+        
+        public void InstantiatePlayerAtEntrance(Vector3 position)
+        {
+            player.transform.position = position;
         }
 
         //Function to exit the game when the quit button is clicked
