@@ -103,6 +103,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             return projectile;
         }
 
+        private void OnDestroy()
+        {
+            _projectilePool.Dispose();
+        }
+
         public override void OnEquip()
         {
             base.OnEquip();
