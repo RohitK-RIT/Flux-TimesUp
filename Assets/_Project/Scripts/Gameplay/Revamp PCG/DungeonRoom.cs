@@ -87,7 +87,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         /// <summary>
         /// Shows the portal object when the room is cleared.
         /// </summary>
-        private void ShowPortal()
+        public void ShowPortal()
         {
             if (portal != null)
             {

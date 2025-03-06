@@ -1,3 +1,4 @@
+using System.Collections;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
@@ -22,13 +23,16 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             //check if the room if cleared of enemies and the TSM is 100
             if (_hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() && Mathf.Approximately(TimeStabilityMeter.Instance.TimeStability, TimeStabilityMeter.Instance.InitialTimeStability))
             {
-                if (_currentRoom != null)
+                TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
+                _currentRoom.ShowPortal();
+                
+                if(_currentRoom.CheckIfPlayerEntersPortal())
                 {
                     Destroy(_currentRoom.gameObject);
+                    //spawn boss room
+                    InstantiateBossRoom(bossRoom);
+                    _hasInstantiatedBossRoom = true;
                 }
-                _hasInstantiatedBossRoom = true;
-                //spawn boss room
-                InstantiateBossRoom(bossRoom);
             }
             
             //if the player enters the portal, generate a new room
