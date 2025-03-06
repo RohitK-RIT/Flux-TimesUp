@@ -1,24 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GroupManager : MonoBehaviour
+namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
 {
-    public static GroupManager Instance { get; private set; }
-
-    private void Awake()
+    public class GroupManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        public static GroupManager Instance { get; private set; }
 
-    public Vector3 GetHelperPosition(Vector3 enemyPosition, Vector3 playerPosition)
-    {
-        // Flanking logic
-        Vector3 directionToPlayer = (playerPosition - enemyPosition).normalized;
-        Vector3 flankingDirection = Vector3.Cross(directionToPlayer, Vector3.up); // Perpendicular direction for flanking
-        float flankDistance = 5f;
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
 
-        return playerPosition + (flankingDirection * flankDistance);
+        // Method to get helper flanking position
+        public Vector3 GetHelperPosition(Vector3 enemyPosition, Vector3 playerPosition)
+        {
+            // Flanking logic
+            Vector3 directionToPlayer = (playerPosition - enemyPosition).normalized;
+            Vector3 flankingDirection = Vector3.Cross(directionToPlayer, Vector3.up); // Perpendicular direction for flanking
+            float flankDistance = 5f;
+
+            return playerPosition + (flankingDirection * flankDistance);
+        }
     }
 }

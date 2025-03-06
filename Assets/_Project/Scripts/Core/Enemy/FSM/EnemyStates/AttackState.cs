@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -19,9 +20,11 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // Stop chasing the player when entering attack state
             _enemyInputController.StopChasing();
-            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            
+            // If the broadcaster re-enters the attack state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
             {
-                EnemyManager.Instance.broadcasterEnemy = null;
+                EnemyManager.Instance.BroadcasterEnemy = null;
             }
         }
 
@@ -31,9 +34,11 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             // Stop any ongoing attack actions
             _enemyInputController.StopAttack();
             _enemyInputController.StopChasing();
-            if (_enemyInputController.memberType == MemberType.Broadcaster)
+            
+            // If the broadcaster leaves the attack state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
             {
-                EnemyManager.Instance.broadcasterEnemy = null;
+                EnemyManager.Instance.BroadcasterEnemy = null;
             }
 
         }
@@ -41,11 +46,12 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
-            if (EnemyManager.Instance.helperEnemies.Count <=3 && _enemyInputController.EnemyHUD.enemy.CurrentHealth < 60)
+            // Broadcast message when health is low and helpers are less than 3
+            if (EnemyManager.Instance.HelperEnemies.Count <=3 && _enemyInputController.EnemyHUD.enemy.CurrentHealth < 60)
             {
                 
                 //memberType = MemberType.Broadcaster;
-                EnemyManager.Instance.EnemyDetected(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+                EnemyManager.Instance.BroadcastMessage(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
                 //BroadcastSystem.BroadcastMessage(_enemyInputController, BroadcastType.Detect);
             }
             

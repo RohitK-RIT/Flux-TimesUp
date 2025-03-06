@@ -1,121 +1,111 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Scripts.Core.Enemy;
-using _Project.Scripts.Core.Enemy.FSM;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
 {
-    public static EnemyManager Instance { get; private set; }
-
-    internal EnemyInputController broadcasterEnemy = null;
-    internal List<EnemyInputController> helperEnemies = new List<EnemyInputController>();
-    private List<EnemyInputController> allEnemies = new List<EnemyInputController>();
-
-    private void Awake()
+    public class EnemyManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        public static EnemyManager Instance { get; private set; }
 
-    public void RegisterEnemy(EnemyInputController enemy)
-    {
-        enemy.SetDefaultRole();
-    }
+        internal EnemyInputController BroadcasterEnemy; // Enemy that calls for help
+        internal List<EnemyInputController> HelperEnemies = new List<EnemyInputController>(); // List of helper enemies
+        private List<EnemyInputController> _allEnemies = new List<EnemyInputController>(); // List of all enemies
 
-    public void DeregisterEnemy(EnemyInputController enemy)
-    {
-        if (enemy == broadcasterEnemy)
+        private void Awake()
         {
-            broadcasterEnemy = null; 
-            AssignNewBroadcaster(); 
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
         }
-        helperEnemies.Remove(enemy);
-    }
 
-    public void EnemyDetected(EnemyInputController enemy, Vector3 playerPosition)
-    {
-        if (broadcasterEnemy == null) 
+        // Method to register all the enemies on awake
+        public void RegisterEnemy(EnemyInputController enemy)
         {
-            broadcasterEnemy = enemy;
-            enemy.memberType = MemberType.Broadcaster;
+            enemy.SetDefaultRole();
         }
-        BroadcastEnemyDetected(playerPosition);
-    }
 
-    private void BroadcastEnemyDetected(Vector3 playerPosition)
-    {
-        List<EnemyInputController> allEnemies = FindObjectsOfType<EnemyInputController>().ToList();
-
-        List<EnemyInputController> potentialHelpers = EnemyManager.Instance.GetEligibleHelpers(broadcasterEnemy, playerPosition);
-        // Filter out enemies outside engagement distance
-        // List<EnemyInputController> potentialHelpers = allEnemies
-        //     .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.engagementDistance)
-        //     .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
-        //     .Take(3) // Only take the 3 closest
-        //     .ToList();
-
-        helperEnemies.Clear();
-        ClearRoles();
-        helperEnemies.AddRange(potentialHelpers);
-
-        // foreach (var enemy in allEnemies)
-        // {
-        //     enemy.OnEnemyDetected(playerPosition);
-        // }
-        
-        foreach (var enemy in helperEnemies)
+        // Method to deregister all enemies on enemy death
+        public void DeregisterEnemy(EnemyInputController enemy)
         {
-            enemy.OnEnemyDetected(playerPosition);
-            enemy.EngagePlayer();
-        }
-    }
-    
-    
-
-    private void AssignNewBroadcaster()
-    {
-        if (helperEnemies.Count > 0)
-        {
-            broadcasterEnemy = helperEnemies[0];
-            helperEnemies.RemoveAt(0); 
-            BroadcastEnemyDetected(broadcasterEnemy.transform.position); // Rebroadcast the alert
-        }
-    }
-    
-    public void AssignHelper(EnemyInputController enemy)
-    {
-        // if (helperEnemies.Count < 3 && !helperEnemies.Contains(enemy))
-        // {
-        //     helperEnemies.Add(enemy);
-        //     enemy.memberType = MemberType.Helper;
-        // }
-        
-        enemy.memberType = MemberType.Helper;
-    }
-    
-    public List<EnemyInputController> GetEligibleHelpers(EnemyInputController broadcaster, Vector3 playerPosition)
-    {
-        // Filter out enemies outside engagement distance
-        List<EnemyInputController> potentialHelpers = allEnemies
-            .Where(e => e != broadcaster && e.memberType == MemberType.Standalone)
-            .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.engagementDistance)
-            .Where(e => e.EnemyHUD.enemy.CurrentHealth >= e.attackHealthThreshold)
-            .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
-            .Take(3) // Only take the 3 closest
-            .ToList();
-        
-        return potentialHelpers;
-    }
-    
-    public void ClearRoles()
-    {
-        foreach (var enemy in allEnemies)
-        {
-            if (enemy.memberType == MemberType.Helper)
+            if (enemy == BroadcasterEnemy)
             {
-                enemy.SetDefaultRole();
+                BroadcasterEnemy = null; 
+                AssignNewBroadcaster(); 
+            }
+            HelperEnemies.Remove(enemy);
+        }
+
+        //
+        public void BroadcastMessage(EnemyInputController enemy, Vector3 playerPosition)
+        {
+            if (BroadcasterEnemy == null) 
+            {
+                BroadcasterEnemy = enemy;
+                enemy.MemberType = MemberType.Broadcaster;
+            }
+            FindHelpers(playerPosition);
+        }
+
+        // Method to find helpers
+        private void FindHelpers(Vector3 playerPosition)
+        {
+            _allEnemies = FindObjectsOfType<EnemyInputController>().ToList();
+
+            List<EnemyInputController> potentialHelpers = EnemyManager.Instance.GetEligibleHelpers(BroadcasterEnemy, playerPosition);
+            
+            HelperEnemies.Clear();
+            ClearRoles();
+            HelperEnemies.AddRange(potentialHelpers);
+
+            foreach (var enemy in HelperEnemies)
+            {
+                enemy.AssignRoles(playerPosition);
+                enemy.EngagePlayer();
+            }
+        }
+    
+    
+        // Assign new broadcaster on broadcaster death
+        private void AssignNewBroadcaster()
+        {
+            if (HelperEnemies.Count > 0)
+            {
+                BroadcasterEnemy = HelperEnemies[0];
+                HelperEnemies.RemoveAt(0); 
+                FindHelpers(BroadcasterEnemy.transform.position); // Rebroadcast the alert
+            }
+        }
+    
+        // Method to assign helpers
+        public void AssignHelper(EnemyInputController enemy)
+        {
+            enemy.MemberType = MemberType.Helper;
+        }
+    
+        // Method to find potential helpers
+        private List<EnemyInputController> GetEligibleHelpers(EnemyInputController broadcaster, Vector3 playerPosition)
+        {
+            // Filter out enemies outside engagement distance
+            List<EnemyInputController> potentialHelpers = _allEnemies
+                .Where(e => e != broadcaster && e.MemberType == MemberType.Standalone)
+                .Where(e => Vector3.Distance(e.transform.position, playerPosition) <= e.EngagementDistance)
+                .Where(e => e.EnemyHUD.enemy.CurrentHealth >= e.AttackHealthThreshold)
+                .OrderBy(e => Vector3.Distance(e.transform.position, playerPosition))
+                .Take(3) // Only take the 3 closest
+                .ToList();
+        
+            return potentialHelpers;
+        }
+    
+        // Method to clear helper roles once they are removed from the helper list
+        private void ClearRoles()
+        {
+            foreach (var enemy in _allEnemies)
+            {
+                if (enemy.MemberType == MemberType.Helper)
+                {
+                    enemy.SetDefaultRole();
+                }
             }
         }
     }

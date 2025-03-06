@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum MemberType
+namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
 {
-    Broadcaster,
-    Helper,
-    Standalone
+    public enum MemberType
+    {
+        Broadcaster,
+        Helper,
+        Standalone
+    }
 }

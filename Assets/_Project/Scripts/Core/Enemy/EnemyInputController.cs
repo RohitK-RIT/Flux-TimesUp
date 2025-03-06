@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
@@ -67,13 +68,14 @@ namespace _Project.Scripts.Core.Enemy
         private WeaponController _weaponController;
 
         internal RangedWeapon RangedWeapon;
+
+        internal MemberType MemberType; // type of group member
+
+        internal float EngagementDistance = 30f; // distance between enemies that can come for help
         
-        [SerializeField] internal MemberType memberType = MemberType.Standalone; 
-        public float detectionRadius = 10f;
-        internal float engagementDistance = 30f;
-        private bool playerSpotted = false;
-        private Vector3 lastKnownPlayerPosition;
-        internal float attackHealthThreshold = 60;
+        private Vector3 _lastKnownPlayerPosition; // player's last known position
+        
+        internal float AttackHealthThreshold = 60;
 
         
         private void Awake()
@@ -148,7 +150,7 @@ namespace _Project.Scripts.Core.Enemy
         
 
         //Method to check if the player in present on the navmesh rooms
-        internal bool IsPlayerOnNavMesh()
+        private bool IsPlayerOnNavMesh()
         {
             NavMeshHit hit;
             // Ensure the ClosestPlayer object exists before proceeding.
@@ -375,7 +377,7 @@ namespace _Project.Scripts.Core.Enemy
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
             
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, engagementDistance);
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
 
             // Visualization of the field of view (cone)
             Gizmos.color = Color.yellow;
@@ -401,46 +403,35 @@ namespace _Project.Scripts.Core.Enemy
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
             IsPlayerOnNavMesh();
-            // if (FindPlayer() && EnemyManager.Instance.broadcasterEnemy == null)
-            // {
-            //     
-            //     //memberType = MemberType.Broadcaster;
-            //     EnemyManager.Instance.EnemyDetected(this, ClosestPlayer.transform.position);
-            // }
         }
         
         internal void EngagePlayer()
         {
-            if (memberType == MemberType.Helper)
+            if (MemberType == MemberType.Helper)
             {
-                Vector3 helperPos = GroupManager.Instance.GetHelperPosition(transform.position, lastKnownPlayerPosition);
+                Vector3 helperPos = GroupManager.Instance.GetHelperPosition(transform.position, _lastKnownPlayerPosition);
                 _isRoaming = false;
                 StartRoaming(helperPos);
             }
-            else if (memberType == MemberType.Broadcaster)
+            else if (MemberType == MemberType.Broadcaster)
             {
                 StartChasing();
             }
         }
         
-        public void OnEnemyDetected(Vector3 playerPos)
+        // Method to assign roles
+        public void AssignRoles(Vector3 playerPos)
         {
-            if (memberType == MemberType.Broadcaster) return;
-        
-            // lastKnownPlayerPosition = playerPos;
-            // if (Vector3.Distance(transform.position, playerPos) <= engagementDistance)
-            // {
-            //     playerSpotted = true;
-            //     memberType = MemberType.Helper;
-            //     EnemyManager.Instance.AssignHelper(this);
-            // }
+            if (MemberType == MemberType.Broadcaster) return;
+            
             EnemyManager.Instance.AssignHelper(this);
             
         }
         
+        // Method to set default roles
         public void SetDefaultRole()
         {
-            memberType = MemberType.Standalone;
+            MemberType = MemberType.Standalone;
         }
         
     }
