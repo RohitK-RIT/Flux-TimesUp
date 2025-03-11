@@ -152,7 +152,7 @@ namespace _Project.Scripts.UI
         private void UpdateTimeStabilityBar()
         {
             timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
-            timeStabilityBar.maxValue = TimeStabilityMeter.Instance.InitialTimeStability;
+            timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
             tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
             animator.SetBool(IsBlinking, false);
             if (timeStabilityBar.value < 50)

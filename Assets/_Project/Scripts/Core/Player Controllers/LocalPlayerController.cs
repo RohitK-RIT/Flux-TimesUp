@@ -10,7 +10,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// <summary>
     /// This class is responsible for handling the player's input.
     /// </summary>
-    [RequireComponent(typeof(LocalInputController), typeof(CameraController))]
+    [RequireComponent(typeof(LocalInputController), typeof(PlayerAimController))]
     public sealed class LocalPlayerController : PlayerController
     {
         /// <summary>
@@ -26,12 +26,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Component that handles the player's camera.
         /// </summary>
-        private CameraController _cameraController;
+        private PlayerAimController _playerAimController;
 
         // This will go in player info eventually.
         [SerializeField] private float aimSensitivity = 1f;
-        
-        //private bool hasPickedUpAnItem = false;
 
         protected override void Awake()
         {
@@ -39,7 +37,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Get the required components
             _localInputController = GetComponent<LocalInputController>();
-            _cameraController = GetComponent<CameraController>();
+            _playerAimController = GetComponent<PlayerAimController>();
         }
 
         protected override void Start()
@@ -48,10 +46,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Initialize the input controller and camera controller
             _localInputController.Initialize(this);
-            _cameraController.Initialize(this);
-
-            // Create a wallet for the player
-            //_walletID = CurrencySystem.Instance.CreateWallet();
+            _playerAimController.Initialize(this);
         }
 
         private void Update()
@@ -65,7 +60,7 @@ namespace _Project.Scripts.Core.Player_Controllers
                     CurrentPickupItem.OnItemEnterRange();
                 }
             }
-            else if(CurrentPickupItem != null)
+            else if (CurrentPickupItem != null)
             {
                 CurrentPickupItem.OnItemExitRange();
                 var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
@@ -77,6 +72,7 @@ namespace _Project.Scripts.Core.Player_Controllers
                         CurrentPickupItem.OnItemExitRange();
                     }
                 }
+
                 CurrentPickupItem = null;
             }
         }
@@ -95,7 +91,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
             _localInputController.OnReloadInput += Reload;
-            
+
             _localInputController.OnLootPickupInput += PickUpItem;
         }
 
@@ -113,7 +109,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
-            
+
             _localInputController.OnLootPickupInput -= PickUpItem;
         }
 
@@ -121,10 +117,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Update the player's look direction.
         /// </summary>
         /// <param name="lookInput">look input to the player</param>
-        private void SetLookInput(Vector2 lookInput)
-        {
-            _cameraController.LookInput = lookInput * aimSensitivity;
-        }
+        private void SetLookInput(Vector2 lookInput) { }
 
         /// <summary>
         /// Function to equip the player's ability.
@@ -158,20 +151,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         protected override void OnKillConfirmed(PlayerController enemyPlayer)
         {
             // Cast the enemyPlayer to an enemy controller
-            if (enemyPlayer is EnemyController enemyController)
-            {
-                
-            }
+            if (enemyPlayer is EnemyController enemyController) { }
         }
 
-        /// <summary>
-        /// Called when an enemy is hit.
-        /// </summary>
-        protected override void OnHitConfirmed(PlayerController enemyPlayer)
-        {
-            // Empty for now
-        }
-        
         private void PickUpItem()
         {
             if (CurrentPickupItem == null) return;

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
-using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -69,6 +69,14 @@ namespace _Project.Scripts.Core.Enemy
 
         internal RangedWeapon RangedWeapon;
 
+        internal MemberType MemberType; // type of group member
+
+        internal float EngagementDistance = 30f; // distance between enemies that can come for help
+        
+        private Vector3 _lastKnownPlayerPosition; // player's last known position
+        
+        internal float AttackHealthThreshold = 60;
+
         
         private void Awake()
         {
@@ -79,6 +87,11 @@ namespace _Project.Scripts.Core.Enemy
             _weaponController = GetComponent<WeaponController>();
             RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
 
+        }
+
+        private void Start()
+        {
+            EnemyManager.Instance.RegisterEnemy(this);
         }
 
         private void InitializeState()
@@ -132,11 +145,12 @@ namespace _Project.Scripts.Core.Enemy
         {
             // Disable AI logic
             _currentTarget = null;
+            EnemyManager.Instance.DeregisterEnemy(this);
         }
         
 
         //Method to check if the player in present on the navmesh rooms
-        internal bool IsPlayerOnNavMesh()
+        private bool IsPlayerOnNavMesh()
         {
             NavMeshHit hit;
             // Ensure the ClosestPlayer object exists before proceeding.
@@ -305,13 +319,13 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to make the enemy move towards roam position
-        private IEnumerator MoveToRoamPosition()
+        private IEnumerator MoveToRoamPosition(Vector3 targetPosition)
         {
             // Set flag to prevent multiple coroutines
             _isRoaming = true;
 
             // move enemy towards roam position
-            Enemy.SetDestination(RoamingPosition);
+            Enemy.SetDestination(targetPosition);
 
             while (Enemy.remainingDistance > 0.5f)
             {
@@ -338,11 +352,11 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to start the coroutine to move the enemy to roam position
-        internal void StartRoaming()
+        internal void StartRoaming(Vector3 targetPosition)
         {
             if (!_isRoaming)
             {
-                StartCoroutine(MoveToRoamPosition());
+                StartCoroutine(MoveToRoamPosition(targetPosition));
             }
         }
 
@@ -361,6 +375,9 @@ namespace _Project.Scripts.Core.Enemy
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
 
             // Visualization of the field of view (cone)
             Gizmos.color = Color.yellow;
@@ -387,5 +404,35 @@ namespace _Project.Scripts.Core.Enemy
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
             IsPlayerOnNavMesh();
         }
+        
+        internal void EngagePlayer()
+        {
+            if (MemberType == MemberType.Helper)
+            {
+                Vector3 helperPos = GroupManager.Instance.GetHelperPosition(transform.position, _lastKnownPlayerPosition);
+                _isRoaming = false;
+                StartRoaming(helperPos);
+            }
+            else if (MemberType == MemberType.Broadcaster)
+            {
+                StartChasing();
+            }
+        }
+        
+        // Method to assign roles
+        public void AssignRoles(Vector3 playerPos)
+        {
+            if (MemberType == MemberType.Broadcaster) return;
+            
+            EnemyManager.Instance.AssignHelper(this);
+            
+        }
+        
+        // Method to set default roles
+        public void SetDefaultRole()
+        {
+            MemberType = MemberType.Standalone;
+        }
+        
     }
 }
