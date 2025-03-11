@@ -43,7 +43,7 @@ namespace _Project.Scripts.Core.Enemy
         public void Reset()
         {
             currentHealth = Stats.maxHealth;
-            var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
+            var currentRangedWeapon = HandController.CurrentWeapon as RangedWeapon;
             if (!currentRangedWeapon) return;
             currentRangedWeapon.InitializeAmo();
             Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);

@@ -145,7 +145,7 @@ namespace _Project.Scripts.UI
         private void OnReloadDetected()
         {
             if (currentPromptIndex != 5) return;
-            if(_playerController.WeaponController.CurrentWeapon is RangedWeapon)
+            if(_playerController.HandController.CurrentWeapon is RangedWeapon)
                 NextPrompt(); // defeat all enemies prompt
         }
     }

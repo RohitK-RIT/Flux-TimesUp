@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -10,12 +9,12 @@ using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Character.Weapon_Controller
+namespace _Project.Scripts.Core.Character.Hand_Controller
 {
     /// <summary>
     /// Manages the player's weapons and abilities, allowing for weapon switching and ability usage.
     /// </summary>
-    public class WeaponController : CharacterComponent
+    public class HandController : CharacterComponent
     {
         public event Action OnWeaponSwitched;
         /// <summary>
@@ -71,7 +70,7 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
         /// </summary>
         public Ability CurrentAbility { get; private set; }
 
-        public static WeaponController Instance { get; set; }
+        public static HandController Instance { get; set; }
 
         [SerializeField] private bool hasPreMadeLoadout;
 

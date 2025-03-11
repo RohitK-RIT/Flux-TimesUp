@@ -21,7 +21,7 @@ namespace _Project.Scripts.Core.Weapons
 
         public void OnItemPickup()
         {
-            var currentWeapon = LevelSceneController.Instance.Player.WeaponController.CurrentWeapon;
+            var currentWeapon = LevelSceneController.Instance.Player.HandController.CurrentWeapon;
 
             switch (currentWeapon)
             {
@@ -40,7 +40,7 @@ namespace _Project.Scripts.Core.Weapons
                     break;
                 case MeleeWeapon meleeWeapon:
                     //add ammo to primary weapon
-                    var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
+                    var playerWeaponController = LevelSceneController.Instance.Player.HandController;
                     var primaryWeapon = playerWeaponController.Weapons[0] as RangedWeapon;
                     if (primaryWeapon != null) primaryWeapon.AddAmmo(ammo);
                     break;

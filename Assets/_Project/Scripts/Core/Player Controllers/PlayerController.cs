@@ -1,7 +1,7 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
 using _Project.Scripts.Core.Character.Animation;
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// <summary>
     /// Base class for player controllers.
     /// </summary>
-    [RequireComponent(typeof(MovementController), typeof(WeaponController), typeof(AnimationController))]
+    [RequireComponent(typeof(MovementController), typeof(HandController), typeof(AnimationController))]
     [RequireComponent(typeof(IKController))]
     public abstract class PlayerController : MonoBehaviour, IDamageable
     {
@@ -26,7 +26,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Property to access the weapon controller.
         /// </summary>
-        public WeaponController WeaponController { get; private set; }
+        public HandController HandController { get; private set; }
 
         /// <summary>
         /// Property to access the animation controller.
@@ -79,7 +79,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Get the MovementController, WeaponController and AnimationController component attached to the player
             MovementController = GetComponent<MovementController>();
-            WeaponController = GetComponent<WeaponController>();
+            HandController = GetComponent<HandController>();
             AnimationController = GetComponentInChildren<AnimationController>();
             IKController = GetComponent<IKController>();
         }
@@ -88,7 +88,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Initialize the player's movement, weapon controller and animation controller
             MovementController.Initialize(this);
-            WeaponController.Initialize(this);
+            HandController.Initialize(this);
             AnimationController.Initialize(this);
             IKController.Initialize(this);
 
@@ -111,12 +111,12 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <param name="direction">the number by which the weapon is supposed to switch</param>
         protected virtual void SwitchWeapon(int direction)
         {
-            WeaponController.SwitchWeapon(direction);
+            HandController.SwitchWeapon(direction);
         }
 
         protected virtual void Reload()
         {
-            WeaponController.ReloadWeapon();
+            HandController.ReloadWeapon();
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         protected void BeginAttack()
         {
-            WeaponController.BeginAttack();
+            HandController.BeginAttack();
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         protected void EndAttack()
         {
-            WeaponController.EndAttack();
+            HandController.EndAttack();
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
@@ -65,7 +65,7 @@ namespace _Project.Scripts.Core.Enemy
         
         private bool _hasSpawnedEnemies;
 
-        private WeaponController _weaponController;
+        private HandController _handController;
 
         internal RangedWeapon RangedWeapon;
 
@@ -84,8 +84,8 @@ namespace _Project.Scripts.Core.Enemy
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
-            _weaponController = GetComponent<WeaponController>();
-            RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
+            _handController = GetComponent<HandController>();
+            RangedWeapon = _handController.CurrentWeapon as RangedWeapon;
 
         }
 

@@ -124,7 +124,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         private void AbilityEquipped()
         {
-            WeaponController.OnAbilityEquipped();
+            HandController.OnAbilityEquipped();
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         public override void TakeDamage(Weapon weapon, float damageDealt)
         {
             // Check if the shield ability is active, if so, return false
-            var shield = WeaponController.CurrentAbility as ShieldAbility;
+            var shield = HandController.CurrentAbility as ShieldAbility;
             if (shield && shield.isAbilityActive)
                 return;
 

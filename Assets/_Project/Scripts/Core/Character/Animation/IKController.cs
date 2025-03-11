@@ -1,4 +1,4 @@
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Weapons.Melee;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -32,29 +32,29 @@ namespace _Project.Scripts.Core.Character.Animation
         /// </summary>
         private TwoBoneIKConstraint[] _handIKConstraints;
 
-        private WeaponController _weaponController;
+        private HandController _handController;
 
         private void Awake()
         {
             _rigBuilder = GetComponentInChildren<RigBuilder>();
             _handIKConstraints = gunIKRig.GetComponentsInChildren<TwoBoneIKConstraint>();
 
-            _weaponController = GetComponent<WeaponController>();
+            _handController = GetComponent<HandController>();
         }
 
         private void OnEnable()
         {
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched += UpdateIKPoints;
+                _handController.OnWeaponSwitched += UpdateIKPoints;
             }
         }
 
         private void OnDisable()
         {
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched -= UpdateIKPoints;
+                _handController.OnWeaponSwitched -= UpdateIKPoints;
             }
         }
 
@@ -63,7 +63,7 @@ namespace _Project.Scripts.Core.Character.Animation
         /// </summary>
         private void UpdateIKPoints()
         {
-            var weapon = _weaponController.CurrentWeapon;
+            var weapon = _handController.CurrentWeapon;
             if (!gunIKRig || !weapon)
             {
                 Debug.LogError("Rig root or prefab is not assigned!");

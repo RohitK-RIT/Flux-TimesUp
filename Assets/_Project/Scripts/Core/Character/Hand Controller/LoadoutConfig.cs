@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Character.Weapon_Controller
+namespace _Project.Scripts.Core.Character.Hand_Controller
 {
     [Serializable]
     public struct LoadoutConfig
