@@ -1,5 +1,6 @@
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,6 +25,8 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         private bool _isPaused; // Variable to check if the game is paused
         
         public EnemyController BossEnemy { get; set; }
+        
+        [SerializeField] public RandomRoomGeneration randomRoomGeneration;
 
         private void Update()
         {
