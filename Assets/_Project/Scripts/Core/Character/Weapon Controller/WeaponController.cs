@@ -198,6 +198,8 @@ namespace _Project.Scripts.Core.Character.Weapon_Controller
                 Debug.LogError("Ability not found");
                 return;
             }
+            if(CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
+                return;
 
             CurrentWeapon = CurrentAbility;
 

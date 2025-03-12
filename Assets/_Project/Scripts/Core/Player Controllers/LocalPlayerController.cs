@@ -137,7 +137,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Check if the shield ability is active, if so, return false
             var shield = WeaponController.CurrentAbility as ShieldAbility;
-            if (shield && shield.IsActive)
+            if (shield && shield.isAbilityActive)
                 return;
 
             // If the shield ability is not active, take damage

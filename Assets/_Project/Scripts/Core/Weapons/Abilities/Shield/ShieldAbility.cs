@@ -12,11 +12,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         public override AbilityType Type => AbilityType.Shield;
 
         /// <summary>
-        /// Gets a value indicating whether the shield is active.
-        /// </summary>
-        public bool IsActive { get; private set; }
-
-        /// <summary>
         /// The stats for the shield ability.
         /// </summary>
         [SerializeField] private ShieldAbilityStats stats;
@@ -63,16 +58,16 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// </summary>
         private void Shield()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
 
             SetShieldVisual(true);
-            IsActive = true;
-            IsAbilityActive = true;
+            isAbilityActive = true;
             CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Duration));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>
@@ -84,9 +79,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            IsActive = false;
+            isAbilityActive = false;
             SetShieldVisual(false);
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

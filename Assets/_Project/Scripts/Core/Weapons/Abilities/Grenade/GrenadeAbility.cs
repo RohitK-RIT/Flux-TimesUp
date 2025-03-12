@@ -24,12 +24,12 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         /// </summary>
         private void UseGrenadeAbility()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
-            IsAbilityActive = true;
+            isAbilityActive = true;
 
             var grenadeInstance = Instantiate(grenade, transform.position, Quaternion.identity);
             
@@ -39,6 +39,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             grenadeInstance.ThrowGrenade(forceDirection, this);
             
             CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Cooldown));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
         
         /// <summary>
@@ -50,7 +51,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         protected override IEnumerator OnAttack()
