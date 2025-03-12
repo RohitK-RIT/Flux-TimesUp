@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
 {
@@ -24,7 +25,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         /// <summary>
         /// Indicates if the ability is active.
         /// </summary>
-        protected bool IsAbilityActive;
+        public bool isAbilityActive;
 
         /// <summary>
         /// Indicates if the ability has been used.
@@ -57,7 +58,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             _isCooldownActive = true;
             yield return new WaitForSeconds(cooldown); // Wait for the cooldown period
             _isCooldownActive = false;
-            IsAbilityActive = false; // Allow a new attack after cooldown
+            isAbilityActive = false; // Allow a new attack after cooldown
             Debug.Log("Ability is on cooldown!!");
         }
     }
