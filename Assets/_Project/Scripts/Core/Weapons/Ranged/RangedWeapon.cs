@@ -161,7 +161,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             IsTriggerPulled = true;
             StartFiring();
-            // base.BeginUse();
         }
 
 
@@ -213,19 +212,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             StopCoroutine(_reloadCoroutine);
             _reloadCoroutine = null;
-        }
-
-        /// <summary>
-        /// Coroutine for attacking.
-        /// </summary>
-        /// <returns></returns>
-        protected override IEnumerator OnAttack()
-        {
-            // Find a fire mode strategy and wait for it to finish, else show an error.
-            if (_currentFiringPin != null)
-                yield return _currentFiringPin.Fire(stats, FireProjectile);
-            else
-                Debug.LogError($"No fire mode set for {stats.WeaponName}", stats);
         }
 
         public override IDamageable.DamageInfo GetDamageInfo()

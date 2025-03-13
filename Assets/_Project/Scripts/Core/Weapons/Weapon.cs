@@ -1,4 +1,3 @@
-using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
@@ -12,20 +11,10 @@ namespace _Project.Scripts.Core.Weapons
     public abstract class Weapon : MonoBehaviour, IHandItem
     {
         /// <summary>
-        /// Coroutine for attacking.
-        /// </summary>
-        protected Coroutine AttackCoroutine;
-
-        /// <summary>
-        /// Is the weapon currently attacking.
-        /// </summary>
-        protected bool Attacking { get; private set; }
-
-        /// <summary>
         /// Current player controller.
         /// </summary>
         public PlayerController CurrentPlayerController { get; private set; }
-        
+
         public abstract string WeaponID { get; }
 
         /// <summary>
@@ -60,35 +49,12 @@ namespace _Project.Scripts.Core.Weapons
         /// <summary>
         /// Start attacking.
         /// </summary>
-        public virtual void BeginUse()
-        {
-            // End the previous attack if it's still running
-            EndUse();
-
-            Attacking = true;
-
-            // Start the new attack
-            AttackCoroutine = StartCoroutine(OnAttack());
-        }
+        public abstract void BeginUse();
 
         /// <summary>
         /// End attacking.
         /// </summary>
-        public virtual void EndUse()
-        {
-            // End the previous attack if it's still running
-            if (AttackCoroutine != null)
-                StopCoroutine(AttackCoroutine);
-
-            AttackCoroutine = null;
-
-            Attacking = false;
-        }
-
-        /// <summary>
-        /// Coroutine for attacking.
-        /// </summary>
-        protected abstract IEnumerator OnAttack();
+        public abstract void EndUse();
 
         /// <summary>
         /// Get the damage of the weapon.
