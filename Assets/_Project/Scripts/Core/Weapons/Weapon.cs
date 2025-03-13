@@ -1,4 +1,6 @@
 using System.Collections;
+using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
-    public abstract class Weapon : MonoBehaviour
+    public abstract class Weapon : MonoBehaviour, IHandItem
     {
         /// <summary>
         /// Coroutine for attacking.
@@ -33,7 +35,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
-            gameObject.layer = currentPlayerController.gameObject.layer;
+            IHandItem.SetLayerRecursive(gameObject, currentPlayerController.gameObject.layer);
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            gameObject.layer = LayerMask.NameToLayer("Default");
+            IHandItem.SetLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
         }
 
         /// <summary>
@@ -58,10 +60,10 @@ namespace _Project.Scripts.Core.Weapons
         /// <summary>
         /// Start attacking.
         /// </summary>
-        public virtual void BeginAttack()
+        public virtual void BeginUse()
         {
             // End the previous attack if it's still running
-            EndAttack();
+            EndUse();
 
             Attacking = true;
 
@@ -72,7 +74,7 @@ namespace _Project.Scripts.Core.Weapons
         /// <summary>
         /// End attacking.
         /// </summary>
-        public virtual void EndAttack()
+        public virtual void EndUse()
         {
             // End the previous attack if it's still running
             if (AttackCoroutine != null)
@@ -92,10 +94,6 @@ namespace _Project.Scripts.Core.Weapons
         /// Get the damage of the weapon.
         /// </summary>
         /// <returns>damage dealt by the weapon</returns>
-        public virtual float GetDamage()
-        {
-            // TODO: Implement damage calculation in base classes
-            return 0f;
-        }
+        public abstract IDamageable.DamageInfo GetDamageInfo();
     }
 }

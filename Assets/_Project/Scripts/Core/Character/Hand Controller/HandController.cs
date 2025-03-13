@@ -22,11 +22,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         [SerializeField] private Transform weaponParent;
 
-        /// <summary>
-        /// The currently equipped weapon.  
-        /// </summary>
-        [SerializeField] private Weapon currentWeapon;
-
         ///<summary>
         /// Property to access the weapons.
         /// </summary>
@@ -40,27 +35,27 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// Gets or sets the current weapon. Deactivates the previous weapon and activates the new one.
         /// </summary>
-        public Weapon CurrentWeapon
+        public IHandItem CurrentItem
         {
-            get => currentWeapon;
+            get => _currentItem;
             private set
             {
-                if (!value)
+                if (value == null)
                 {
-                    Debug.LogError("Weapon not found");
+                    Debug.LogError("Item not found");
                     return;
                 }
 
-                if (currentWeapon)
+                if (_currentItem != null)
                 {
-                    currentWeapon.OnUnequip();
-                    currentWeapon.gameObject.SetActive(false);
+                    _currentItem.OnUnequip();
+                    _currentItem.gameObject.SetActive(false);
                 }
 
-                currentWeapon = value;
+                _currentItem = value;
 
-                currentWeapon.gameObject.SetActive(true);
-                currentWeapon.OnEquip();
+                _currentItem.gameObject.SetActive(true);
+                _currentItem.OnEquip();
                 OnWeaponSwitched?.Invoke();
             }
         }
@@ -70,14 +65,18 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public Ability CurrentAbility { get; private set; }
 
-        public static HandController Instance { get; set; }
-
         [SerializeField] private bool hasPreMadeLoadout;
 
         /// <summary>
         /// The index of the current weapon.
         /// </summary>
         private int _currentWeaponIndex;
+        
+
+        /// <summary>
+        /// The currently equipped weapon.  
+        /// </summary>
+        private IHandItem _currentItem;
 
         public override void Initialize(PlayerController playerController)
         {
@@ -101,8 +100,10 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             foreach (var weapon in weapons)
                 weapon?.OnPickup(PlayerController);
 
-            CurrentWeapon = weapons[_currentWeaponIndex];
+            CurrentItem = weapons[_currentWeaponIndex];
         }
+        
+        
 
         /// <summary>
         /// Loads an ability by its type.
@@ -184,7 +185,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             else if (_currentWeaponIndex >= weapons.Length)
                 _currentWeaponIndex = 0;
 
-            CurrentWeapon = weapons[_currentWeaponIndex];
+            CurrentItem = weapons[_currentWeaponIndex];
         }
 
         /// <summary>
@@ -200,7 +201,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             if(CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
                 return;
 
-            CurrentWeapon = CurrentAbility;
+            CurrentItem = CurrentAbility;
 
             StartCoroutine(HandleWeaponSwitch(CurrentAbility));
         }
@@ -210,8 +211,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void ReloadWeapon()
         {
-            if (currentWeapon is RangedWeapon rangedWeapon)
-                rangedWeapon.Reload();
+            if (_currentItem is RangedWeapon rangedWeapon)
+                rangedWeapon.OnReload();
         }
 
         /// <summary>
@@ -223,7 +224,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         {
             // Handle weapon switch
             yield return new WaitUntil(() => ability.Used);
-            CurrentWeapon = weapons[_currentWeaponIndex];
+            CurrentItem = weapons[_currentWeaponIndex];
         }
 
         /// <summary>
@@ -231,7 +232,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void BeginAttack()
         {
-            CurrentWeapon.BeginAttack();
+            CurrentItem.BeginUse();
         }
 
         /// <summary>
@@ -239,7 +240,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void EndAttack()
         {
-            CurrentWeapon.EndAttack();
+            CurrentItem.EndUse();
         }
 
         /// <summary>

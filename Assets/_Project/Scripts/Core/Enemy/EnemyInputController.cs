@@ -85,7 +85,7 @@ namespace _Project.Scripts.Core.Enemy
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
             _handController = GetComponent<HandController>();
-            RangedWeapon = _handController.CurrentWeapon as RangedWeapon;
+            RangedWeapon = _handController.CurrentItem as RangedWeapon;
 
         }
 

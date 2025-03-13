@@ -59,7 +59,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Last time the weapon was fired.
         /// </summary>
         private DateTime _lastFireTime = DateTime.MinValue;
-        
+
         /// <summary>
         /// Fire the weapon.
         /// </summary>
@@ -69,13 +69,13 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             // Wait for the attack speed and then fire the bullet.
             yield return new WaitWhile(() => (DateTime.Now - _lastFireTime).Seconds < 1 / stats.AttackSpeed);
-            
+
             // Keep on firing until the coroutine is stopped.
             while (true)
             {
                 yield return InternalFire(stats, fireAction);
                 _lastFireTime = DateTime.Now;
-                
+
                 yield return new WaitForSeconds(1 / stats.AttackSpeed);
             }
         }
@@ -91,7 +91,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             yield break;
         }
     }
-    
+
     /// <summary>
     /// Burst fire mode strategy.
     /// </summary>
@@ -107,6 +107,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             // Fire the weapon for the amount of bursts.
             for (var burstNumber = 0; burstNumber < stats.BurstAmount; burstNumber++)
             {
+                Debug.Log("Firing burst");
                 fireAction?.Invoke();
                 yield return new WaitForSeconds(stats.BurstDuration / stats.BurstAmount);
             }

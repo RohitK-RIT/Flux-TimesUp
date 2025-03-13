@@ -84,15 +84,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         }
 
         /// <summary>
-        /// Overrides the OnAttack method to provide custom attack behavior for the shield ability.
-        /// </summary>
-        /// <returns>An IEnumerator for the coroutine.</returns>
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
-        }
-
-        /// <summary>
         /// Sets the visual representation of the shield.
         /// </summary>
         /// <param name="value">A boolean value indicating whether to activate or deactivate the shield visual.</param>

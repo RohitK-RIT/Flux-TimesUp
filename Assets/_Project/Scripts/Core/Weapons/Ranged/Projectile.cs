@@ -35,6 +35,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private Rigidbody _rigidbody;
 
+        /// <summary>
+        /// Damage info of the projectile.
+        /// </summary>
+        private IDamageable.DamageInfo _damageInfo;
+
         private void Awake()
         {
             // Get the rigidbody component.
@@ -49,6 +54,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             // Set the weapon that fired the projectile.
             _weapon = weapon;
+            _damageInfo = weapon.GetDamageInfo();
 
             // Set the projectile to active and deactivate the hit effect.
             bulletMesh.SetActive(true);
@@ -58,7 +64,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             var weaponFriendlyLayer = weapon.CurrentPlayerController.FriendlyLayer;
             _rigidbody.includeLayers = ~weaponFriendlyLayer;
             _rigidbody.excludeLayers = weaponFriendlyLayer;
-            
+
             // Set the projectile's velocity.
             _rigidbody.velocity = transform.forward * weapon.Stats.ProjectileSpeed;
         }
@@ -67,7 +73,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         {
             // Check if the object that the projectile collided with is damageable.
             if (other.gameObject.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(_weapon, _weapon.GetDamage());
+                damageable.TakeDamage(_damageInfo);
 
             // Stop the projectile and deactivate the mesh.
             _rigidbody.velocity = Vector3.zero;

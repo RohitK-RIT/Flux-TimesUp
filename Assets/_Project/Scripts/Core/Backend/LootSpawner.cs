@@ -1,8 +1,8 @@
 using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,10 +26,10 @@ namespace _Project.Scripts.Core.Backend
         /// <summary>
         /// Function to spawn loot on Player Death.
         /// </summary>
-        /// <param name="killingplayer"></param>
-        /// <param name="playerkilled"></param>
-        /// <param name="weaponkilledby"></param>
-        private void OnPlayerDeath(PlayerController killingplayer, PlayerController playerkilled, Weapon weaponkilledby)
+        /// <param name="killingplayer">the attacker</param>
+        /// <param name="playerkilled">the dead player</param>
+        /// <param name="itemKilledBy">item killed by</param>
+        private void OnPlayerDeath(PlayerController killingplayer, PlayerController playerkilled, IHandItem itemKilledBy)
         {
             if (killingplayer != LevelSceneController.Instance.Player)
                 return;

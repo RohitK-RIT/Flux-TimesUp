@@ -55,10 +55,5 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
         }
-
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
-        }
     }
 }

@@ -87,7 +87,7 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private void HandSwitched()
         {
-            if (_handController.CurrentWeapon is MeleeWeapon meleeWeapon)
+            if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
             {
                 _hasMeleeWeapon = true;
                 animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed);

@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Ranged;
@@ -43,7 +44,7 @@ namespace _Project.Scripts.Core.Enemy
         public void Reset()
         {
             currentHealth = Stats.maxHealth;
-            var currentRangedWeapon = HandController.CurrentWeapon as RangedWeapon;
+            var currentRangedWeapon = HandController.CurrentItem as RangedWeapon;
             if (!currentRangedWeapon) return;
             currentRangedWeapon.InitializeAmo();
             Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
@@ -51,10 +52,10 @@ namespace _Project.Scripts.Core.Enemy
             Debug.Log("Enemy reset to initial state.");
         }
 
-        protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
+        protected override void Die(PlayerController enemyPlayer, IHandItem itemKilledBy)
         {
             gameObject.SetActive(false);
-            base.Die(enemyPlayer, weaponKilledBy);
+            base.Die(enemyPlayer, itemKilledBy);
         }
     }
 }

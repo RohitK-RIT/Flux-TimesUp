@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -130,10 +131,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Overrides the TakeDamage method to include shield ability check.
         /// </summary>
-        /// <param name="weapon"></param>
         /// <param name="damageDealt"></param>
         /// <returns>if the player is dead</returns>
-        public override void TakeDamage(Weapon weapon, float damageDealt)
+        public override void TakeDamage(IDamageable.DamageInfo damageDealt)
         {
             // Check if the shield ability is active, if so, return false
             var shield = HandController.CurrentAbility as ShieldAbility;
@@ -141,17 +141,7 @@ namespace _Project.Scripts.Core.Player_Controllers
                 return;
 
             // If the shield ability is not active, take damage
-            base.TakeDamage(weapon, damageDealt);
-        }
-
-        /// <summary>
-        /// Called when an enemy is killed.
-        /// </summary>
-        /// <param name="enemyPlayer"></param>
-        protected override void OnKillConfirmed(PlayerController enemyPlayer)
-        {
-            // Cast the enemyPlayer to an enemy controller
-            if (enemyPlayer is EnemyController enemyController) { }
+            base.TakeDamage(damageDealt);
         }
 
         private void PickUpItem()

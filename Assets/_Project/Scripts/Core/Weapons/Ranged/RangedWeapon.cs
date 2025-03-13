@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -11,7 +13,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     /// <summary>
     /// Ranged weapon class.
     /// </summary>
-    public sealed class RangedWeapon : Weapon
+    public sealed class RangedWeapon : Weapon, IHandItem
     {
         /// <summary>
         /// Weapon stats.
@@ -38,27 +40,33 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         ///<summary>
         /// Property to check if the weapon is currently reloading.
         /// </summary>
-        public bool IsReloading => _reloading;
+        public bool IsReloading => _reloadCoroutine != null;
 
-        /// <summary>
-        /// Is the weapon currently reloading.
-        /// </summary>
-        private bool _reloading;
+        public bool IsFiring => _fireCoroutine != null;
 
-        /// <summary>
-        /// Recoil factor.
-        /// </summary>
-        private float _recoilFactor;
+        public bool IsTriggerPulled { get; private set; }
 
         /// <summary>
         /// Current fire mode.
         /// </summary>
-        private FireModes _currentFireMode;
+        public FireModes CurrentFireMode
+        {
+            get => _currentFireMode;
+            private set
+            {
+                if (value != _currentFireMode && _fireModeStrategies.TryGetValue(value, out var firingPin))
+                    _currentFiringPin = firingPin;
+            }
+        }
 
         /// <summary>
         /// Dictionary of fire mode strategies.
         /// </summary>
         private Dictionary<FireModes, FiringPin> _fireModeStrategies;
+
+        private FiringPin _currentFiringPin;
+
+        private FireModes _currentFireMode;
 
         /// <summary>
         /// Object pool for projectiles.
@@ -70,6 +78,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private Coroutine _reloadCoroutine;
 
+        private Coroutine _fireCoroutine;
+
         private void Start()
         {
             // Initialize the dictionary of fire mode strategies
@@ -78,7 +88,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 _fireModeStrategies.TryAdd(mode, FiringPin.GetFiringPin(mode));
 
             // Set the default fire mode and magazine count.
-            _currentFireMode = _fireModeStrategies.First().Key;
+            CurrentFireMode = _fireModeStrategies.First().Key;
             InitializeAmo();
 
             // Initialize the projectile pool.
@@ -113,7 +123,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             base.OnEquip();
 
             if (CurrentAmmo == 0)
-                Reload();
+                StartReloading();
         }
 
 
@@ -122,10 +132,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             base.OnUnequip();
 
             if (IsReloading)
-            {
-                StopCoroutine(_reloadCoroutine);
-                _reloading = false;
-            }
+                StopReloading();
         }
 
         /// <summary>
@@ -134,11 +141,12 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         public void SwitchFireMode()
         {
             // End the previous attack if it's still running
-            EndAttack();
+            if (IsFiring)
+                StopCoroutine(_fireCoroutine);
 
             // Set the new fire mode
-            var indexOf = (Array.IndexOf(stats.FireModes, _currentFireMode) + 1) % stats.FireModes.Length;
-            _currentFireMode = stats.FireModes[indexOf];
+            var indexOf = (Array.IndexOf(stats.FireModes, CurrentFireMode) + 1) % stats.FireModes.Length;
+            CurrentFireMode = stats.FireModes[indexOf];
         }
 
         public override string WeaponID => stats.WeaponID;
@@ -146,15 +154,65 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// <summary>
         /// Start attacking.
         /// </summary>
-        public override void BeginAttack()
+        public override void BeginUse()
         {
             // If the weapon is reloading, don't start attacking.
-            if (_reloading) return;
+            if (IsReloading) return;
 
-            base.BeginAttack();
+            IsTriggerPulled = true;
+            StartFiring();
+            // base.BeginUse();
+        }
 
-            // Reset the recoil factor.
-            _recoilFactor = 0;
+
+        public override void EndUse()
+        {
+            IsTriggerPulled = false;
+            StopFiring();
+        }
+
+        public void OnReload()
+        {
+            StopFiring();
+            StartReloading();
+        }
+
+        private void StartFiring()
+        {
+            if (IsFiring)
+                return;
+
+            if (_currentFiringPin != null)
+                _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
+        }
+
+        private void StopFiring()
+        {
+            if (!IsFiring)
+                return;
+
+            StopCoroutine(_fireCoroutine);
+            _fireCoroutine = null;
+        }
+
+        private void StartReloading()
+        {
+            if (CurrentAmmo == stats.MagazineSize || MaxAmmo == 0)
+                return;
+
+            if (IsReloading)
+                return;
+
+            _reloadCoroutine = StartCoroutine(ReloadCoroutine());
+        }
+
+        private void StopReloading()
+        {
+            if (!IsReloading)
+                return;
+
+            StopCoroutine(_reloadCoroutine);
+            _reloadCoroutine = null;
         }
 
         /// <summary>
@@ -164,16 +222,15 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         protected override IEnumerator OnAttack()
         {
             // Find a fire mode strategy and wait for it to finish, else show an error.
-            if (_fireModeStrategies.TryGetValue(_currentFireMode, out var strategy))
-                yield return strategy.Fire(stats, FireProjectile);
+            if (_currentFiringPin != null)
+                yield return _currentFiringPin.Fire(stats, FireProjectile);
             else
                 Debug.LogError($"No fire mode set for {stats.WeaponName}", stats);
         }
 
-        public override float GetDamage()
+        public override IDamageable.DamageInfo GetDamageInfo()
         {
-            // TODO: Implement era specific damage calculation
-            return stats.Damage;
+            return new IDamageable.DamageInfo(stats.Damage, this);
         }
 
         /// <summary>
@@ -191,22 +248,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             projectile.gameObject.SetActive(true);
             projectile.OnHit += theProjectile => { _projectilePool.Release(theProjectile); };
 
-            if (--CurrentAmmo <= 0)
-                Reload();
-        }
-
-        /// <summary>
-        /// Reload the weapon.
-        /// </summary>
-        public void Reload()
-        {
-            if (CurrentAmmo == stats.MagazineSize || _reloading || MaxAmmo == 0)
+            if (--CurrentAmmo > 0)
                 return;
 
-            if (AttackCoroutine != null)
-                StopCoroutine(AttackCoroutine);
-
-            _reloadCoroutine = StartCoroutine(ReloadCoroutine());
+            StopFiring();
+            StartReloading();
         }
 
         /// <summary>
@@ -214,23 +260,15 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private IEnumerator ReloadCoroutine()
         {
-            if (MaxAmmo == 0)
-                yield break;
-
-            if (AttackCoroutine != null)
-                StopCoroutine(AttackCoroutine);
-
             // Wait for the reload time and then refill the magazine.
-            _reloading = true;
             yield return new WaitForSeconds(stats.ReloadTime);
 
             CurrentAmmo = math.min(stats.MagazineSize, MaxAmmo);
             MaxAmmo -= CurrentAmmo;
 
-            _reloading = false;
-
-            if (Attacking)
-                BeginAttack();
+            _reloadCoroutine = null;
+            if (IsTriggerPulled)
+                StartFiring();
         }
 
         /// <summary>
