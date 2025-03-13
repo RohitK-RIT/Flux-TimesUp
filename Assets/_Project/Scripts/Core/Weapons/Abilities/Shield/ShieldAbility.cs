@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
 
@@ -32,6 +33,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
             _shieldVisual = Instantiate(shieldVisualPrefab, currentPlayerController.transform);
+            IHandItem.SetLayerRecursive(_shieldVisual.gameObject, CurrentPlayerController.FriendlyLayer);
             SetShieldVisual(false);
         }
 
