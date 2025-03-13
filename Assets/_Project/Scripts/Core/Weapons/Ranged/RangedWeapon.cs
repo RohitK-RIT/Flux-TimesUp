@@ -49,12 +49,12 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// <summary>
         /// Current fire mode.
         /// </summary>
-        public FireModes CurrentFireMode
+        private FireModes CurrentFireMode
         {
             get => _currentFireMode;
-            private set
+            set
             {
-                if (value != _currentFireMode && _fireModeStrategies.TryGetValue(value, out var firingPin))
+                if (_fireModeStrategies.TryGetValue(value, out var firingPin))
                     _currentFiringPin = firingPin;
             }
         }
