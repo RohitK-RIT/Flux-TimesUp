@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
@@ -24,7 +25,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
-            IHandItem.SetLayerRecursive(gameObject, currentPlayerController.gameObject.layer);
+            gameObject.SetLayerRecursively(currentPlayerController.gameObject.layer);
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            IHandItem.SetLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
+            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
         }
 
         /// <summary>

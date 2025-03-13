@@ -1,4 +1,5 @@
-﻿using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Helper;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
 using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Character.Hand_Controller;
@@ -96,6 +97,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
+            gameObject.SetLayerRecursively(FriendlyLayer);
         }
 
         /// <summary>

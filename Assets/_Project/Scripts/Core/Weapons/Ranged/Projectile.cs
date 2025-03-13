@@ -1,5 +1,7 @@
 ﻿using System;
+using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Ranged
@@ -62,7 +64,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             // Set the projectile's collision layers.
             var weaponFriendlyLayer = weapon.CurrentPlayerController.FriendlyLayer;
-            _rigidbody.includeLayers = ~weaponFriendlyLayer;
+            gameObject.SetLayerRecursively(weaponFriendlyLayer);
             _rigidbody.excludeLayers = weaponFriendlyLayer;
 
             // Set the projectile's velocity.
@@ -83,6 +85,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void OnParticleSystemStopped()
         {
+            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
             // Projectile has completed the hit.
             OnHit?.Invoke(this);
         }

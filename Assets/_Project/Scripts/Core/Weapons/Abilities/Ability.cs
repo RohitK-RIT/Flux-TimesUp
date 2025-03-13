@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
@@ -40,13 +41,13 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
-            IHandItem.SetLayerRecursive(gameObject, currentPlayerController.FriendlyLayer);
+            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayer);
         }
 
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            IHandItem.SetLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
+            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
         }
 
         public virtual void BeginUse() { }
