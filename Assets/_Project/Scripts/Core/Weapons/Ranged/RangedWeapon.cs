@@ -138,7 +138,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// <summary>
         /// Cycle through the allowed fire modes.
         /// </summary>
-        public void SwitchFireMode()
+        public void OnSwitchFireMode()
         {
             // End the previous attack if it's still running
             if (IsFiring)
