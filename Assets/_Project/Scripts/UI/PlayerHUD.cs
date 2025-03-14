@@ -1,4 +1,5 @@
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
@@ -48,6 +49,8 @@ namespace _Project.Scripts.UI
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private TMP_Text tmsValueText;
 
+        [SerializeField] private TMP_Text currentRoomText;
+
         //private Ability currentAbility;
 
         private void Start()
@@ -72,6 +75,7 @@ namespace _Project.Scripts.UI
             UpdateAmmoDisplay();
             UpdateReloadingText();
             UpdateLoadoutInfo();
+            //currentRoomText.text = LevelSceneController.Instance.randomRoomGeneration.CurrentRoom.name + player.transform.position;
         }
         
         public void ShowAbilityHUD(AbilityType abilityType)
