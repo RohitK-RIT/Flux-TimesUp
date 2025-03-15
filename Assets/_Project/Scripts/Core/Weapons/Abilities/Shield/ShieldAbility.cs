@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using _Project.Scripts.Core.Backend.Helper;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
 
@@ -32,6 +33,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
             _shieldVisual = Instantiate(shieldVisualPrefab, currentPlayerController.transform);
+            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
             SetShieldVisual(false);
         }
 
@@ -81,15 +83,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
             Debug.Log("Ability deactivated!!");
             isAbilityActive = false;
             SetShieldVisual(false);
-        }
-
-        /// <summary>
-        /// Overrides the OnAttack method to provide custom attack behavior for the shield ability.
-        /// </summary>
-        /// <returns>An IEnumerator for the coroutine.</returns>
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
         }
 
         /// <summary>

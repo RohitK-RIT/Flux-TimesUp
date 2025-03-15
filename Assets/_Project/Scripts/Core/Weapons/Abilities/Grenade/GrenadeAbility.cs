@@ -10,15 +10,23 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
     {
         // Property to reference Grenade Ability stats.
         public GrenadeAbilityStats Stats => stats;
-        
+
         /// <summary>
         /// The stats for the heal ability.
         /// </summary>
         [SerializeField] private GrenadeAbilityStats stats;
+
         public override AbilityType Type => AbilityType.Grenades;
 
         [SerializeField] private Grenade grenade;
-        
+
+        public override void BeginUse()
+        {
+            UseGrenadeAbility();
+            Used = true;
+        }
+
+
         /// <summary>
         /// Function to use grenade ability.
         /// </summary>
@@ -29,6 +37,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
+
             isAbilityActive = true;
 
             var grenadeInstance = Instantiate(grenade, transform.position, Quaternion.identity);
@@ -41,7 +50,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Cooldown));
             CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
-        
+
         /// <summary>
         /// Coroutine to deactivate the ability after a certain time.
         /// </summary>
@@ -51,13 +60,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-        }
-
-        protected override IEnumerator OnAttack()
-        {
-            UseGrenadeAbility();
-            Used = true;
-            yield break;
         }
     }
 }

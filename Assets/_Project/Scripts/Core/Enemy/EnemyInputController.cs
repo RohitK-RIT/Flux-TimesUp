@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
@@ -56,37 +56,35 @@ namespace _Project.Scripts.Core.Enemy
         internal float LastFleeDuration { get; set; } // Stores the duration of the last FleeState
 
         internal float FleeTimeout { get; private set; } = 5f; // Timeout threshold for FleeState
-        
+
         public EnemyType enemyType; // The enemy type
 
         internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
 
         private readonly float _chargerDistanceFromPlayer = 1.5f; // Distance between the player and charger enemy
-        
+
         private bool _hasSpawnedEnemies;
 
-        private WeaponController _weaponController;
+        private HandController _handController;
 
-        internal RangedWeapon RangedWeapon;
+        internal RangedWeapon RangedWeapon => _handController.CurrentItem as RangedWeapon;
 
         internal MemberType MemberType; // type of group member
 
         internal float EngagementDistance = 30f; // distance between enemies that can come for help
-        
+
         private Vector3 _lastKnownPlayerPosition; // player's last known position
-        
+
         internal float AttackHealthThreshold = 60;
 
-        
+
         private void Awake()
         {
             Enemy = GetComponent<NavMeshAgent>();
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
-            _weaponController = GetComponent<WeaponController>();
-            RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
-
+            _handController = GetComponent<HandController>();
         }
 
         private void Start()
@@ -115,7 +113,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Attack] = new AttackState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
-                
+
                 case EnemyType.Charger:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
@@ -137,7 +135,7 @@ namespace _Project.Scripts.Core.Enemy
             _playerDetection = GetComponent<PlayerDetection>();
 
             _playerDetection.Initialize(playerController);
-            
+
             Enemy.speed = playerController.Stats.movementSpeed;
         }
 
@@ -147,7 +145,7 @@ namespace _Project.Scripts.Core.Enemy
             _currentTarget = null;
             EnemyManager.Instance.DeregisterEnemy(this);
         }
-        
+
 
         //Method to check if the player in present on the navmesh rooms
         private bool IsPlayerOnNavMesh()
@@ -155,7 +153,7 @@ namespace _Project.Scripts.Core.Enemy
             NavMeshHit hit;
             // Ensure the ClosestPlayer object exists before proceeding.
             if (!ClosestPlayer) return false;
-            
+
             // Create a mask for the "Room" area on the NavMesh. 
             // NavMesh.GetAreaFromName("Room") fetches the index of the "Room" area,
             // and the bitwise shift (1 << index) creates a mask for this area.
@@ -169,14 +167,14 @@ namespace _Project.Scripts.Core.Enemy
             // Return true if the player's position is on the NavMesh within the specified area.
             return isOnNavMesh;
         }
-        
+
         // Method to find the closest player and check if its in detection range and in conical field of view
         internal bool FindPlayer()
         {
             ClosestPlayer = _playerDetection.FindClosestPlayerInRange();
             return ClosestPlayer && IsPlayerInCone();
         }
-        
+
         // Method to check if player is in chase range and conical field of view
         internal bool CanChasePlayer()
         {
@@ -315,6 +313,7 @@ namespace _Project.Scripts.Core.Enemy
 
                 yield return null; // Keep following every frame
             }
+
             OnMoveInputUpdated?.Invoke(Vector2.zero);
         }
 
@@ -368,14 +367,14 @@ namespace _Project.Scripts.Core.Enemy
             // Visualization of the chase range (sphere)
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, ChaseRange);
-            
+
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, PlayerDetection._detectionRange);
 
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
-            
+
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
 
@@ -404,7 +403,7 @@ namespace _Project.Scripts.Core.Enemy
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
             IsPlayerOnNavMesh();
         }
-        
+
         internal void EngagePlayer()
         {
             if (MemberType == MemberType.Helper)
@@ -418,21 +417,19 @@ namespace _Project.Scripts.Core.Enemy
                 StartChasing();
             }
         }
-        
+
         // Method to assign roles
         public void AssignRoles(Vector3 playerPos)
         {
             if (MemberType == MemberType.Broadcaster) return;
-            
+
             EnemyManager.Instance.AssignHelper(this);
-            
         }
-        
+
         // Method to set default roles
         public void SetDefaultRole()
         {
             MemberType = MemberType.Standalone;
         }
-        
     }
 }

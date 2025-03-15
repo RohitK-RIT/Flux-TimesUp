@@ -88,10 +88,10 @@ namespace _Project.Scripts.UI
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
-            var currentAbility = player.WeaponController.CurrentWeapon as Ability;
+            var currentAbility = player.HandController.CurrentItem as Ability;
             if (!player) return;
 
-            if (player.WeaponController.CurrentWeapon is Ability)
+            if (player.HandController.CurrentItem is Ability)
             {
                 abilityIconSlot.enabled = true;
                 abilityIconSlot.sprite = abilityData.Icon;
@@ -107,9 +107,9 @@ namespace _Project.Scripts.UI
                 abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
             }
 
-            primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[0].WeaponID);
-            secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[1].WeaponID);
-            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.WeaponController.Weapons[2].WeaponID);
+            primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[0].WeaponID);
+            secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[1].WeaponID);
+            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[2].WeaponID);
             primaryIconSlot.enabled = true;
             secondaryIconSlot.enabled = true;
             meleeIconSlot.enabled = true;
@@ -119,21 +119,21 @@ namespace _Project.Scripts.UI
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
-            if (player.WeaponController.CurrentWeapon == player.WeaponController.Weapons[0])
+            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
             {
                 primaryOverlay.SetActive(false);
                 secondaryOverlay.SetActive(true);
                 meleeOverlay.SetActive(true);
                 abilityOverlay.SetActive(true);
             }
-            else if (player.WeaponController.CurrentWeapon == player.WeaponController.Weapons[1])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
             {
                 primaryOverlay.SetActive(true);
                 secondaryOverlay.SetActive(false);
                 meleeOverlay.SetActive(true);
                 abilityOverlay.SetActive(true);
             }
-            else if (player.WeaponController.CurrentWeapon == player.WeaponController.Weapons[2])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
                primaryOverlay.SetActive(true);
                secondaryOverlay.SetActive(true);
@@ -174,7 +174,7 @@ namespace _Project.Scripts.UI
         // Updates the ammo display based on the player's current and total ammo
         private void UpdateAmmoDisplay()
         {
-            var currentRangedWeapon = player.WeaponController.CurrentWeapon as RangedWeapon;
+            var currentRangedWeapon = player.HandController.CurrentItem as RangedWeapon;
             if (!currentRangedWeapon) return;
             currAmmo.text = currentRangedWeapon.CurrentAmmo.ToString();
             maxAmmo.text = currentRangedWeapon.MaxAmmo.ToString();
@@ -183,7 +183,7 @@ namespace _Project.Scripts.UI
         // Updates the reloading text based on the player's current weapon state
         private void UpdateReloadingText()
         {
-            var currentRangedWeapon = player.WeaponController.CurrentWeapon as RangedWeapon;
+            var currentRangedWeapon = player.HandController.CurrentItem as RangedWeapon;
             if (!currentRangedWeapon)
                 return;
 

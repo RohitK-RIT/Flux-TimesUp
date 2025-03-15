@@ -1,4 +1,4 @@
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Weapons.Melee;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -32,29 +32,31 @@ namespace _Project.Scripts.Core.Character.Animation
         /// </summary>
         private TwoBoneIKConstraint[] _handIKConstraints;
 
-        private WeaponController _weaponController;
+        private HandController _handController;
 
         private void Awake()
         {
             _rigBuilder = GetComponentInChildren<RigBuilder>();
             _handIKConstraints = gunIKRig.GetComponentsInChildren<TwoBoneIKConstraint>();
 
-            _weaponController = GetComponent<WeaponController>();
+            _handController = GetComponent<HandController>();
         }
 
         private void OnEnable()
         {
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched += UpdateIKPoints;
+                _handController.OnWeaponSwitched += UpdateIKPoints;
             }
+            
+            RefreshRig();
         }
 
         private void OnDisable()
         {
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched -= UpdateIKPoints;
+                _handController.OnWeaponSwitched -= UpdateIKPoints;
             }
         }
 
@@ -63,8 +65,8 @@ namespace _Project.Scripts.Core.Character.Animation
         /// </summary>
         private void UpdateIKPoints()
         {
-            var weapon = _weaponController.CurrentWeapon;
-            if (!gunIKRig || !weapon)
+            var item = _handController.CurrentItem;
+            if (!gunIKRig || item == null)
             {
                 Debug.LogError("Rig root or prefab is not assigned!");
                 return;
@@ -77,7 +79,7 @@ namespace _Project.Scripts.Core.Character.Animation
                 return;
             }
 
-            if (weapon is MeleeWeapon)
+            if (item is MeleeWeapon)
             {
                 gunIKRig.weight = 0f;
                 gunAimingIKRig.weight = 0f;
@@ -89,7 +91,7 @@ namespace _Project.Scripts.Core.Character.Animation
                 gunAimingIKRig.weight = 1f;
                 meleeIKRig.weight = 0f;
                 
-                weapon.transform.parent.rotation = Quaternion.identity;
+                item.transform.parent.rotation = Quaternion.identity;
                 
                 // Assign transforms to each Two Bone IK Constraint
                 foreach (var constraint in _handIKConstraints)
@@ -98,8 +100,8 @@ namespace _Project.Scripts.Core.Character.Animation
                     var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
 
                     // Fetch source, target, and hint transforms based on the prefab structure
-                    var targetObject = weapon.transform.Find($"IK Points/{constraintName}_target");
-                    var hintObject = weapon.transform.Find($"IK Points/{constraintName}_hint");
+                    var targetObject = item.transform.Find($"IK Points/{constraintName}_target");
+                    var hintObject = item.transform.Find($"IK Points/{constraintName}_hint");
 
                     if (!hintObject || !targetObject)
                     {

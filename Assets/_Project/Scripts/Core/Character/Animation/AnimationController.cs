@@ -1,4 +1,4 @@
-using _Project.Scripts.Core.Character.Weapon_Controller;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -17,13 +17,13 @@ namespace _Project.Scripts.Core.Character.Animation
         [SerializeField] private Animator animator;
 
         private InputController _inputController;
-        private WeaponController _weaponController;
+        private HandController _handController;
         private bool _hasMeleeWeapon;
 
         private void Awake()
         {
             _inputController = GetComponent<InputController>();
-            _weaponController = GetComponent<WeaponController>();
+            _handController = GetComponent<HandController>();
         }
 
         public override void Initialize(PlayerController playerController)
@@ -43,9 +43,9 @@ namespace _Project.Scripts.Core.Character.Animation
                 _inputController.OnAttackInputEnded += OnAttackEnd;
             }
 
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched += OnWeaponSwitched;
+                _handController.OnWeaponSwitched += HandSwitched;
             }
         }
 
@@ -62,9 +62,9 @@ namespace _Project.Scripts.Core.Character.Animation
                 _inputController.OnAttackInputEnded -= OnAttackEnd;
             }
 
-            if (_weaponController)
+            if (_handController)
             {
-                _weaponController.OnWeaponSwitched -= OnWeaponSwitched;
+                _handController.OnWeaponSwitched -= HandSwitched;
             }
         }
 
@@ -85,9 +85,9 @@ namespace _Project.Scripts.Core.Character.Animation
             animator.SetBool(MeleeAttack, false);
         }
 
-        private void OnWeaponSwitched()
+        private void HandSwitched()
         {
-            if (_weaponController.CurrentWeapon is MeleeWeapon meleeWeapon)
+            if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
             {
                 _hasMeleeWeapon = true;
                 animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed);
