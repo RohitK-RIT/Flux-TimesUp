@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
@@ -18,12 +19,24 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // Resets player movement when entering the state
             _enemyInputController.StopChasing(); 
+            
+            // If the broadcaster re-enters the detect state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.BroadcasterEnemy = null;
+            }
         }
 
         // Called when the enemy exits the DetectState
         public override void ExitState()
         {
             Debug.Log("Exiting Detect State");
+            
+            // If the broadcaster leaves the detect state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.BroadcasterEnemy = null;
+            }
         }
 
         // Called every frame while the enemy is in the ChaseState
@@ -32,6 +45,14 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // If the player is detected, rotate towards them
             _enemyInputController.RotateTowardsPlayer();
+            
+            // Broadcast message when player is detected and helpers are less than 3
+            if (EnemyManager.Instance.HelperEnemies.Count <=3)
+            {
+                //memberType = MemberType.Broadcaster;
+                EnemyManager.Instance.BroadcastMessage(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+                //BroadcastSystem.BroadcastMessage(_enemyInputController, BroadcastType.Detect);
+            }
         }
         
         public override EnemyState GetNextState()

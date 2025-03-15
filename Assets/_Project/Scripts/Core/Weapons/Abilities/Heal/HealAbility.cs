@@ -30,17 +30,19 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
         /// </summary>
         private void Heal()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
 
-            IsAbilityActive = true;
+            isAbilityActive = true;
             //Heal the player
             Debug.Log("Player is using the heal ability!!");
             CurrentPlayerController.Heal(stats.HealValue);
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+
         }
 
         /// <summary>
@@ -52,12 +54,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
-        }
-
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
         }
     }
 }

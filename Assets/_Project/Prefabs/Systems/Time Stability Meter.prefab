@@ -44,5 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcf7278c42c40ffa6619722aa07f696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialTimeStability: 100
-  decreaseRate: 0.5
+  totalTimeStability: 100
+  startingTimeStability: 75
+  decreaseRate: 1
+  pauseTimeStability: 0

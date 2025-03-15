@@ -19,8 +19,11 @@ MonoBehaviour:
   range: 75
   attackSpeed: 7.5
   weaponEra: 0
-  timeStabilityEffect: -7
+  timeStabilityEffect: 4
   fireModes: 02000000
+  projectilePrefab: {fileID: 3585076104673698268, guid: d5d5414df1dcdd544b7e10df57f273c9,
+    type: 3}
+  projectileSpeed: 50
   reloadTime: 2.5
   spread: 0.02
   recoil: 0.01

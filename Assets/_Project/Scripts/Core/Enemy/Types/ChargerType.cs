@@ -1,4 +1,5 @@
 using _Project.Scripts.Core.Enemy.EnemySpawner;
+using _Project.Scripts.Core.Enemy.FSM;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy.Types
@@ -9,6 +10,8 @@ namespace _Project.Scripts.Core.Enemy.Types
         private EnemyInputController _enemyInputController;
         private SpawnManager _spawnManager;
         private bool _hasSpawnedChargers; // Ensure Chargers spawn only once
+        private bool _hasSpawnedSecondChargers; // Ensure Chargers spawn only once
+        private bool _hasSpawnedThirdChargers; // Ensure Chargers spawn only once
 
         void Awake()
         {
@@ -18,21 +21,40 @@ namespace _Project.Scripts.Core.Enemy.Types
 
         private void Update()
         {
-            // Check if Chargers haven't been spawned yet and enemy health is below the threshold
-            if (!_hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= _lowHealthThreshold)
+            if (_enemyInputController.enemyType == EnemyType.Basic && !_hasSpawnedChargers &&
+                _enemyInputController.EnemyHUD.enemy.CurrentHealth <= _lowHealthThreshold)
             {
-                // Mark that Chargers have been spawned to prevent multiple spawns
                 _hasSpawnedChargers = true;
-                SpawnChargers();
+                SpawnChargers(EnemyType.Basic);
+            }
+
+            // Check if the enemy is a Boss type and should spawn Chargers at 75 and 50 health
+            if (_enemyInputController.enemyType == EnemyType.Boss)
+            {
+                if (!_hasSpawnedThirdChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 250)
+                {
+                    _hasSpawnedThirdChargers = true;
+                    SpawnChargers(EnemyType.Boss);
+                }
+                else if (!_hasSpawnedSecondChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 500)
+                {
+                    _hasSpawnedSecondChargers = true;
+                    SpawnChargers(EnemyType.Boss);
+                }
+                else if (!_hasSpawnedChargers && _enemyInputController.EnemyHUD.enemy.CurrentHealth <= 750)
+                {
+                    _hasSpawnedChargers = true;
+                    SpawnChargers(EnemyType.Boss);
+                }
             }
         }
     
-        private void SpawnChargers()
+        private void SpawnChargers(EnemyType type)
         {
             if (_spawnManager)
             {
                 // Request the SpawnManager to spawn Chargers near the enemy's position
-                _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position);
+                _spawnManager.ChargerSpawner(_enemyInputController.Enemy.transform.position, type);
             }
             else
             {

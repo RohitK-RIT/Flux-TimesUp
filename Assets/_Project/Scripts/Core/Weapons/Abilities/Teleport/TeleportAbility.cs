@@ -24,22 +24,22 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
             Teleport();
             Used = true;
         }
-        
+
         /// <summary>
         /// Activates the teleport ability.
         /// </summary>
         private void Teleport()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
-            IsAbilityActive = true;
-            
+
+            isAbilityActive = true;
             // Teleport the player to the target position
             Vector3 targetPosition = CurrentPlayerController.transform.position + (-CurrentPlayerController.MovementController.Body.forward) * stats.Distance;
-            
+
             // Perform a raycast to check that teleport does not happen through room walls. 
             RaycastHit hit;
             if (Physics.Raycast(CurrentPlayerController.transform.position, -CurrentPlayerController.MovementController.Body.forward, out hit, stats.Distance))
@@ -49,8 +49,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
 
             CurrentPlayerController.transform.position = targetPosition;
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
-        
+
         /// <summary>
         /// Coroutine to deactivate the ability after a certain time.
         /// </summary>
@@ -60,16 +61,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
-        }
-
-        /// <summary>
-        /// Overrides the OnAttack method to provide custom attack behavior for the shield ability.
-        /// </summary>
-        /// <returns>An IEnumerator for the coroutine.</returns>
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
         }
     }
 }

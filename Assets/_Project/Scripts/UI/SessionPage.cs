@@ -15,9 +15,9 @@ namespace _Project.Scripts.UI
         public async void OnCreateButtonClicked()
         {
             // Start the game in host mode
-            var status = await NetworkSystem.Instance.CreateSession();
+            // var status = await NetworkSystem.Instance.CreateSession();
 
-            UpdateStatus(lobbyCodeText, status.Item1, status.Item2);
+            // UpdateStatus(lobbyCodeText, status.Item1, status.Item2);
         }
 
         public async void OnJoinButtonClicked()
@@ -28,13 +28,13 @@ namespace _Project.Scripts.UI
             if (!string.IsNullOrEmpty(lobbyCodeInputField.text) && lobbyCodeInputField.text.Length > 4)
             {
                 // Start the game in client mode
-                var status = await NetworkSystem.Instance.JoinSession(lobbyCodeInputField.text);
+                // var status = await NetworkSystem.Instance.JoinSession(lobbyCodeInputField.text);
 
-                statusFlag = status.Item1;
-                message = status.Item2;
+                // statusFlag = status.Item1;
+                // message = status.Item2;
             }
 
-            UpdateStatus(statusText, statusFlag, message);
+            // UpdateStatus(statusText, statusFlag, message);
         }
 
         private void UpdateStatus(TMP_Text statusTextField, bool status, string message)
