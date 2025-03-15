@@ -63,9 +63,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             hitEffect.gameObject.SetActive(false);
 
             // Set the projectile's collision layers.
-            var weaponFriendlyLayer = weapon.CurrentPlayerController.FriendlyLayer;
-            gameObject.SetLayerRecursively(weaponFriendlyLayer);
-            _rigidbody.excludeLayers = weaponFriendlyLayer;
+            gameObject.SetLayerRecursively(weapon.CurrentPlayerController.FriendlyLayerName);
+            _rigidbody.excludeLayers = weapon.CurrentPlayerController.FriendlyLayer;
 
             // Set the projectile's velocity.
             _rigidbody.velocity = transform.forward * weapon.Stats.ProjectileSpeed;
@@ -85,7 +84,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void OnParticleSystemStopped()
         {
-            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
+            gameObject.SetLayerRecursively("Default");
             // Projectile has completed the hit.
             OnHit?.Invoke(this);
         }

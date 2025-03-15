@@ -1,7 +1,5 @@
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
 using IPickupItem = _Project.Scripts.Core.Backend.Interfaces.IPickupItem;
@@ -18,6 +16,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// The current pickup item the player has.
         /// </summary>
         public IPickupItem CurrentPickupItem { get; private set; }
+
+        public override string FriendlyLayerName => "Player";
+        public override string OpponentLayerName => "Enemy";
 
         /// <summary>
         /// Component that handles player input.

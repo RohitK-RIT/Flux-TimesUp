@@ -41,13 +41,13 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
-            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayer);
+            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayerName);
         }
 
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
+            gameObject.SetLayerRecursively("Default");
         }
 
         public virtual void BeginUse() { }

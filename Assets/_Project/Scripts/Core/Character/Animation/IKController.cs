@@ -48,6 +48,8 @@ namespace _Project.Scripts.Core.Character.Animation
             {
                 _handController.OnWeaponSwitched += UpdateIKPoints;
             }
+            
+            RefreshRig();
         }
 
         private void OnDisable()

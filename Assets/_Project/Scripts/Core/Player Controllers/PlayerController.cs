@@ -58,6 +58,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         public LayerMask OpponentLayer => opponentLayer;
 
+        public abstract string FriendlyLayerName { get; }
+        public abstract string OpponentLayerName { get; }
+
         /// <summary>
         /// Component that handles Character Stats.
         /// </summary>
@@ -97,7 +100,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
-            gameObject.SetLayerRecursively(FriendlyLayer);
+            gameObject.SetLayerRecursively(FriendlyLayerName);
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace _Project.Scripts.Core.Backend.Helper
             if (!obj)
                 return;
 
+            Debug.Log($"New layer for {obj.name} - {newLayer}", obj);
             // Set the layer of the object.
             obj.layer = newLayer;
 
@@ -25,6 +26,13 @@ namespace _Project.Scripts.Core.Backend.Helper
 
                 SetLayerRecursively(child.gameObject, newLayer);
             }
+        }
+
+        public static void SetLayerRecursively(this GameObject obj, string newLayerName)
+        {
+            var layer = LayerMask.NameToLayer(newLayerName);
+            
+            SetLayerRecursively(obj, layer);
         }
     }
 }

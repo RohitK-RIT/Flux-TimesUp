@@ -25,7 +25,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
-            gameObject.SetLayerRecursively(currentPlayerController.gameObject.layer);
+            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayerName);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            gameObject.SetLayerRecursively(LayerMask.NameToLayer("Default"));
+            gameObject.SetLayerRecursively("Default");
         }
 
         /// <summary>

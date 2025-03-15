@@ -33,7 +33,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
             _shieldVisual = Instantiate(shieldVisualPrefab, currentPlayerController.transform);
-            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayer);
+            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
             SetShieldVisual(false);
         }
 
