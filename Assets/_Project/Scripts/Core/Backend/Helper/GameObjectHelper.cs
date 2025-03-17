@@ -14,7 +14,6 @@ namespace _Project.Scripts.Core.Backend.Helper
             if (!obj)
                 return;
 
-            Debug.Log($"New layer for {obj.name} - {newLayer}", obj);
             // Set the layer of the object.
             obj.layer = newLayer;
 
