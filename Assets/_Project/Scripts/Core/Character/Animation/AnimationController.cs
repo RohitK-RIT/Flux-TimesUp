@@ -31,6 +31,7 @@ namespace _Project.Scripts.Core.Character.Animation
             base.Initialize(playerController);
 
             animator.SetFloat(Speed, playerController.Stats.movementSpeed);
+            animator.keepAnimatorStateOnDisable = true;
         }
 
         private void OnEnable()
