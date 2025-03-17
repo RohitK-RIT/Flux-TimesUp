@@ -17,7 +17,7 @@ namespace _Project.Scripts.Core.Backend.Interfaces
             {
                 Damage = damage;
                 Item = item;
-                Attacker = item.CurrentPlayerController;
+                Attacker = item?.CurrentPlayerController;
             }
         }
     }
