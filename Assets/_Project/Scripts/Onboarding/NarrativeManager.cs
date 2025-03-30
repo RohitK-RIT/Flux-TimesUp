@@ -25,7 +25,6 @@ namespace _Project.Scripts.Onboarding
         public void OnContinue()
         {
             index++;
-
             if (index < narrativeSequence.Length)
             {
                 EndCheck();
