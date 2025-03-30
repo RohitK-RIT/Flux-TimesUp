@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
@@ -22,6 +23,10 @@ namespace _Project.Scripts.Onboarding
         private int index = 0;
         private bool onboardingLocked = true;
         private bool waitingForInput = false;
+        
+        public Action OnLookAndMoveComplete;
+        public Action OnWeaponSwitchAndAttackComplete;
+        public Action OnPlayerTeleportComplete;
 
         private void Awake()
         {
@@ -92,6 +97,10 @@ namespace _Project.Scripts.Onboarding
         private void AdvanceStep()
         {
             index++;
+            if (index == 2)
+            {
+                OnLookAndMoveComplete?.Invoke();
+            }
             ShowOnboardingStep();
         }
 

@@ -24,6 +24,9 @@ namespace _Project.Scripts.Onboarding
 
         public void OnContinue()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            //Time.timeScale = 1f;
             index++;
             if (index < narrativeSequence.Length)
             {
@@ -38,7 +41,9 @@ namespace _Project.Scripts.Onboarding
         {
             if (index < narrativeSequence.Length )
             {
+                StopAllCoroutines();
                 narrativeText.text = narrativeSequence[index];
+                narrativeText.maxVisibleCharacters = 0; 
                 continueButton.gameObject.SetActive(false);
                 StartCoroutine(DisplayLine());
             }   
@@ -51,6 +56,7 @@ namespace _Project.Scripts.Onboarding
         }
         private IEnumerator DisplayLine()
         {
+            Debug.Log("Typing started for: " + narrativeText.text);
             narrativeText.ForceMeshUpdate();
             var totalVisibleCharacters = narrativeText.textInfo.characterCount;
             var counter = 0;
@@ -64,7 +70,7 @@ namespace _Project.Scripts.Onboarding
                 }
 
                 counter++;
-                yield return new WaitForSeconds(typingSpeed);
+                yield return new  WaitForSecondsRealtime(typingSpeed);
             }
             continueButton.gameObject.SetActive(true);
         }
