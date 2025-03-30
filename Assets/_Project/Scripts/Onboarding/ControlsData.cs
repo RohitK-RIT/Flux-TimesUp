@@ -10,5 +10,6 @@ namespace _Project.Scripts.Onboarding
         [SerializeField] internal Sprite controlsIcon;
         [SerializeField] internal string controlsName;
         [SerializeField] internal string controlsDescription;
+        public InputType inputType;
     }
 }

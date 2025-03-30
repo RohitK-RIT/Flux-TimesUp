@@ -1,3 +1,4 @@
+using System.Collections;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using TMPro;
@@ -10,37 +11,32 @@ namespace _Project.Scripts.Onboarding
     {
         private LocalPlayerController _playerController;
         private LocalInputController _inputController;
-        
+
         [SerializeField] private GameObject onboardingPanel;
         [SerializeField] private Image controlsIcon;
         [SerializeField] private TMP_Text controlsName;
         [SerializeField] private TMP_Text controlsDescription;
-        
+
         [SerializeField] private ControlsDataSystem controlsDataSystem;
-        
+
         private int index = 0;
+        private bool onboardingLocked = true;
+        private bool waitingForInput = false;
 
         private void Awake()
         {
-            // Find and assign the player controller (assuming only one player in the scene)
             _inputController = FindObjectOfType<LocalInputController>();
             _playerController = FindObjectOfType<LocalPlayerController>();
-            if (!_playerController) return;
+            if(!_playerController) return;
         }
-        
+
         private void Start()
         {
-            controlsIcon.sprite = controlsDataSystem.controlsDatabase[index].controlsIcon;
-            controlsName.text = controlsDataSystem.controlsDatabase[index].controlsName;
-            controlsDescription.text = controlsDataSystem.controlsDatabase[index].controlsDescription;
+            ShowOnboardingStep();
         }
-        
-        /// <summary>
-        /// Subscribe for input events.
-        /// </summary>
+
         private void OnEnable()
         {
-            // Subscribe to events
             if (!_inputController) return;
             _inputController.OnLookInputUpdated += OnLookDetected;
             _inputController.OnMoveInputUpdated += OnMoveDetected;
@@ -50,12 +46,8 @@ namespace _Project.Scripts.Onboarding
             _inputController.OnAbilityEquipped += OnAbilityEquipped;
         }
 
-        /// <summary>
-        /// Unsubscribe from events to avoid memory leaks
-        /// </summary>
         private void OnDisable()
         {
-            // Unsubscribe from events to avoid memory leaks
             if (!_inputController) return;
             _inputController.OnLookInputUpdated -= OnLookDetected;
             _inputController.OnMoveInputUpdated -= OnMoveDetected;
@@ -65,75 +57,112 @@ namespace _Project.Scripts.Onboarding
             _inputController.OnAbilityEquipped -= OnAbilityEquipped;
         }
 
-        private void Update()
-        {
-            if (onboardingPanel.activeSelf)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-        }
-        private void UpdateOnboardingData()
+        private void ShowOnboardingStep()
         {
             if (index >= controlsDataSystem.controlsDatabase.Length)
             {
-                onboardingPanel.SetActive(false);
+                EndOnboarding();
                 return;
             }
+
+            onboardingLocked = true;
+            waitingForInput = false;
+
+            onboardingPanel.SetActive(true);
             controlsIcon.sprite = controlsDataSystem.controlsDatabase[index].controlsIcon;
             controlsName.text = controlsDataSystem.controlsDatabase[index].controlsName;
             controlsDescription.text = controlsDataSystem.controlsDatabase[index].controlsDescription;
+
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-        
+
+        public void OnContinueClicked()
+        {
+            onboardingLocked = false;
+            waitingForInput = true;
+
+            onboardingPanel.SetActive(false);
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private void AdvanceStep()
+        {
+            index++;
+            ShowOnboardingStep();
+        }
+
+        private void EndOnboarding()
+        {
+            onboardingPanel.SetActive(false);
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        private IEnumerator DelayedAdvanceStep(float delayTime)
+        {
+            yield return new WaitForSecondsRealtime(delayTime); // Use Realtime to ignore Time.timeScale
+            AdvanceStep();
+        }
         #region Input Event Handlers
-        /// <summary>
-        /// Event handler for look input
-        /// </summary>
+
         private void OnLookDetected(Vector2 lookInput)
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Look) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(3));
         }
-        /// <summary>
-        /// Event handler for move input
-        /// </summary>
+
         private void OnMoveDetected(Vector2 moveInput)
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Move) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(5));
         }
-        /// <summary>
-        /// Event handler for weapon switch input
-        /// </summary>
+
         private void OnWeaponSwitchDetected(int weaponIndex)
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.SwitchWeapon) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(5));
         }
-        /// <summary>
-        /// Event handler for attack input
-        /// </summary>
+
         private void OnAttackDetected()
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Attack) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(5));
         }
-        /// <summary>
-        /// Event handler for loot pickup input
-        /// </summary>
+
         private void OnLootPickupDetected()
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.LootPickup) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(5));
         }
-        /// <summary>
-        /// Event handler for ability equipped input
-        /// </summary>
+
         private void OnAbilityEquipped()
         {
-            index++;
-            UpdateOnboardingData();
+            if (!waitingForInput || onboardingLocked || index >= controlsDataSystem.controlsDatabase.Length) return;
+            if (controlsDataSystem.controlsDatabase[index].inputType != InputType.AbilityEquip) return;
+
+            waitingForInput = false;
+            StartCoroutine(DelayedAdvanceStep(5));
         }
+
         #endregion
     }
 }
