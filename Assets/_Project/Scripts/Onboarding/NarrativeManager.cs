@@ -26,7 +26,6 @@ namespace _Project.Scripts.Onboarding
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            //Time.timeScale = 1f;
             index++;
             if (index < narrativeSequence.Length)
             {
