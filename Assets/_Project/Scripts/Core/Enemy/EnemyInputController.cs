@@ -430,7 +430,6 @@ namespace _Project.Scripts.Core.Enemy
         private void UpdateMoveDirection(Vector3 moveDirection)
         {
             OnMoveInputUpdated?.Invoke(new Vector2(moveDirection.x, moveDirection.z));
-            Debug.Log($"Move Direction: {moveDirection}", gameObject);
         }
     }
 }
