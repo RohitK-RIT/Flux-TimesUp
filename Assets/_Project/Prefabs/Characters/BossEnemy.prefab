@@ -1205,6 +1205,7 @@ GameObject:
   - component: {fileID: 1991303006998598943}
   - component: {fileID: 1358199139427676378}
   - component: {fileID: 3880361818240976733}
+  - component: {fileID: 999119271026652523}
   m_Layer: 11
   m_Name: BossEnemy
   m_TagString: Enemy
@@ -1440,6 +1441,21 @@ MonoBehaviour:
   chargerEnemyPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
     type: 3}
   basicEnemyPrefab: {fileID: 0}
+--- !u!114 &999119271026652523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8669512272685826618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6730a4995d4d04a4ba5b6e3af1af0ecc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _orbPrefab: {fileID: 0}
+  _spawnPoint: {fileID: 0}
+  _healAmount: 1
 --- !u!1 &8868932900736931432
 GameObject:
   m_ObjectHideFlags: 0

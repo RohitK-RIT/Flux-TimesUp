@@ -7,7 +7,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
     public class AttackState : BaseState
     {
         // Reference to the enemy's input controller
-        private readonly EnemyInputController _enemyInputController;
+        internal readonly EnemyInputController _enemyInputController;
         
         // Constructor for the AttackState, setting the state key and storing a reference to the input controller
         public AttackState(EnemyInputController enemyInputController) : base(EnemyState.Attack)
