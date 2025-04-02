@@ -1,10 +1,10 @@
 ﻿
 namespace _Project.Scripts.Core.Backend.Interfaces
 {
-    public interface IPickupItem
+    public interface IPickup
     {
-        public void OnItemPickup();
-        public void OnItemEnterRange();
-        public void OnItemExitRange();
+        public void OnPickup();
+        public void OnHoverEnter();
+        public void OnHoverExit();
     }
 }

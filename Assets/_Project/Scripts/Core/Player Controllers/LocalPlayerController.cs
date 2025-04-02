@@ -16,7 +16,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The current pickup item the player has.
         /// </summary>
-        public IPickupItem CurrentPickupItem { get; private set; }
+        public IPickup CurrentPickup { get; private set; }
 
         public override string FriendlyLayerName => "Player";
         public override string OpponentLayerName => "Enemy";
@@ -57,26 +57,26 @@ namespace _Project.Scripts.Core.Player_Controllers
             if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 8f,
                     LayerMask.GetMask("Pickup")))
             {
-                if (hit.collider.TryGetComponent<IPickupItem>(out var pickupItem))
+                if (hit.collider.TryGetComponent<IPickup>(out var pickupItem))
                 {
-                    CurrentPickupItem = pickupItem;
-                    CurrentPickupItem.OnItemEnterRange();
+                    CurrentPickup = pickupItem;
+                    CurrentPickup.OnHoverEnter();
                 }
             }
-            else if (CurrentPickupItem != null)
+            else if (CurrentPickup != null)
             {
-                CurrentPickupItem.OnItemExitRange();
+                CurrentPickup.OnHoverExit();
                 var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
                 foreach (var ability in abilitiesInRange)
                 {
-                    if (ability.TryGetComponent<IPickupItem>(out var pickupItem))
+                    if (ability.TryGetComponent<IPickup>(out var pickupItem))
                     {
-                        CurrentPickupItem = pickupItem;
-                        CurrentPickupItem.OnItemExitRange();
+                        CurrentPickup = pickupItem;
+                        CurrentPickup.OnHoverExit();
                     }
                 }
 
-                CurrentPickupItem = null;
+                CurrentPickup = null;
             }
         }
 
@@ -148,9 +148,9 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void PickUpItem()
         {
-            if (CurrentPickupItem == null) return;
-            CurrentPickupItem.OnItemPickup();
-            CurrentPickupItem = null;
+            if (CurrentPickup == null) return;
+            CurrentPickup.OnPickup();
+            CurrentPickup = null;
         }
     }
 }
