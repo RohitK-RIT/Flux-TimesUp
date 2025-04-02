@@ -13,7 +13,9 @@ public class BossAttackState : BaseState
     public BossAttackType currentAttack;
     //public EnemyController enemy;
     private readonly EnemyInputController _enemyInputController;
-
+    private float attackDuration = 5f; // Duration for each attack
+    private float attackTimer = 0f;
+    
     public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
     {
         _enemyInputController = enemyInputController;
@@ -38,7 +40,15 @@ public class BossAttackState : BaseState
 
     public override void UpdateState()
     {
-        currentAttack = (BossAttackType)Random.Range(0, 3);
+        attackTimer += Time.deltaTime;
+    
+        if (attackTimer >= attackDuration) 
+        {
+            attackTimer = 0f; // Reset timer
+            currentAttack = (BossAttackType)Random.Range(0, 3); // Pick a new attack type
+            Debug.Log("Switching boss attack type to: " + currentAttack);
+        }
+
         ExecuteAttack();
         Debug.Log("in update boss attack state");
     }
