@@ -119,6 +119,11 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             // Replace "MainMenuScene" with the name of your actual main menu scene
             SceneSystem.Instance.LoadScene(new SceneLoadRequest("UI", LoadSceneMode.Single));
         }
+
+        public void LoadScene(string sceneName)
+        {
+            SceneSystem.Instance.LoadScene(new SceneLoadRequest(sceneName, LoadSceneMode.Single));
+        }
         
         public void SetSceneName(string sceneName)
         {

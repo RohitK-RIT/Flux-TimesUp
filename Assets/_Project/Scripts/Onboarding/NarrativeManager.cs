@@ -8,11 +8,12 @@ namespace _Project.Scripts.Onboarding
     public class NarrativeManager : MonoBehaviour
     {
         [SerializeField] private TMP_Text narrativeText;
-        [SerializeField] private string[] narrativeSequence;
+        [SerializeField] public string[] narrativeSequence;
         [SerializeField] private Button continueButton;
         
         [SerializeField] private float typingSpeed = 0.04f;
         
+        public int NarrativeIndex => index;
         private int index = 0;
         
         private void Start()

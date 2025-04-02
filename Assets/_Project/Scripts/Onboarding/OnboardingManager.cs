@@ -19,8 +19,9 @@ namespace _Project.Scripts.Onboarding
         [SerializeField] private TMP_Text controlsName;
         [SerializeField] private TMP_Text controlsDescription;
 
-        [SerializeField] private ControlsDataSystem controlsDataSystem;
+        [SerializeField] public ControlsDataSystem controlsDataSystem;
 
+        public int OnboardingIndex => index;
         private int index = 0;
         private bool onboardingLocked = true;
         private bool waitingForInput = false;
@@ -130,8 +131,10 @@ namespace _Project.Scripts.Onboarding
             if (!waitingForLootDrop) return;
 
             waitingForLootDrop = false;
-            AdvanceStep(); // ✅ Continue onboarding (e.g., show ability pickup control)
+            AdvanceStep();
         }
+
+        #region DelayCoroutines
         private IEnumerator DelayedAdvanceStep(float delayTime)
         {
             yield return new WaitForSecondsRealtime(delayTime); // Use Realtime to ignore Time.timeScale
@@ -141,6 +144,8 @@ namespace _Project.Scripts.Onboarding
         {
             yield return new WaitForSecondsRealtime(delayTime); // Use Realtime to ignore Time.timeScale
         }
+        #endregion
+        
         #region Input Event Handlers
 
         private void OnLookDetected(Vector2 lookInput)
@@ -176,7 +181,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Attack) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayCoroutine(5));
+            StartCoroutine(DelayCoroutine(10f));
             OnWeaponSwitchAndAttackComplete?.Invoke();
         }
 

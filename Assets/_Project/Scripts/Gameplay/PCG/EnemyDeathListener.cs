@@ -37,6 +37,12 @@ namespace _Project.Scripts.Gameplay.PCG
             
             PlayerController.OnDeath += OnEnemyDeath;
         }
+        
+        public EnemyDeathListener(IEnumerable<EnemyController> enemies)
+        {
+            _enemies = enemies.ToList();
+            PlayerController.OnDeath += OnEnemyDeath;
+        }
 
         ~EnemyDeathListener()
         {

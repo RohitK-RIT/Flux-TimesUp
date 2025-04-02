@@ -9,6 +9,7 @@ namespace _Project.Scripts.Onboarding
         [SerializeField] private NarrativeManager narrativeManager;
         [SerializeField] private OnboardingManager onboardingManager;
         [SerializeField] private LevelSceneController levelSceneController;
+        [SerializeField] private GameObject portal;
         private void Start()
         {
             onboardingManager.gameObject.SetActive(false);
@@ -21,10 +22,17 @@ namespace _Project.Scripts.Onboarding
             onboardingManager.OnWeaponSwitchAndAttackComplete += OnWeaponSwitchAndAttackComplete;
             onboardingManager.OnPlayerTeleportComplete += OnPlayerTeleportComplete;
             onboardingManager.OnPlayerLootControlsComplete += OnPlayerLootControlsComplete;
+            
         }
 
         public void OnContinueClickedFromNarrative()
         {
+            if(onboardingManager.OnboardingIndex >= onboardingManager.controlsDataSystem.controlsDatabase.Length)
+            {
+                narrativeManager.gameObject.SetActive(false);
+                onboardingManager.gameObject.SetActive(false);
+                return;
+            }
             narrativeManager.gameObject.SetActive(false);
             onboardingManager.gameObject.SetActive(true);
         }
@@ -32,32 +40,35 @@ namespace _Project.Scripts.Onboarding
         private void OnLookAndMoveComplete()
         {
             onboardingManager.OnLookAndMoveComplete -= OnLookAndMoveComplete;
-            narrativeManager.gameObject.SetActive(true);
-            onboardingManager.gameObject.SetActive(false);
             levelSceneController.gameObject.SetActive(true);
-            narrativeManager.OnContinue();
+            MoveToNextOnboardingPhase();
         }
 
         private void OnWeaponSwitchAndAttackComplete()
         {
             onboardingManager.OnWeaponSwitchAndAttackComplete -= OnWeaponSwitchAndAttackComplete;
-            narrativeManager.gameObject.SetActive(true);
-            onboardingManager.gameObject.SetActive(false);
             levelSceneController.playerHUD.timeStabilityBar.gameObject.SetActive(true);
-            narrativeManager.OnContinue();
+            MoveToNextOnboardingPhase();
+            portal.SetActive(true);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         
         private void OnPlayerTeleportComplete()
         {
             onboardingManager.OnPlayerTeleportComplete -= OnPlayerTeleportComplete;
-            narrativeManager.gameObject.SetActive(true);
-            onboardingManager.gameObject.SetActive(false);
-            narrativeManager.OnContinue();
+            MoveToNextOnboardingPhase();
+            TimeStabilityMeter.Instance.PauseTimeStabilityMeter = false;
         }
         
         private void OnPlayerLootControlsComplete()
         {
             onboardingManager.OnPlayerLootControlsComplete -= OnPlayerLootControlsComplete;
+            MoveToNextOnboardingPhase();
+        }
+        
+        public void MoveToNextOnboardingPhase()
+        {
             narrativeManager.gameObject.SetActive(true);
             onboardingManager.gameObject.SetActive(false);
             narrativeManager.OnContinue();

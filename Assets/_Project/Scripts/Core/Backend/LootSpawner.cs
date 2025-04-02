@@ -50,7 +50,7 @@ namespace _Project.Scripts.Core.Backend
             var onboarding = FindObjectOfType<OnboardingManager>();
             if (onboarding != null)
             {
-                onboarding.OnLootDroppedAfterTeleport(); // ✅ Notify
+                onboarding.OnLootDroppedAfterTeleport(); 
             }
             var dropType = Random.Range(0, 2);
             switch (dropType)
