@@ -23,11 +23,11 @@ namespace _Project.Scripts.Core.Weapons
         /// <summary>
         /// Function called when the weapon is picked up.
         /// </summary>
-        /// <param name="currentPlayerController">the player controller that will control the weapon</param>
-        public virtual void OnPickup(PlayerController currentPlayerController)
+        /// <param name="playerController">the player controller that will control the weapon</param>
+        public virtual void OnPickup(PlayerController playerController)
         {
-            CurrentPlayerController = currentPlayerController;
-            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayerName);
+            CurrentPlayerController = playerController;
+            gameObject.SetLayerRecursively(playerController.FriendlyLayerName);
         }
 
         /// <summary>
