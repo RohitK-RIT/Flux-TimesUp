@@ -92,6 +92,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         protected virtual void Start()
         {
+            
             // Initialize the player's movement, weapon controller and animation controller
             MovementController.Initialize(this);
             HandController.Initialize(this);
