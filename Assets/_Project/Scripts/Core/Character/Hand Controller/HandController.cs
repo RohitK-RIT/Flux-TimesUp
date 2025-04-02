@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -17,6 +18,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     public class HandController : CharacterComponent
     {
         public event Action OnWeaponSwitched;
+
         /// <summary>
         /// The parent transform for the weapons.
         /// </summary>
@@ -71,7 +73,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The index of the current weapon.
         /// </summary>
         private int _currentWeaponIndex;
-        
 
         /// <summary>
         /// The currently equipped weapon.  
@@ -87,13 +88,9 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             {
                 var selectedLoadoutWeaponIDs = WeaponDataSystem.Instance.GetSelectedWeapons();
                 if (selectedLoadoutWeaponIDs is { Count: > 0 })
-                {
                     LoadWeapon(selectedLoadoutWeaponIDs);
-                }
                 else
-                {
                     Debug.LogError("No selected weapons found in WeaponDataSystem");
-                }
             }
 
             // The player controller has picked up all the weapons
@@ -102,8 +99,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
-        
-        
 
         /// <summary>
         /// Loads an ability by its type.
@@ -198,7 +193,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 Debug.LogError("Ability not found");
                 return;
             }
-            if(CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
+
+            if (CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
                 return;
 
             CurrentItem = CurrentAbility;

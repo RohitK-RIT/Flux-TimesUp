@@ -17,6 +17,8 @@ namespace _Project.Scripts.Core.Weapons
         public PlayerController CurrentPlayerController { get; private set; }
 
         public abstract string WeaponID { get; }
+        
+        protected bool Equipped { get; private set; }
 
         /// <summary>
         /// Function called when the weapon is picked up.
@@ -40,12 +42,18 @@ namespace _Project.Scripts.Core.Weapons
         /// <summary>
         /// Function called when the weapon is equipped.
         /// </summary>
-        public virtual void OnEquip() { }
+        public virtual void OnEquip()
+        {
+            Equipped = true;
+        }
 
         /// <summary>
         /// Function called when the weapon is unequipped.
         /// </summary>
-        public virtual void OnUnequip() { }
+        public virtual void OnUnequip()
+        {
+            Equipped = false;
+        }
 
         /// <summary>
         /// Start attacking.
