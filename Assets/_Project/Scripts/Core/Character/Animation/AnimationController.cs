@@ -31,9 +31,6 @@ namespace _Project.Scripts.Core.Character.Animation
             base.Initialize(playerController);
 
             animator.SetFloat(Speed, playerController.Stats.movementSpeed);
-         
-            // TODO: This is the fix for the animator not playing the animation when the game object is disabled and enabled again, but it breaks IK.
-            // animator.keepAnimatorStateOnDisable = true;
         }
 
         private void OnEnable()

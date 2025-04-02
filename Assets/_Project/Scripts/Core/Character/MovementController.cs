@@ -135,5 +135,17 @@ namespace _Project.Scripts.Core.Character
             // Combine horizontal and vertical movement
             _moveDirection.y = _velocity;
         }
+
+        /// <summary>
+        /// Sets the world position of the character.
+        /// </summary>
+        /// <param name="position"></param>
+        public void SetPosition(Vector3 position)
+        {
+            // Disable the character controller to avoid issues while setting the position
+            _characterController.enabled = false;
+            transform.position = position;
+            _characterController.enabled = true;
+        }
     }
 }
