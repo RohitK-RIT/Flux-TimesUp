@@ -288,7 +288,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// <summary>
         /// Function to Add ammo to the weapon when the ammo is picked up.
         /// </summary>
-        /// <param name="controller">the controller that picked up the ammo</param>
         /// <param name="ammo">the ammo to be added</param>
         private void AddAmmo(int ammo)
         {
