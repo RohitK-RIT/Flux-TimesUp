@@ -207,6 +207,26 @@ namespace _Project.Scripts.Core.Enemy
             Enemy.velocity = Vector3.zero;
         }
 
+        internal void AttackPlayer()
+        {
+            // Face towards the player
+            RotateTowardsPlayer();
+
+            // Player is in attack range, so keep attacking
+            TryAttack();
+            
+            // Attack and move towards the player till the DistanceFromPlayer is reached
+            if ( Vector3.Distance(Enemy.transform.position,
+                    ClosestPlayer.transform.position) <= EnemyDistanceFromPlayer)
+            {
+                StopChasing();
+            }
+            else
+            {
+                StartChasing();
+            }
+        }
+        
         // Method to check if the player is in attack range and conical field of view
         // ReSharper disable Unity.PerformanceAnalysis
         internal bool CanAttack()

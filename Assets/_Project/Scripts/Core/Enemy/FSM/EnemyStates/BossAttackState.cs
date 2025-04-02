@@ -14,7 +14,9 @@ public class BossAttackState : BaseState
     //public EnemyController enemy;
     private readonly EnemyInputController _enemyInputController;
     private float attackDuration = 5f; // Duration for each attack
-    private float attackTimer = 0f;
+    private float cooldownDuration = 2f; // Cooldown between attacks
+    private float stateTimer = 0f;
+    private bool isOnCooldown = false;
     
     public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
     {
@@ -40,16 +42,31 @@ public class BossAttackState : BaseState
 
     public override void UpdateState()
     {
-        attackTimer += Time.deltaTime;
-    
-        if (attackTimer >= attackDuration) 
-        {
-            attackTimer = 0f; // Reset timer
-            currentAttack = (BossAttackType)Random.Range(0, 3); // Pick a new attack type
-            Debug.Log("Switching boss attack type to: " + currentAttack);
-        }
+        stateTimer += Time.deltaTime;
 
-        ExecuteAttack();
+        if (isOnCooldown)
+        {
+            if (stateTimer >= cooldownDuration)
+            {
+                isOnCooldown = false;
+                stateTimer = 0f;
+                currentAttack = (BossAttackType)Random.Range(0, 3); // Pick a new attack
+                Debug.Log("Boss attack resumes: " + currentAttack);
+            }
+        }
+        else
+        {
+            if (stateTimer >= attackDuration)
+            {
+                isOnCooldown = true;
+                stateTimer = 0f;
+                Debug.Log("Boss is on cooldown, waiting...");
+            }
+            else
+            {
+                ExecuteAttack();
+            }
+        }
         Debug.Log("in update boss attack state");
     }
 
@@ -65,9 +82,11 @@ public class BossAttackState : BaseState
                 ShootAtPlayer();
                 break;
             case BossAttackType.SlowPlayer:
+                _enemyInputController.StopAttack();
                 PlayerDebuffHandler.Instance.ApplySlow(2f);
                 break;
             case BossAttackType.ReduceTSM:
+                _enemyInputController.StopAttack();
                 StabilityMeterHandler.Instance.DecreaseTSM(5);
                 break;
         }
@@ -76,5 +95,9 @@ public class BossAttackState : BaseState
     void ShootAtPlayer() {
         // Implement shooting logic
         Debug.Log("boss is shooting");
+        if (_enemyInputController.CanAttack())
+        {
+            _enemyInputController.AttackPlayer();
+        }
     }
 }
