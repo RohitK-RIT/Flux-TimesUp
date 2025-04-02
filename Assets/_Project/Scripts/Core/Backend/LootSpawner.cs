@@ -61,12 +61,13 @@ namespace _Project.Scripts.Core.Backend
                     break;
                 case 1:
                     // Spawn Random Abilities
-                    var abilityType = Random.Range(0, 4) switch
+                    var abilityType = Random.Range(0, 5) switch
                     {
                         0 => AbilityType.Heal,
                         1 => AbilityType.Shield,
                         2 => AbilityType.Grenades,
                         3 => AbilityType.Teleport,
+                        4 => AbilityType.TsmFreeze,
                         _ => throw new ArgumentOutOfRangeException()
                     };
                     SpawnRandomAbilities(abilityType, lootDropPosition, currentRoom);

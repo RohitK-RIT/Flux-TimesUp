@@ -299,7 +299,6 @@ namespace _Project.Scripts.Core.Enemy
             {
                 // Move towards the player
                 Enemy.SetDestination(ClosestPlayer.position);
-                OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
                 var stoppingDistance = enemyType == EnemyType.Charger ? _chargerDistanceFromPlayer : EnemyDistanceFromPlayer;
 
@@ -313,8 +312,6 @@ namespace _Project.Scripts.Core.Enemy
 
                 yield return null; // Keep following every frame
             }
-
-            OnMoveInputUpdated?.Invoke(Vector2.zero);
         }
 
         // Method to make the enemy move towards roam position
@@ -328,13 +325,11 @@ namespace _Project.Scripts.Core.Enemy
 
             while (Enemy.remainingDistance > 0.5f)
             {
-                OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
                 yield return null; // Wait for the next frame
             }
 
             // Once close enough, set roaming position to a new location
             RoamingPosition = GetRoamingPosition(Enemy.transform.position);
-            OnMoveInputUpdated?.Invoke(Vector2.zero);
             _isRoaming = false;
         }
 
@@ -400,7 +395,7 @@ namespace _Project.Scripts.Core.Enemy
 
         private void Update()
         {
-            OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
+            UpdateMoveDirection(Enemy.velocity.sqrMagnitude > 0f ? Enemy.steeringTarget : Vector3.zero);
             IsPlayerOnNavMesh();
         }
 
@@ -430,6 +425,11 @@ namespace _Project.Scripts.Core.Enemy
         public void SetDefaultRole()
         {
             MemberType = MemberType.Standalone;
+        }
+
+        private void UpdateMoveDirection(Vector3 moveDirection)
+        {
+            OnMoveInputUpdated?.Invoke(new Vector2(moveDirection.x, moveDirection.z));
         }
     }
 }
