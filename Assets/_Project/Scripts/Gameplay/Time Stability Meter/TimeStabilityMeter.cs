@@ -1,4 +1,5 @@
-﻿using _Project.Scripts.Core.Backend.Interfaces;
+﻿using System.Collections;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
@@ -82,6 +83,21 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
                 player.TakeDamage(new IDamageable.DamageInfo(player.CurrentHealth, null));
             }
+        }
+        
+        public void DecreaseTSM(float amount) 
+        {
+            StartCoroutine(DecreaseTSMValue(amount));
+            Debug.Log("boss is affecting TSM");
+        }
+
+        // Coroutine to heal the boss over time
+        IEnumerator DecreaseTSMValue(float amount) {
+            // Decrease TSM value
+            TimeStability -= amount;
+                    
+            // Wait for 2 second before reducing again
+            yield return new WaitForSeconds(2f);
         }
     }
 }

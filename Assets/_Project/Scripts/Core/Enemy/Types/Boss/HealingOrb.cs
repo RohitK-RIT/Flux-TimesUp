@@ -18,6 +18,8 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         
         // Maximum health of the orb
         private readonly float _maxHealth = 300f;
+        
+        private IDamageable.DamageInfo _damageInfo;
     
 
         void Start() {
@@ -39,9 +41,11 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         }
 
         // Function to apply damage to the boss
-        public void TakeDamage(Weapon weapon, float damage)
+        public void TakeDamage(IDamageable.DamageInfo damageInfo)
         {
-            currentHealth -= damage;
+            if (gameObject.TryGetComponent<IDamageable>(out var damageable))
+                damageable.TakeDamage(_damageInfo);
+            currentHealth -= damageInfo.Damage;
             currentHealth = Mathf.Clamp(currentHealth, 0f, _maxHealth);
 
             if (currentHealth <= 0)
