@@ -83,7 +83,7 @@ public class BossAttackState : BaseState
                 break;
             case BossAttackType.SlowPlayer:
                 _enemyInputController.StopAttack();
-                PlayerDebuffHandler.Instance.ApplySlow(2f);
+                PlayerDebuffHandler.Instance.ApplySlow(5f);
                 break;
             case BossAttackType.ReduceTSM:
                 _enemyInputController.StopAttack();

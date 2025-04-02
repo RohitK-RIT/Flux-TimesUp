@@ -10,15 +10,20 @@ public class PlayerDebuffHandler : MonoBehaviour
     private PlayerController player;
 
     void Awake() { Instance = this; }
-    void Start() { player = FindObjectOfType<PlayerController>(); originalSpeed = player.Stats.movementSpeed; }
+
+    void Start()
+    {
+        player = GetComponent<PlayerController>(); 
+        originalSpeed = player.Stats.movementSpeed;
+    }
 
     public void ApplySlow(float duration) {
         Debug.Log("boss is slowing player movement");
-        //StartCoroutine(SlowPlayer(duration));
+        StartCoroutine(SlowPlayer(duration));
     }
 
     IEnumerator SlowPlayer(float duration) {
-        player.Stats.movementSpeed *= 0.5f;
+        player.Stats.movementSpeed = 0.5f;
         yield return new WaitForSeconds(duration);
         player.Stats.movementSpeed = originalSpeed;
     }
