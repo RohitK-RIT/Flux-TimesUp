@@ -1,36 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Enemy;
+using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class BossAttackState : AttackState
+public class BossAttackState : BaseState
 {
     private BossController boss;
     public enum BossAttackType { Shoot, SlowPlayer, ReduceTSM }
     public BossAttackType currentAttack;
     //public EnemyController enemy;
+    private readonly EnemyInputController _enemyInputController;
 
-    public BossAttackState(EnemyInputController enemyInputController, BossController boss, BossAttackType currentAttack) : base(enemyInputController)
+    public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
     {
-        this.boss = boss;
-        this.currentAttack = currentAttack;
+        _enemyInputController = enemyInputController;
     }
 
     public override void EnterState() {
-        base.EnterState();
-        boss = _enemyInputController.Enemy.GetComponent<BossController>();
+        // boss = _enemyInputController.Enemy.GetComponent<BossController>();
+        //
+        // if (boss == null) {
+        //     Debug.LogError("BossAttackState: Enemy is not a BossController!");
+        //     return;
+        // }
+        //
+        
+        Debug.Log("in enter boss attack state");
+    }
 
-        if (boss == null) {
-            Debug.LogError("BossAttackState: Enemy is not a BossController!");
-            return;
-        }
+    public override void ExitState()
+    {
+        Debug.Log("in exit boss attack state");
+    }
 
+    public override void UpdateState()
+    {
         currentAttack = (BossAttackType)Random.Range(0, 3);
         ExecuteAttack();
+        Debug.Log("in update boss attack state");
     }
-    
+
+    public override EnemyState GetNextState()
+    {
+        Debug.Log("in getnext boss attack state");
+        return EnemyState.BossAttack;
+    }
+
     void ExecuteAttack() {
         switch (currentAttack) {
             case BossAttackType.Shoot:
@@ -47,5 +65,6 @@ public class BossAttackState : AttackState
     
     void ShootAtPlayer() {
         // Implement shooting logic
+        Debug.Log("boss is shooting");
     }
 }

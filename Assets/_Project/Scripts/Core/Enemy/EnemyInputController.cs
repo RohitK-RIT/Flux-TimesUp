@@ -110,7 +110,7 @@ namespace _Project.Scripts.Core.Enemy
                 case EnemyType.Boss:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
-                    states[EnemyState.Attack] = new AttackState(this);
+                    states[EnemyState.BossAttack] = new BossAttackState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 

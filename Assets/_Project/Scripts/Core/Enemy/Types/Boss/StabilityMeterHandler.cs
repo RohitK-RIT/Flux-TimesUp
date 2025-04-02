@@ -10,6 +10,7 @@ public class StabilityMeterHandler : MonoBehaviour
     void Awake() { Instance = this; }
 
     public void DecreaseTSM(int amount) {
-        stabilityLevel -= amount;
+        //stabilityLevel -= amount;
+        Debug.Log("boss is affecting TSM");
     }
 }

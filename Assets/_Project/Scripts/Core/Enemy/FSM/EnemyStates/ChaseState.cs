@@ -42,6 +42,14 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 return EnemyState.Detect;
             }
 
+            if (_enemyInputController.enemyType == EnemyType.Boss)
+            {
+                return _enemyInputController.IsPlayerInAttackRange() ?
+                    // If the player is in attack range, transition to Attack state
+                    EnemyState.BossAttack :
+                    EnemyState.Chase;
+            }
+
             //Check if the player is now within attack range
             return _enemyInputController.IsPlayerInAttackRange() ?
                 // If the player is in attack range, transition to Attack state

@@ -13,7 +13,8 @@ public class PlayerDebuffHandler : MonoBehaviour
     void Start() { player = FindObjectOfType<PlayerController>(); originalSpeed = player.Stats.movementSpeed; }
 
     public void ApplySlow(float duration) {
-        StartCoroutine(SlowPlayer(duration));
+        Debug.Log("boss is slowing player movement");
+        //StartCoroutine(SlowPlayer(duration));
     }
 
     IEnumerator SlowPlayer(float duration) {
