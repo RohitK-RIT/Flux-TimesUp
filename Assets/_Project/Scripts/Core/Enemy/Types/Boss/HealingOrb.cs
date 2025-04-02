@@ -1,40 +1,51 @@
 using System.Collections;
-using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Enemy;
-using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 
-public class HealingOrb : MonoBehaviour, IDamageable
+namespace _Project.Scripts.Core.Enemy.Types.Boss
 {
-    //public int orbHealth = 10;
-    private int healAmount = 1;
-    private BossController boss;
-    [SerializeField] private float currentHealth = 0;
-    private float maxHealth = 300f;
+    public class HealingOrb : MonoBehaviour, IDamageable
+    {
+        // Amount of health restored per second
+        private readonly int _healAmount = 1;
+        
+        // Reference to the BossController
+        private BossController _boss;
+        
+        // Current health of the orb
+        [SerializeField] private float currentHealth;
+        
+        // Maximum health of the orb
+        private readonly float _maxHealth = 300f;
     
 
-    void Start() {
-        //base.Start();
-        currentHealth = maxHealth;
-        boss = FindObjectOfType<BossController>();
-        StartCoroutine(HealBoss());
-    }
-
-    IEnumerator HealBoss() {
-        while (boss != null) {
-            boss._enemyController.currentHealth += healAmount;
-            yield return new WaitForSeconds(1f);
+        void Start() {
+            currentHealth = _maxHealth;
+            _boss = FindObjectOfType<BossController>();
+            StartCoroutine(HealBoss());
         }
-    }
 
-    public void TakeDamage(Weapon weapon, float damage)
-    {
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        // Coroutine to heal the boss over time
+        IEnumerator HealBoss() {
+            while (_boss != null) {
+                
+                // Increase boss's health
+                _boss.EnemyController.currentHealth += _healAmount;
+                
+                // Wait for 1 second before healing again
+                yield return new WaitForSeconds(1f);
+            }
+        }
 
-        if (currentHealth <= 0)
-            gameObject.SetActive(false);
+        // Function to apply damage to the boss
+        public void TakeDamage(Weapon weapon, float damage)
+        {
+            currentHealth -= damage;
+            currentHealth = Mathf.Clamp(currentHealth, 0f, _maxHealth);
+
+            if (currentHealth <= 0)
+                gameObject.SetActive(false);
+        }
     }
 }

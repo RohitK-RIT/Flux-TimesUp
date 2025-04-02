@@ -1,104 +1,118 @@
-using System.Collections;
-using System.Collections.Generic;
-using _Project.Scripts.Core.Enemy;
-using _Project.Scripts.Core.Enemy.FSM;
-using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
+using _Project.Scripts.Core.Enemy.Types.Boss;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class BossAttackState : BaseState
+namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 {
-    private BossController boss;
-    public enum BossAttackType { Shoot, SlowPlayer, ReduceTSM }
-    public BossAttackType currentAttack;
-    //public EnemyController enemy;
-    private readonly EnemyInputController _enemyInputController;
-    private float attackDuration = 5f; // Duration for each attack
-    private float cooldownDuration = 2f; // Cooldown between attacks
-    private float stateTimer = 0f;
-    private bool isOnCooldown = false;
-    
-    public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
+    public class BossAttackState : BaseState
     {
-        _enemyInputController = enemyInputController;
-    }
-
-    public override void EnterState() {
-        // boss = _enemyInputController.Enemy.GetComponent<BossController>();
-        //
-        // if (boss == null) {
-        //     Debug.LogError("BossAttackState: Enemy is not a BossController!");
-        //     return;
-        // }
-        //
+        // Stores the current attack type
+        private BossAttackType _currentAttack;
         
-        Debug.Log("in enter boss attack state");
-    }
-
-    public override void ExitState()
-    {
-        Debug.Log("in exit boss attack state");
-    }
-
-    public override void UpdateState()
-    {
-        stateTimer += Time.deltaTime;
-
-        if (isOnCooldown)
+        // Reference to the enemy's input controller
+        private readonly EnemyInputController _enemyInputController;
+        
+        // Duration for each attack before switching
+        private readonly float _attackDuration = 5f;
+        
+        // Cooldown duration between attacks
+        private readonly float _cooldownDuration = 2f;
+        
+        // Timer to track attack duration and cooldown time
+        private float _stateTimer;
+        
+        // Flag to check if the boss is in cooldown mode
+        private bool _isOnCooldown;
+    
+        // Constructor initializing the attack state with an EnemyInputController
+        public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
         {
-            if (stateTimer >= cooldownDuration)
-            {
-                isOnCooldown = false;
-                stateTimer = 0f;
-                currentAttack = (BossAttackType)Random.Range(0, 3); // Pick a new attack
-                Debug.Log("Boss attack resumes: " + currentAttack);
-            }
+            _enemyInputController = enemyInputController;
         }
-        else
+
+        public override void EnterState() 
         {
-            if (stateTimer >= attackDuration)
+            Debug.Log("in enter boss attack state");
+        }
+
+        public override void ExitState()
+        {
+            Debug.Log("in exit boss attack state");
+        }
+
+        public override void UpdateState()
+        {
+            // Update the timer each frame
+            _stateTimer += Time.deltaTime;
+
+            if (_isOnCooldown)
             {
-                isOnCooldown = true;
-                stateTimer = 0f;
-                Debug.Log("Boss is on cooldown, waiting...");
+                // If the cooldown period is over, start a new attack
+                if (_stateTimer >= _cooldownDuration)
+                {
+                    _isOnCooldown = false;
+                    _stateTimer = 0f;
+                    
+                    // Randomly choose the next attack
+                    _currentAttack = (BossAttackType)Random.Range(0, 3);
+                }
             }
             else
             {
-                ExecuteAttack();
+                // If the attack duration is over, switch to cooldown mode
+                if (_stateTimer >= _attackDuration)
+                {
+                    _isOnCooldown = true;
+                    _stateTimer = 0f;
+                    Debug.Log("Boss is on cooldown, waiting...");
+                }
+                else
+                {
+                    // Perform the selected attack
+                    ExecuteAttack();
+                }
+            }
+            Debug.Log("in update boss attack state");
+        }
+
+        public override EnemyState GetNextState()
+        {
+            // If a player is still in attack range, stay in attack state
+            if (_enemyInputController.IsPlayerInAttackRange())
+            {
+                return EnemyState.BossAttack;
+            }
+            //Check if the player is now within chase range
+            return _enemyInputController.CanChasePlayer() ? 
+                // If the player is in chase range, transition to Chase state
+                EnemyState.Chase : 
+                EnemyState.Detect;
+        }
+
+        // Executes the currently selected attack
+        void ExecuteAttack() {
+            switch (_currentAttack) {
+                case BossAttackType.Shoot:
+                    ShootAtPlayer();
+                    break;
+                case BossAttackType.SlowPlayer:
+                    _enemyInputController.StopAttack();
+                    PlayerSpeedHandler.Instance.ReduceSpeed(5f);
+                    break;
+                case BossAttackType.ReduceTSM:
+                    _enemyInputController.StopAttack();
+                    TimeStabilityMeter.Instance.DecreaseTSM(0.1f);
+                    break;
             }
         }
-        Debug.Log("in update boss attack state");
-    }
-
-    public override EnemyState GetNextState()
-    {
-        Debug.Log("in getnext boss attack state");
-        return EnemyState.BossAttack;
-    }
-
-    void ExecuteAttack() {
-        switch (currentAttack) {
-            case BossAttackType.Shoot:
-                ShootAtPlayer();
-                break;
-            case BossAttackType.SlowPlayer:
-                _enemyInputController.StopAttack();
-                PlayerDebuffHandler.Instance.ApplySlow(5f);
-                break;
-            case BossAttackType.ReduceTSM:
-                _enemyInputController.StopAttack();
-                TimeStabilityMeter.Instance.DecreaseTSM(0.1f);
-                break;
-        }
-    }
     
-    void ShootAtPlayer() {
-        // Implement shooting logic
-        Debug.Log("boss is shooting");
-        if (_enemyInputController.CanAttack())
-        {
-            _enemyInputController.AttackPlayer();
+        // Handles the shooting attack
+        void ShootAtPlayer() {
+            Debug.Log("boss is shooting");
+            if (_enemyInputController.CanAttack())
+            {
+                _enemyInputController.AttackPlayer();
+            }
         }
     }
 }
