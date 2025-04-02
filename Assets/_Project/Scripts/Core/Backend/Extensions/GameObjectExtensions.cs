@@ -2,7 +2,7 @@
 
 namespace _Project.Scripts.Core.Backend.Helper
 {
-    public static class GameObjectHelper
+    public static class GameObjectExtensions
     {
         /// <summary>
         /// Function to set the layer of the item and all its children recursively.

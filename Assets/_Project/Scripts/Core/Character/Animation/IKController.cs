@@ -123,8 +123,6 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             // Refresh the rig to apply changes
             _rigBuilder?.Build();
-
-            Debug.Log("All Two Bone IK Constraints assigned successfully!");
         }
     }
 }
