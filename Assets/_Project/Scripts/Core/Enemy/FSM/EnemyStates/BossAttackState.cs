@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -87,7 +88,7 @@ public class BossAttackState : BaseState
                 break;
             case BossAttackType.ReduceTSM:
                 _enemyInputController.StopAttack();
-                StabilityMeterHandler.Instance.DecreaseTSM(5);
+                TimeStabilityMeter.Instance.DecreaseTSM(0.1f);
                 break;
         }
     }
