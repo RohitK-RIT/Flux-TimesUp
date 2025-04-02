@@ -1,8 +1,9 @@
+using System;
+using System.Linq;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
-using IPickupItem = _Project.Scripts.Core.Backend.Interfaces.IPickupItem;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
@@ -87,8 +88,6 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputBegan += BeginAttack;
             _localInputController.OnAttackInputEnded += EndAttack;
 
-            _localInputController.OnLookInputUpdated += SetLookInput;
-
             _localInputController.OnAbilityEquipped += AbilityEquipped;
 
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
@@ -105,8 +104,6 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputBegan -= BeginAttack;
             _localInputController.OnAttackInputEnded -= EndAttack;
 
-            _localInputController.OnLookInputUpdated -= SetLookInput;
-
             _localInputController.OnAbilityEquipped -= AbilityEquipped;
 
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
@@ -115,11 +112,11 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnLootPickupInput -= PickUpItem;
         }
 
-        /// <summary>
-        /// Update the player's look direction.
-        /// </summary>
-        /// <param name="lookInput">look input to the player</param>
-        private void SetLookInput(Vector2 lookInput) { }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent<ICollectible>(out var collectible))
+                collectible.OnCollected(this);
+        }
 
         /// <summary>
         /// Function to equip the player's ability.
@@ -137,7 +134,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         public override void TakeDamage(IDamageable.DamageInfo damageInfo)
         {
             // Check if the attacker is not null, (which means that TSM is killing the player)
-            if (damageInfo.Attacker != null)
+            if (damageInfo.Attacker)
             {
                 // Check if the shield ability is active, if so, return false
                 var shield = HandController.CurrentAbility as ShieldAbility;

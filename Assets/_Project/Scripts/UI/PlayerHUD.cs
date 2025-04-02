@@ -1,6 +1,8 @@
+using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
@@ -24,7 +26,7 @@ namespace _Project.Scripts.UI
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public TMP_Text pickupText;
         [SerializeField] public LocalPlayerController player;
-        
+
         [SerializeField] public Image primaryIconSlot;
         [SerializeField] public Image secondaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
@@ -67,6 +69,16 @@ namespace _Project.Scripts.UI
             abilitySlotHolder.SetActive(false);
         }
 
+        private void OnEnable()
+        {
+            AmmoPickup.OnAmmoCollected += OnAmmoPickup;
+        }
+
+        private void OnDisable()
+        {
+            AmmoPickup.OnAmmoCollected -= OnAmmoPickup;
+        }
+
         private void Update()
         {
             UpdateHealthBar();
@@ -76,7 +88,7 @@ namespace _Project.Scripts.UI
             UpdateLoadoutInfo();
             //currentRoomText.text = LevelSceneController.Instance.randomRoomGeneration.CurrentRoom.name + player.transform.position;
         }
-        
+
         public void ShowAbilityHUD(AbilityType abilityType)
         {
             abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
@@ -84,6 +96,7 @@ namespace _Project.Scripts.UI
             abilitySlotHolder.SetActive(true);
             abilityIconSlot.gameObject.SetActive(true);
         }
+
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
@@ -114,7 +127,7 @@ namespace _Project.Scripts.UI
             meleeIconSlot.enabled = true;
             ShowActiveWeaponSlot();
         }
-        
+
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
@@ -134,10 +147,10 @@ namespace _Project.Scripts.UI
             }
             else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
-               primaryOverlay.SetActive(true);
-               secondaryOverlay.SetActive(true);
-               meleeOverlay.SetActive(false);
-               abilityOverlay.SetActive(true);
+                primaryOverlay.SetActive(true);
+                secondaryOverlay.SetActive(true);
+                meleeOverlay.SetActive(false);
+                abilityOverlay.SetActive(true);
             }
         }
 
@@ -148,7 +161,7 @@ namespace _Project.Scripts.UI
             healthBar.maxValue = player.Stats.maxHealth;
             healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
         }
-        
+
         /// <summary>
         /// Function to update the time stability bar.
         /// </summary>
@@ -163,7 +176,7 @@ namespace _Project.Scripts.UI
                 animator.SetBool(IsBlinking, true);
                 animator.speed = 0.5f;
             }
-            else if(timeStabilityBar.value < 25)
+            else if (timeStabilityBar.value < 25)
             {
                 animator.SetBool(IsBlinking, true);
                 animator.speed = 1f;
@@ -189,7 +202,7 @@ namespace _Project.Scripts.UI
             reloadingText.SetActive(currentRangedWeapon.IsReloading);
             StartCoroutine(UpdateReloadingIcon(currentRangedWeapon.IsReloading, currentRangedWeapon));
         }
-        
+
         private System.Collections.IEnumerator UpdateReloadingIcon(bool isReloading, RangedWeapon currentRangedWeapon)
         {
             var originalRotation = reloadingIcon.transform.rotation; // Store original rotation
@@ -201,11 +214,24 @@ namespace _Project.Scripts.UI
                 reloadingIcon.transform.Rotate(Vector3.forward, totalRotation * Time.deltaTime / reloadTime);
                 yield return new WaitForSeconds(reloadTime);
             }
+
             // Ensure it resets exactly to the original rotation
             reloadingIcon.transform.rotation = originalRotation;
         }
 
-        
+        /// <summary>
+        /// Function for event when ammo is picked up.
+        /// </summary>
+        /// <param name="playerController">the controller that picked up ammo</param>
+        /// <param name="amount">the amount of ammo that is picked up</param>
+        private void OnAmmoPickup(PlayerController playerController, int amount)
+        {
+            if (playerController == LevelSceneController.Instance.Player)
+            {
+                ShowPickupFeedback("You picked up " + amount + " ammo.");
+            }
+        }
+
         /// <summary>
         /// Function to show pickup feedback.
         /// </summary>
@@ -216,7 +242,7 @@ namespace _Project.Scripts.UI
             pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);
         }
-        
+
         /// <summary>
         /// Function to hide pickup feedback.
         /// </summary>
