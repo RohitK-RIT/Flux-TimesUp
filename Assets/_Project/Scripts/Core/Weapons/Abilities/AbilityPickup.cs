@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
 {
-    public class AbilityPickup : MonoBehaviour, IPickupItem
+    public class AbilityPickup : MonoBehaviour, IPickup
     {
         [SerializeField] private AbilityType abilityType;
         
@@ -16,7 +16,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             abilityPickUpInstruction.gameObject.SetActive(false);
         }
 
-        public void OnItemPickup()
+        public void OnPickup()
         {
             var playerWeaponController = LevelSceneController.Instance.Player.HandController;
             
@@ -41,7 +41,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             gameObject.SetActive(false);
         }
         
-        public void OnItemEnterRange()
+        public void OnHoverEnter()
         {
             if (CheckForCurrentAbility())
             {
@@ -52,11 +52,11 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             else
             {
                 //Get Ability
-                this.OnItemPickup();
+                this.OnPickup();
             }
         }
 
-        public void OnItemExitRange()
+        public void OnHoverExit()
         {
             abilityPickUpInstruction.gameObject.SetActive(false);
         }
