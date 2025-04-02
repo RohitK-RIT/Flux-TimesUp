@@ -182,6 +182,8 @@ namespace _Project.Scripts.Onboarding
 
             waitingForInput = false;
             StartCoroutine(DelayCoroutine(10f));
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             OnWeaponSwitchAndAttackComplete?.Invoke();
         }
 

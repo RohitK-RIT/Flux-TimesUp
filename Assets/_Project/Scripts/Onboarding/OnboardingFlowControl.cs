@@ -50,8 +50,6 @@ namespace _Project.Scripts.Onboarding
             levelSceneController.playerHUD.timeStabilityBar.gameObject.SetActive(true);
             MoveToNextOnboardingPhase();
             portal.SetActive(true);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
         
         private void OnPlayerTeleportComplete()
