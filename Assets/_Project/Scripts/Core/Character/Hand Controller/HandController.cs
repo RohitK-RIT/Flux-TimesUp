@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -18,6 +17,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     public class HandController : CharacterComponent
     {
         public event Action OnWeaponSwitched;
+        public event Action<int> OnAmmoPicked;
+        public event Action<AbilityType> OnAbilitySwitched;
 
         /// <summary>
         /// The parent transform for the weapons.
@@ -42,13 +43,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             get => _currentItem;
             private set
             {
-                if (value == null)
+                if (value is null)
                 {
                     Debug.LogError("Item not found");
                     return;
                 }
 
-                if (_currentItem != null)
+                if (_currentItem is not null)
                 {
                     _currentItem.OnUnequip();
                     _currentItem.gameObject.SetActive(false);
@@ -63,9 +64,27 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         }
 
         /// <summary>
-        /// Gets the current ability.
+        /// Property to get the current ability.
         /// </summary>
-        public Ability CurrentAbility { get; private set; }
+        public Ability CurrentAbility
+        {
+            get => _currentAbility;
+            private set
+            {
+                if (value is null)
+                    return;
+
+                if (_currentAbility is not null)
+                {
+                    _currentAbility.OnDrop();
+                    Destroy(_currentAbility.gameObject);
+                }
+
+                _currentAbility = value;
+                _currentAbility.OnPickup(PlayerController);
+                OnAbilitySwitched?.Invoke(value.Type);
+            }
+        }
 
         [SerializeField] private bool hasPreMadeLoadout;
 
@@ -78,6 +97,23 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The currently equipped weapon.  
         /// </summary>
         private IHandItem _currentItem;
+
+        /// <summary>
+        /// The currently equipped ability.
+        /// </summary>
+        private Ability _currentAbility;
+
+        private void OnEnable()
+        {
+            AbilityPickup.OnAbilityPicked += OnAbilityPicked;
+            AmmoPickup.OnAmmoCollected += OnAmmoCollected;
+        }
+
+        private void OnDisable()
+        {
+            AbilityPickup.OnAbilityPicked -= OnAbilityPicked;
+            AmmoPickup.OnAmmoCollected -= OnAmmoCollected;
+        }
 
         public override void Initialize(PlayerController playerController)
         {
@@ -237,6 +273,42 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         public void EndAttack()
         {
             CurrentItem.EndUse();
+        }
+
+
+        private void OnAbilityPicked(PlayerController controller, AbilityType type)
+        {
+            if (!IsPlayer(controller))
+                return;
+
+            if (type == AbilityType.None)
+            {
+                Debug.LogError("Ability type is None");
+                return;
+            }
+
+            if (CurrentAbility?.Type == type)
+                return;
+
+            // Destroy the current ability
+            if (CurrentAbility)
+                Destroy(CurrentAbility.gameObject);
+
+            // Load the new ability
+            LoadAbility(type);
+        }
+
+        private void OnAmmoCollected(PlayerController controller, int amount)
+        {
+            if (!IsPlayer(controller))
+                return;
+            
+            OnAmmoPicked?.Invoke(amount);
+        }
+
+        private bool IsPlayer(PlayerController controller)
+        {
+            return controller == PlayerController;
         }
 
         /// <summary>

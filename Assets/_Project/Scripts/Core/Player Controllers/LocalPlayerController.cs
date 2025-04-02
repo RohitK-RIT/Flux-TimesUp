@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
@@ -14,11 +13,13 @@ namespace _Project.Scripts.Core.Player_Controllers
     public sealed class LocalPlayerController : PlayerController
     {
         /// <summary>
-        /// The current pickup item the player has.
+        /// The friendly layer name for the player.
         /// </summary>
-        public IPickup CurrentPickup { get; private set; }
-
         public override string FriendlyLayerName => "Player";
+
+        /// <summary>
+        /// The enemy layer name for the player.
+        /// </summary>
         public override string OpponentLayerName => "Enemy";
 
         /// <summary>
@@ -33,6 +34,35 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         // This will go in player info eventually.
         [SerializeField] private float aimSensitivity = 1f;
+
+        /// <summary>
+        /// The center of the viewport.
+        /// </summary>
+        private static readonly Vector3 ViewportCenter = new(0.5f, 0.5f, 0f);
+
+        /// <summary>
+        /// The camera used for the player.
+        /// </summary>
+        private Camera _camera;
+
+        /// <summary>
+        /// The property that gets or sets the current pickable item.
+        /// </summary>
+        private IPickable CurrentPickable
+        {
+            get => _currentPickable;
+            set
+            {
+                _currentPickable?.OnHoverExit();
+                _currentPickable = value;
+                _currentPickable?.OnHoverEnter(this);
+            }
+        }
+
+        /// <summary>
+        /// The current pickable item the player is interacting with.
+        /// </summary>
+        private IPickable _currentPickable;
 
         protected override void Awake()
         {
@@ -50,34 +80,14 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Initialize the input controller and camera controller
             _localInputController.Initialize(this);
             _playerAimController.Initialize(this);
+
+            // Set the camera to the main camera
+            _camera = LevelSceneController.Instance.Camera;
         }
 
         private void Update()
         {
-            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 8f,
-                    LayerMask.GetMask("Pickup")))
-            {
-                if (hit.collider.TryGetComponent<IPickup>(out var pickupItem))
-                {
-                    CurrentPickup = pickupItem;
-                    CurrentPickup.OnHoverEnter();
-                }
-            }
-            else if (CurrentPickup != null)
-            {
-                CurrentPickup.OnHoverExit();
-                var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
-                foreach (var ability in abilitiesInRange)
-                {
-                    if (ability.TryGetComponent<IPickup>(out var pickupItem))
-                    {
-                        CurrentPickup = pickupItem;
-                        CurrentPickup.OnHoverExit();
-                    }
-                }
-
-                CurrentPickup = null;
-            }
+            UpdatePickable();
         }
 
         private void OnEnable()
@@ -146,11 +156,27 @@ namespace _Project.Scripts.Core.Player_Controllers
             base.TakeDamage(damageInfo);
         }
 
+        private void UpdatePickable()
+        {
+            if (Physics.Raycast(_camera.ViewportPointToRay(ViewportCenter),
+                    out var hit,
+                    8f,
+                    LayerMask.GetMask("Pickup")))
+            {
+                if (hit.collider.TryGetComponent<IPickable>(out var pickable))
+                    CurrentPickable = pickable;
+            }
+            else
+            {
+                CurrentPickable = null;
+            }
+        }
+
         private void PickUpItem()
         {
-            if (CurrentPickup == null) return;
-            CurrentPickup.OnPickup();
-            CurrentPickup = null;
+            if (CurrentPickable == null) return;
+            CurrentPickable.OnPickup(this);
+            CurrentPickable = null;
         }
     }
 }

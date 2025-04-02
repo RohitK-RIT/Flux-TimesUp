@@ -106,8 +106,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             // Initialize the projectile pool.
             _projectilePool = new ObjectPool<Projectile>(CreateProjectile);
-            
-            AmmoPickup.OnAmmoCollected += AddAmmo;
         }
 
         internal void InitializeAmo()
@@ -130,8 +128,25 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void OnDestroy()
         {
-            AmmoPickup.OnAmmoCollected -= AddAmmo;
+            // Dispose of the projectile pool.
             _projectilePool?.Dispose();
+        }
+
+        public override void OnPickup(PlayerController playerController)
+        {
+            base.OnPickup(playerController);
+
+            playerController.HandController.OnAmmoPicked += AddAmmo;
+        }
+
+        public override void OnDrop()
+        {
+            base.OnDrop();
+
+            if (IsReloading)
+                StopReloading();
+
+            CurrentPlayerController.HandController.OnAmmoPicked -= AddAmmo;
         }
 
         public override void OnEquip()
@@ -275,11 +290,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         /// <param name="controller">the controller that picked up the ammo</param>
         /// <param name="ammo">the ammo to be added</param>
-        private void AddAmmo(PlayerController controller, int ammo)
+        private void AddAmmo(int ammo)
         {
-            if (controller != CurrentPlayerController)
-                return;
-
             if (stats.WeaponType != WeaponType.Primary && !Equipped)
                 return;
 
