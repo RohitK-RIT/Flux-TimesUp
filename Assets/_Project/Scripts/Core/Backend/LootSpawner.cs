@@ -4,6 +4,7 @@ using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
+using _Project.Scripts.Onboarding;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -34,7 +35,7 @@ namespace _Project.Scripts.Core.Backend
             if (killingplayer != LevelSceneController.Instance.Player)
                 return;
             
-            Debug.Log("Room: " + playerkilled.transform.parent.name);
+            //Debug.Log("Room: " + playerkilled.transform.parent.name);
             DropLoot(playerkilled.transform.position, playerkilled.transform.parent);
         }
 
@@ -46,6 +47,11 @@ namespace _Project.Scripts.Core.Backend
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void DropLoot(Vector3 lootDropPosition, Transform currentRoom)
         {
+            var onboarding = FindObjectOfType<OnboardingManager>();
+            if (onboarding != null)
+            {
+                onboarding.OnLootDroppedAfterTeleport(); // ✅ Notify
+            }
             var dropType = Random.Range(0, 2);
             switch (dropType)
             {

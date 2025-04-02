@@ -1,6 +1,5 @@
     using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
-using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,7 +25,10 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         
         public EnemyController BossEnemy { get; set; }
         
-        [SerializeField] public RandomRoomGeneration randomRoomGeneration;
+        // The name of the next scene to load after onboarding
+        private string _nextSceneName = "PCG-Level";
+        
+        //[SerializeField] public RandomRoomGeneration randomRoomGeneration;
 
         private void Update()
         {
@@ -116,6 +118,11 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
             // Replace "MainMenuScene" with the name of your actual main menu scene
             SceneSystem.Instance.LoadScene(new SceneLoadRequest("UI", LoadSceneMode.Single));
+        }
+        
+        public void SetSceneName(string sceneName)
+        {
+            _nextSceneName = sceneName;
         }
 
         //Function to exit the game when the quit button is clicked

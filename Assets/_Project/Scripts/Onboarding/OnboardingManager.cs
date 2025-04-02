@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using TMPro;
@@ -23,10 +24,12 @@ namespace _Project.Scripts.Onboarding
         private int index = 0;
         private bool onboardingLocked = true;
         private bool waitingForInput = false;
+        private bool waitingForLootDrop = false;
         
         public Action OnLookAndMoveComplete;
         public Action OnWeaponSwitchAndAttackComplete;
         public Action OnPlayerTeleportComplete;
+        public Action OnPlayerLootControlsComplete;
 
         private void Awake()
         {
@@ -101,6 +104,11 @@ namespace _Project.Scripts.Onboarding
             {
                 OnLookAndMoveComplete?.Invoke();
             }
+            if(index == controlsDataSystem.controlsDatabase.Length)
+            {
+                OnPlayerLootControlsComplete?.Invoke();
+            }
+            
             ShowOnboardingStep();
         }
 
@@ -111,10 +119,27 @@ namespace _Project.Scripts.Onboarding
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
+        public void OnPlayerEnteredPortal()
+        {
+            waitingForLootDrop = true;
+            OnPlayerTeleportComplete?.Invoke();
+        }
+        public void OnLootDroppedAfterTeleport()
+        {
+            if (!waitingForLootDrop) return;
+
+            waitingForLootDrop = false;
+            AdvanceStep(); // ✅ Continue onboarding (e.g., show ability pickup control)
+        }
         private IEnumerator DelayedAdvanceStep(float delayTime)
         {
             yield return new WaitForSecondsRealtime(delayTime); // Use Realtime to ignore Time.timeScale
             AdvanceStep();
+        }
+        private IEnumerator DelayCoroutine(float delayTime)
+        {
+            yield return new WaitForSecondsRealtime(delayTime); // Use Realtime to ignore Time.timeScale
         }
         #region Input Event Handlers
 
@@ -151,7 +176,8 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Attack) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayedAdvanceStep(5));
+            StartCoroutine(DelayCoroutine(5));
+            OnWeaponSwitchAndAttackComplete?.Invoke();
         }
 
         private void OnLootPickupDetected()

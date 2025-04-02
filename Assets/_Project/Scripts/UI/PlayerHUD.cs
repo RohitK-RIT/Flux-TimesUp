@@ -1,5 +1,4 @@
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
@@ -17,10 +16,10 @@ namespace _Project.Scripts.UI
     public class PlayerHUD : MonoBehaviour
     {
         private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
-
+        
         // References to the UI components
         [SerializeField] public Slider healthBar;
-        [SerializeField] private Slider timeStabilityBar;
+        [SerializeField] public Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public TMP_Text pickupText;
@@ -49,7 +48,7 @@ namespace _Project.Scripts.UI
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private TMP_Text tmsValueText;
 
-        [SerializeField] private TMP_Text currentRoomText;
+        //[SerializeField] private TMP_Text currentRoomText;
 
         //private Ability currentAbility;
 

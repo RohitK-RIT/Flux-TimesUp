@@ -71,6 +71,12 @@ namespace _Project.Scripts.Onboarding
                 counter++;
                 yield return new  WaitForSecondsRealtime(typingSpeed);
             }
+
+            if (index == 2 || index == 5)
+            {
+                OnContinue();
+                yield return null;
+            }
             continueButton.gameObject.SetActive(true);
         }
     }
