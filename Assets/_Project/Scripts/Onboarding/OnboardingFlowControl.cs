@@ -27,6 +27,8 @@ namespace _Project.Scripts.Onboarding
 
         public void OnContinueClickedFromNarrative()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             if(onboardingManager.OnboardingIndex >= onboardingManager.controlsDataSystem.controlsDatabase.Length)
             {
                 narrativeManager.gameObject.SetActive(false);
@@ -63,6 +65,8 @@ namespace _Project.Scripts.Onboarding
         {
             onboardingManager.OnPlayerLootControlsComplete -= OnPlayerLootControlsComplete;
             MoveToNextOnboardingPhase();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         
         public void MoveToNextOnboardingPhase()

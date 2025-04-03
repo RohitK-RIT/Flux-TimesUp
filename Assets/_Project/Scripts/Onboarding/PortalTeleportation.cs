@@ -11,21 +11,8 @@ namespace _Project.Scripts.Onboarding
         {
             if (other.CompareTag("Player"))
             {
-                Debug.Log("Player entered portal" + destination.position);
                 var player = LevelSceneController.Instance.Player;
-                CharacterController cc = player.GetComponent<CharacterController>();
-
-                if (cc != null)
-                {
-                    cc.enabled = false; 
-                }
-
-                player.transform.position = destination.position;
-
-                if (cc != null)
-                {
-                    cc.enabled = true;
-                }
+                player.MovementController.SetPosition(destination.position);
                 onboardingManager.OnPlayerEnteredPortal();
             }
         }
