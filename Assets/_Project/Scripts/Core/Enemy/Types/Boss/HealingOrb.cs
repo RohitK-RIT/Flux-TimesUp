@@ -21,6 +21,7 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         
         private IDamageable.DamageInfo _damageInfo;
     
+        private GameObject _healingOrbEffect;
 
         void OnEnable() {
             currentHealth = _maxHealth;
@@ -50,24 +51,26 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
             if (currentHealth <= 0)
             {
                 gameObject.SetActive(false);
+                DeactivateVFX();
             }
         }
         
         void ActivateVFX()
         {
             Vector3 spawnPosition = _boss.transform.position - new Vector3(0,1.0f, 0);
-            Instantiate(_boss.healBossVFX, spawnPosition, Quaternion.identity);
+            _healingOrbEffect = Instantiate(_boss.healBossVFX, spawnPosition, Quaternion.identity, _boss.transform);
         }
 
         // Deactivates the current VFX
         void DeactivateVFX()
         {
-            _boss.healBossVFX.SetActive(false);
+            _healingOrbEffect.SetActive(false);
+            //DestroyImmediate(_boss.healBossVFX, true);
         }
 
-        private void OnDisable()
-        {
-            DeactivateVFX();
-        }
+        // private void OnDisable()
+        // {
+        //     DeactivateVFX();
+        // }
     }
 }
