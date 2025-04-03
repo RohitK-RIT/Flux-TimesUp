@@ -1301,6 +1301,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 2
   enemyType: 1
+  slowPlayerVFX: {fileID: 3744133877081091469, guid: 7e5e27db0cf1644f3917dd41d1316793,
+    type: 3}
+  reduceTSMVFX: {fileID: 7478731271839673279, guid: 70accc193021c48fe8322a0278d4e573,
+    type: 3}
 --- !u!114 &7350352694099059543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1314,7 +1318,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 6695076461426248051}
-  currentWeapon: {fileID: 4372811483543633570}
   weapons:
   - {fileID: 4372811483543633570}
   hasPreMadeLoadout: 1
@@ -1453,14 +1456,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb5d0f8122fc24f5e95e238b6158c7af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats: {fileID: 0}
-  friendlyLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  opponentLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  currentHealth: 0
   healingOrbPrefab: {fileID: 3473613526463779720, guid: 3b6b4ce696c4343b189b2ee77118fdb3,
     type: 3}
 --- !u!1 &8868932900736931432

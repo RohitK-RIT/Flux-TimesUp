@@ -23,6 +23,9 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         // Flag to check if the boss is in cooldown mode
         private bool _isOnCooldown;
+        
+        // VFX Prefabs for different attack types
+        private GameObject _currentVFX;
     
         // Constructor initializing the attack state with an EnemyInputController
         public BossAttackState(EnemyInputController enemyInputController) : base(EnemyState.BossAttack)
@@ -33,11 +36,16 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         public override void EnterState() 
         {
             Debug.Log("in enter boss attack state");
+            _currentAttack = (BossAttackType)Random.Range(0, 3); // Pick a new attack when entering the state
+            _stateTimer = 0f;
+            _isOnCooldown = false;
+            ActivateVFX();
         }
 
         public override void ExitState()
         {
             Debug.Log("in exit boss attack state");
+            DeactivateVFX();
         }
 
         public override void UpdateState()
@@ -55,6 +63,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                     
                     // Randomly choose the next attack
                     _currentAttack = (BossAttackType)Random.Range(0, 3);
+                    ActivateVFX(); // Activate new attack VFX
                 }
             }
             else
@@ -64,6 +73,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 {
                     _isOnCooldown = true;
                     _stateTimer = 0f;
+                    DeactivateVFX(); // Deactivate VFX when attack ends
                     Debug.Log("Boss is on cooldown, waiting...");
                 }
                 else
@@ -107,11 +117,42 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         }
     
         // Handles the shooting attack
-        void ShootAtPlayer() {
+        void ShootAtPlayer() 
+        {
             Debug.Log("boss is shooting");
             if (_enemyInputController.CanAttack())
             {
                 _enemyInputController.AttackPlayer();
+            }
+        }
+        
+        void ActivateVFX()
+        {
+            DeactivateVFX(); // Ensure previous VFX is turned off before activating a new one
+
+            switch (_currentAttack)
+            {
+                case BossAttackType.SlowPlayer:
+                    _currentVFX = Object.Instantiate(_enemyInputController.slowPlayerVFX, _enemyInputController.transform.position, Quaternion.identity);
+                    break;
+                case BossAttackType.ReduceTSM:
+                    _currentVFX = Object.Instantiate(_enemyInputController.reduceTSMVFX, _enemyInputController.transform.position, Quaternion.identity);
+                    break;
+            }
+
+            if (_currentVFX != null)
+            {
+                _currentVFX.transform.SetParent(_enemyInputController.transform); // Keep VFX attached to the boss
+            }
+        }
+
+        // Deactivates the current VFX
+        void DeactivateVFX()
+        {
+            if (_currentVFX != null)
+            {
+                Object.Destroy(_currentVFX);
+                _currentVFX = null;
             }
         }
     }

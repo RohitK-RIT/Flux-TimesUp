@@ -76,6 +76,9 @@ namespace _Project.Scripts.Core.Enemy
         private Vector3 _lastKnownPlayerPosition; // player's last known position
 
         internal float AttackHealthThreshold = 60;
+        
+        [SerializeField] internal GameObject slowPlayerVFX;
+        [SerializeField] internal GameObject reduceTSMVFX;
 
 
         private void Awake()
