@@ -46,26 +46,26 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         // Function to apply damage to the boss
         public void TakeDamage(IDamageable.DamageInfo damageInfo)
         {
-            if (gameObject.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(_damageInfo);
             currentHealth -= damageInfo.Damage;
             currentHealth = Mathf.Clamp(currentHealth, 0f, _maxHealth);
 
             if (currentHealth <= 0)
+            {
                 gameObject.SetActive(false);
+            }
         }
         
         void ActivateVFX()
         {
             Vector3 spawnPosition = _boss.transform.position - new Vector3(0,1.0f, 0); // Adjust Y by 0.5 units down
             Instantiate(_boss.healBossVFX, spawnPosition, Quaternion.identity);
-            _boss.healBossVFX.transform.SetParent(_boss.transform); // Keep VFX attached to the boss
+            //_boss.healBossVFX.transform.SetParent(_boss.transform); // Keep VFX attached to the boss
         }
 
         // Deactivates the current VFX
         void DeactivateVFX()
         {
-            Destroy(_boss.healBossVFX);
+            _boss.healBossVFX.SetActive(false);
         }
 
         private void OnDisable()
