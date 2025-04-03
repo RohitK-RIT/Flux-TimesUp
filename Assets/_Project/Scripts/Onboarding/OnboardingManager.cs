@@ -181,7 +181,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Attack) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayCoroutine(10f));
+            StartCoroutine(DelayCoroutine(5f));
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             OnWeaponSwitchAndAttackComplete?.Invoke();
