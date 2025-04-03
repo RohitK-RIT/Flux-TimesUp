@@ -113,7 +113,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 case BossAttackType.ReduceTSM:
                     _enemyInputController.StopAttack();
                     _enemyInputController.RotateTowardsPlayer();
-                    TimeStabilityMeter.Instance.DecreaseTSM(0.1f);
+                    TimeStabilityMeter.Instance.DecreaseTSM(0.05f);
                     break;
             }
         }
