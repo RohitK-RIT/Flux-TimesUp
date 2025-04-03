@@ -163,7 +163,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Move) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayedAdvanceStep(3.5f));
+            StartCoroutine(DelayedAdvanceStep(1.5f));
         }
 
         private void OnWeaponSwitchDetected(int weaponIndex)
@@ -172,7 +172,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.SwitchWeapon) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayedAdvanceStep(3f));
+            StartCoroutine(DelayedAdvanceStep(1.5f));
         }
 
         private void OnAttackDetected()
@@ -181,7 +181,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.Attack) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayCoroutine(3f));
+            StartCoroutine(DelayCoroutine(1.5f));
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             OnWeaponSwitchAndAttackComplete?.Invoke();
@@ -193,7 +193,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.LootPickup) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayedAdvanceStep(3));
+            StartCoroutine(DelayedAdvanceStep(2));
         }
 
         private void OnAbilityEquipped()
@@ -202,7 +202,7 @@ namespace _Project.Scripts.Onboarding
             if (controlsDataSystem.controlsDatabase[index].inputType != InputType.AbilityEquip) return;
 
             waitingForInput = false;
-            StartCoroutine(DelayedAdvanceStep(2));
+            StartCoroutine(DelayedAdvanceStep(1));
         }
 
         #endregion
