@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Weapons;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace _Project.Scripts.Core.Enemy.Types.Boss
 {
@@ -57,9 +55,8 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         
         void ActivateVFX()
         {
-            Vector3 spawnPosition = _boss.transform.position - new Vector3(0,1.0f, 0); // Adjust Y by 0.5 units down
+            Vector3 spawnPosition = _boss.transform.position - new Vector3(0,1.0f, 0);
             Instantiate(_boss.healBossVFX, spawnPosition, Quaternion.identity);
-            //_boss.healBossVFX.transform.SetParent(_boss.transform); // Keep VFX attached to the boss
         }
 
         // Deactivates the current VFX
