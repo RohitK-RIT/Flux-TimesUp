@@ -107,10 +107,12 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                     break;
                 case BossAttackType.SlowPlayer:
                     _enemyInputController.StopAttack();
+                    _enemyInputController.RotateTowardsPlayer();
                     PlayerSpeedHandler.Instance.ReduceSpeed(5f);
                     break;
                 case BossAttackType.ReduceTSM:
                     _enemyInputController.StopAttack();
+                    _enemyInputController.RotateTowardsPlayer();
                     TimeStabilityMeter.Instance.DecreaseTSM(0.1f);
                     break;
             }
@@ -130,13 +132,14 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             DeactivateVFX(); // Ensure previous VFX is turned off before activating a new one
 
+            Vector3 spawnPosition = _enemyInputController.transform.position - new Vector3(0,1.0f, 0); // Adjust Y by 0.5 units down
             switch (_currentAttack)
             {
                 case BossAttackType.SlowPlayer:
-                    _currentVFX = Object.Instantiate(_enemyInputController.slowPlayerVFX, _enemyInputController.transform.position, Quaternion.identity);
+                    _currentVFX = Object.Instantiate(_enemyInputController.slowPlayerVFX, spawnPosition, Quaternion.identity);
                     break;
                 case BossAttackType.ReduceTSM:
-                    _currentVFX = Object.Instantiate(_enemyInputController.reduceTSMVFX, _enemyInputController.transform.position, Quaternion.identity);
+                    _currentVFX = Object.Instantiate(_enemyInputController.reduceTSMVFX, spawnPosition, Quaternion.identity);
                     break;
             }
 
