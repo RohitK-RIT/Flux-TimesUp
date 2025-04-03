@@ -1,14 +1,16 @@
+using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace _Project.Scripts.Core.Enemy.Types.Boss
 {
     public class HealingOrb : MonoBehaviour, IDamageable
     {
         // Amount of health restored per second
-        private readonly int _healAmount = 1;
+        private readonly int _healAmount = 10;
         
         // Reference to the BossController
         private BossController _boss;
@@ -22,9 +24,10 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         private IDamageable.DamageInfo _damageInfo;
     
 
-        void Start() {
+        void OnEnable() {
             currentHealth = _maxHealth;
             _boss = FindObjectOfType<BossController>();
+            ActivateVFX();
             StartCoroutine(HealBoss());
         }
 
@@ -50,6 +53,24 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
 
             if (currentHealth <= 0)
                 gameObject.SetActive(false);
+        }
+        
+        void ActivateVFX()
+        {
+            Vector3 spawnPosition = _boss.transform.position - new Vector3(0,1.0f, 0); // Adjust Y by 0.5 units down
+            Instantiate(_boss.healBossVFX, spawnPosition, Quaternion.identity);
+            _boss.healBossVFX.transform.SetParent(_boss.transform); // Keep VFX attached to the boss
+        }
+
+        // Deactivates the current VFX
+        void DeactivateVFX()
+        {
+            Destroy(_boss.healBossVFX);
+        }
+
+        private void OnDisable()
+        {
+            DeactivateVFX();
         }
     }
 }

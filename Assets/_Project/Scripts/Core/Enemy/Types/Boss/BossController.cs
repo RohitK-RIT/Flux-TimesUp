@@ -13,6 +13,8 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         
         // Reference to the enemy's controller
         internal EnemyController EnemyController;
+        
+        [SerializeField] internal GameObject healBossVFX;
 
         void Awake()
         {
@@ -50,11 +52,11 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
         Vector3 GetRandomNavMeshPoint() {
             
             // Generate a random point near the boss
-            Vector3 randomPoint = transform.position + Random.insideUnitSphere * 5f;
+            Vector3 randomPoint = transform.position + Random.insideUnitSphere * 10f;
             NavMeshHit hit;
 
             // Check if the generated point is on the NavMesh
-            if (NavMesh.SamplePosition(randomPoint, out hit, 5f, NavMesh.AllAreas)) {
+            if (NavMesh.SamplePosition(randomPoint, out hit, 10f, NavMesh.AllAreas)) {
                 return new Vector3(hit.position.x, 1f, hit.position.z);
             }
 
