@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,7 +25,7 @@ namespace _Project.Scripts.Core.Enemy
 
         private Transform _currentTarget; // current target to assign
 
-        private readonly float _attackRange = 10f; // Attack range
+        private readonly float _attackRange = 15f; // Attack range
 
         [SerializeField] private float attackCooldown = 3f; // Cooldown time between attacks
 
@@ -38,7 +41,7 @@ namespace _Project.Scripts.Core.Enemy
 
         internal StateManager StateManager; // reference to state manager
 
-        private const float ChaseRange = 15f; // chase range
+        private const float ChaseRange = 20f; // chase range
 
         internal Vector3 RoamingPosition; // random roaming position for an enemy
 
@@ -55,8 +58,25 @@ namespace _Project.Scripts.Core.Enemy
         internal float FleeTimeout { get; private set; } = 5f; // Timeout threshold for FleeState
         
         public EnemyType enemyType; // The enemy type
+
+        internal readonly float EnemyDistanceFromPlayer = 5.0f; // Distance between the player and enemy
+
+        private readonly float _chargerDistanceFromPlayer = 1.5f; // Distance between the player and charger enemy
         
-        internal readonly float DistanceFromPlayer = 3.0f; // Distance between the player and enemy
+        private bool _hasSpawnedEnemies;
+
+        private WeaponController _weaponController;
+
+        internal RangedWeapon RangedWeapon;
+
+        internal MemberType MemberType; // type of group member
+
+        internal float EngagementDistance = 30f; // distance between enemies that can come for help
+        
+        private Vector3 _lastKnownPlayerPosition; // player's last known position
+        
+        internal float AttackHealthThreshold = 60;
+
         
         private void Awake()
         {
@@ -64,6 +84,14 @@ namespace _Project.Scripts.Core.Enemy
             StateManager = GetComponent<StateManager>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
+            _weaponController = GetComponent<WeaponController>();
+            RangedWeapon = _weaponController.CurrentWeapon as RangedWeapon;
+
+        }
+
+        private void Start()
+        {
+            EnemyManager.Instance.RegisterEnemy(this);
         }
 
         private void InitializeState()
@@ -82,6 +110,13 @@ namespace _Project.Scripts.Core.Enemy
                     break;
 
                 case EnemyType.Boss:
+                    states[EnemyState.Detect] = new DetectState(this);
+                    states[EnemyState.Chase] = new ChaseState(this);
+                    states[EnemyState.Attack] = new AttackState(this);
+                    StateManager.InitializeStates(states, EnemyState.Detect);
+                    break;
+                
+                case EnemyType.Charger:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
@@ -110,6 +145,7 @@ namespace _Project.Scripts.Core.Enemy
         {
             // Disable AI logic
             _currentTarget = null;
+            EnemyManager.Instance.DeregisterEnemy(this);
         }
         
 
@@ -124,7 +160,11 @@ namespace _Project.Scripts.Core.Enemy
             // NavMesh.GetAreaFromName("Room") fetches the index of the "Room" area,
             // and the bitwise shift (1 << index) creates a mask for this area.
             int roomAreaMask = 1 << NavMesh.GetAreaFromName("Room");
-            bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 1.0f, roomAreaMask);
+            bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 3.0f, roomAreaMask);
+            if (isOnNavMesh)
+            {
+                Debug.Log("Player On NavMesh");
+            }
 
             // Return true if the player's position is on the NavMesh within the specified area.
             return isOnNavMesh;
@@ -156,7 +196,7 @@ namespace _Project.Scripts.Core.Enemy
         // ReSharper disable Unity.PerformanceAnalysis
         internal void StartChasing()
         {
-            if (IsPlayerInCone() && IsPlayerOnNavMesh())
+            if (IsPlayerInCone())
             {
                 StartCoroutine(FollowPlayer()); // Start following the player
             }
@@ -203,7 +243,7 @@ namespace _Project.Scripts.Core.Enemy
 
 
         // Start the attack process if not already attacking and not in cooldown
-        private void StartAttack()
+        internal void StartAttack()
         {
             if (_isAttacking || _isCooldownActive) return; // Prevent multiple attacks or attacks during cooldown
 
@@ -263,9 +303,11 @@ namespace _Project.Scripts.Core.Enemy
                 Enemy.SetDestination(ClosestPlayer.position);
                 OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
 
+                var stoppingDistance = enemyType == EnemyType.Charger ? _chargerDistanceFromPlayer : EnemyDistanceFromPlayer;
+
                 // If a player is in DistanceFromPlayer range, stop chasing
                 if (Vector3.Distance(Enemy.transform.position,
-                        ClosestPlayer.transform.position) <= DistanceFromPlayer)
+                        ClosestPlayer.transform.position) <= stoppingDistance)
                 {
                     StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;
@@ -277,13 +319,13 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to make the enemy move towards roam position
-        private IEnumerator MoveToRoamPosition()
+        private IEnumerator MoveToRoamPosition(Vector3 targetPosition)
         {
             // Set flag to prevent multiple coroutines
             _isRoaming = true;
 
             // move enemy towards roam position
-            Enemy.SetDestination(RoamingPosition);
+            Enemy.SetDestination(targetPosition);
 
             while (Enemy.remainingDistance > 0.5f)
             {
@@ -310,11 +352,11 @@ namespace _Project.Scripts.Core.Enemy
         }
 
         // Method to start the coroutine to move the enemy to roam position
-        internal void StartRoaming()
+        internal void StartRoaming(Vector3 targetPosition)
         {
             if (!_isRoaming)
             {
-                StartCoroutine(MoveToRoamPosition());
+                StartCoroutine(MoveToRoamPosition(targetPosition));
             }
         }
 
@@ -333,6 +375,9 @@ namespace _Project.Scripts.Core.Enemy
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
+            
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
 
             // Visualization of the field of view (cone)
             Gizmos.color = Color.yellow;
@@ -357,6 +402,37 @@ namespace _Project.Scripts.Core.Enemy
         private void Update()
         {
             OnMoveInputUpdated?.Invoke(Enemy.velocity.normalized);
+            IsPlayerOnNavMesh();
         }
+        
+        internal void EngagePlayer()
+        {
+            if (MemberType == MemberType.Helper)
+            {
+                Vector3 helperPos = GroupManager.Instance.GetHelperPosition(transform.position, _lastKnownPlayerPosition);
+                _isRoaming = false;
+                StartRoaming(helperPos);
+            }
+            else if (MemberType == MemberType.Broadcaster)
+            {
+                StartChasing();
+            }
+        }
+        
+        // Method to assign roles
+        public void AssignRoles(Vector3 playerPos)
+        {
+            if (MemberType == MemberType.Broadcaster) return;
+            
+            EnemyManager.Instance.AssignHelper(this);
+            
+        }
+        
+        // Method to set default roles
+        public void SetDefaultRole()
+        {
+            MemberType = MemberType.Standalone;
+        }
+        
     }
 }

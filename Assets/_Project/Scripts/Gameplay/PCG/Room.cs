@@ -1,4 +1,5 @@
 ﻿using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Enemy.EnemySpawner;
 using UnityEngine;
 
 namespace _Project.Scripts.Gameplay.PCG
@@ -24,12 +25,15 @@ namespace _Project.Scripts.Gameplay.PCG
         [SerializeField] private Exit[] exits;
 
         private EnemyDeathListener _enemyDeathListener;
+        private RoomWaveController _roomWaveController;
+        
 
         /// <summary>
         /// Initializes the room by mapping local exit positions to world positions.
         /// </summary>
         private void Awake()
         {
+            _roomWaveController = GetComponent<RoomWaveController>();
             foreach (var exit in Exits)
             {
                 exit.worldPosition = transform.position + exit.localPosition;
@@ -38,7 +42,7 @@ namespace _Project.Scripts.Gameplay.PCG
             
             if (roomType == RoomType.Exploration)
             {
-                _enemyDeathListener = new EnemyDeathListener(gameObject);
+                //_enemyDeathListener = new EnemyDeathListener(gameObject);
             }
         }
 
@@ -56,7 +60,10 @@ namespace _Project.Scripts.Gameplay.PCG
         
         private void OnAllEnemiesDead()
         {
-            AbilitySpawner.SpawnRandomAbilities(transform, size);
+            // Debug.Log("All enemies dead");
+            // _roomWaveController.CanSpawnEnemies();
         }
+        
+        
     }
 }

@@ -1,17 +1,16 @@
-using _Project.Scripts.Core.Backend.Currency;
-using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
+using IPickupItem = _Project.Scripts.Core.Backend.Interfaces.IPickupItem;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
     /// <summary>
     /// This class is responsible for handling the player's input.
     /// </summary>
-    [RequireComponent(typeof(LocalInputController), typeof(CameraController))]
+    [RequireComponent(typeof(LocalInputController), typeof(PlayerAimController))]
     public sealed class LocalPlayerController : PlayerController
     {
         /// <summary>
@@ -27,15 +26,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Component that handles the player's camera.
         /// </summary>
-        private CameraController _cameraController;
+        private PlayerAimController _playerAimController;
 
         // This will go in player info eventually.
         [SerializeField] private float aimSensitivity = 1f;
-
-        /// <summary>
-        /// The wallet ID for the player.
-        /// </summary>
-        private string _walletID;
 
         protected override void Awake()
         {
@@ -43,7 +37,7 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Get the required components
             _localInputController = GetComponent<LocalInputController>();
-            _cameraController = GetComponent<CameraController>();
+            _playerAimController = GetComponent<PlayerAimController>();
         }
 
         protected override void Start()
@@ -52,10 +46,35 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             // Initialize the input controller and camera controller
             _localInputController.Initialize(this);
-            _cameraController.Initialize(this);
+            _playerAimController.Initialize(this);
+        }
 
-            // Create a wallet for the player
-            _walletID = CurrencySystem.Instance.CreateWallet();
+        private void Update()
+        {
+            if (Physics.Raycast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)), out var hit, 8f,
+                    LayerMask.GetMask("Pickup")))
+            {
+                if (hit.collider.TryGetComponent<IPickupItem>(out var pickupItem))
+                {
+                    CurrentPickupItem = pickupItem;
+                    CurrentPickupItem.OnItemEnterRange();
+                }
+            }
+            else if (CurrentPickupItem != null)
+            {
+                CurrentPickupItem.OnItemExitRange();
+                var abilitiesInRange = Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("Pickup"));
+                foreach (var ability in abilitiesInRange)
+                {
+                    if (ability.TryGetComponent<IPickupItem>(out var pickupItem))
+                    {
+                        CurrentPickupItem = pickupItem;
+                        CurrentPickupItem.OnItemExitRange();
+                    }
+                }
+
+                CurrentPickupItem = null;
+            }
         }
 
         private void OnEnable()
@@ -72,6 +91,8 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
             _localInputController.OnReloadInput += Reload;
+
+            _localInputController.OnLootPickupInput += PickUpItem;
         }
 
         private void OnDisable()
@@ -88,16 +109,15 @@ namespace _Project.Scripts.Core.Player_Controllers
 
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
+
+            _localInputController.OnLootPickupInput -= PickUpItem;
         }
 
         /// <summary>
         /// Update the player's look direction.
         /// </summary>
         /// <param name="lookInput">look input to the player</param>
-        private void SetLookInput(Vector2 lookInput)
-        {
-            _cameraController.LookInput = lookInput * aimSensitivity;
-        }
+        private void SetLookInput(Vector2 lookInput) { }
 
         /// <summary>
         /// Function to equip the player's ability.
@@ -117,7 +137,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Check if the shield ability is active, if so, return false
             var shield = WeaponController.CurrentAbility as ShieldAbility;
-            if (shield && shield.IsActive)
+            if (shield && shield.isAbilityActive)
                 return;
 
             // If the shield ability is not active, take damage
@@ -131,39 +151,14 @@ namespace _Project.Scripts.Core.Player_Controllers
         protected override void OnKillConfirmed(PlayerController enemyPlayer)
         {
             // Cast the enemyPlayer to an enemy controller
-            if (enemyPlayer is EnemyController enemyController)
-            {
-                // Add coins to the player's wallet
-                CurrencySystem.Instance.AddCoins(_walletID, 10); // 10 coins for now, eventually this will be based on enemy type
-            }
+            if (enemyPlayer is EnemyController enemyController) { }
         }
 
-        /// <summary>
-        /// Called when an enemy is hit.
-        /// </summary>
-        protected override void OnHitConfirmed(PlayerController enemyPlayer)
+        private void PickUpItem()
         {
-            // Empty for now
-        }
-
-        /// <summary>
-        /// Get the player's coins.
-        /// </summary>
-        /// <returns></returns>
-        public int GetCoins()
-        {
-            return CurrencySystem.Instance.GetCoins(_walletID);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            // Check if player has picked up a pickup
-            if (other.TryGetComponent(out IPickupItem pickupItem))
-            {
-                // Call the OnPickup method
-                pickupItem.OnItemPickup();
-                CurrentPickupItem = pickupItem;
-            }
+            if (CurrentPickupItem == null) return;
+            CurrentPickupItem.OnItemPickup();
+            CurrentPickupItem = null;
         }
     }
 }

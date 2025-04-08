@@ -1,10 +1,9 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
+using _Project.Scripts.Core.Character.Animation;
 using _Project.Scripts.Core.Character.Weapon_Controller;
 using _Project.Scripts.Core.Weapons;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Project.Scripts.Core.Player_Controllers
 {
@@ -12,9 +11,12 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// Base class for player controllers.
     /// </summary>
     [RequireComponent(typeof(MovementController), typeof(WeaponController), typeof(AnimationController))]
+    [RequireComponent(typeof(IKController))]
     public abstract class PlayerController : MonoBehaviour, IDamageable
     {
-        public event Action<PlayerController> OnDeath;
+        public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
+
+        public static event PlayerDeath OnDeath;
 
         /// <summary>
         /// Component that handles movement.
@@ -30,6 +32,8 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Property to access the animation controller.
         /// </summary>
         public AnimationController AnimationController { get; private set; }
+        
+        public IKController IKController { get; private set; }
 
         /// <summary>
         /// Property to access the char stats.
@@ -69,14 +73,15 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Player's current health.
         /// </summary>
-        [SerializeField] private float currentHealth;
+        [SerializeField] internal float currentHealth;
 
         protected virtual void Awake()
         {
             // Get the MovementController, WeaponController and AnimationController component attached to the player
             MovementController = GetComponent<MovementController>();
             WeaponController = GetComponent<WeaponController>();
-            AnimationController = GetComponent<AnimationController>();
+            AnimationController = GetComponentInChildren<AnimationController>();
+            IKController = GetComponent<IKController>();
         }
 
         protected virtual void Start()
@@ -85,6 +90,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             MovementController.Initialize(this);
             WeaponController.Initialize(this);
             AnimationController.Initialize(this);
+            IKController.Initialize(this);
 
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
@@ -138,10 +144,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             currentHealth -= damageDealt;
             currentHealth = Mathf.Clamp(currentHealth, 0f, Stats.maxHealth);
-            OnHitConfirmed(weapon.CurrentPlayerController);
+            OnHitConfirmed(weapon?.CurrentPlayerController);
 
             if (currentHealth <= 0)
-                Die(weapon.CurrentPlayerController);
+                Die(weapon?.CurrentPlayerController, weapon);
         }
 
         /// <summary>
@@ -158,12 +164,13 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Function to handle the character's death.
         /// </summary>
         /// <param name="enemyPlayer"></param>
-        protected virtual void Die(PlayerController enemyPlayer)
+        /// <param name="weaponKilledBy"></param>
+        protected virtual void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
         {
             // Handle the character's death
-            enemyPlayer.OnKillConfirmed(this);
-            
-            OnDeath?.Invoke(this);
+            enemyPlayer?.OnKillConfirmed(this);
+
+            OnDeath?.Invoke(enemyPlayer, this, weaponKilledBy);
         }
 
         protected virtual void OnKillConfirmed(PlayerController enemyPlayer)

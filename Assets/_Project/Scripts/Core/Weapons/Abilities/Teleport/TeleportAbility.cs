@@ -30,12 +30,12 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         /// </summary>
         private void Teleport()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
-            IsAbilityActive = true;
+            isAbilityActive = true;
             
             // Teleport the player to the target position
             Vector3 targetPosition = CurrentPlayerController.transform.position + (-CurrentPlayerController.MovementController.Body.forward) * stats.Distance;
@@ -49,6 +49,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
 
             CurrentPlayerController.transform.position = targetPosition;
             CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
         
         /// <summary>
@@ -60,7 +61,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

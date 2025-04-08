@@ -1,3 +1,5 @@
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
+using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
@@ -18,6 +20,12 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // Stop chasing the player when entering attack state
             _enemyInputController.StopChasing();
+            
+            // If the broadcaster re-enters the attack state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.BroadcasterEnemy = null;
+            }
         }
 
         // Called when the enemy exits the AttackState
@@ -26,14 +34,27 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             // Stop any ongoing attack actions
             _enemyInputController.StopAttack();
             _enemyInputController.StopChasing();
+            
+            // If the broadcaster leaves the attack state it should not be the broadcaster again
+            if (_enemyInputController.MemberType == MemberType.Broadcaster)
+            {
+                EnemyManager.Instance.BroadcasterEnemy = null;
+            }
 
         }
 
         // Called every frame while the enemy is in the AttackState
         public override void UpdateState()
         {
-            //_enemyInputController.StopChasing();
-
+            // Broadcast message when health is low and helpers are less than 3
+            if (EnemyManager.Instance.HelperEnemies.Count <=3 && _enemyInputController.EnemyHUD.enemy.CurrentHealth < 60)
+            {
+                
+                //memberType = MemberType.Broadcaster;
+                EnemyManager.Instance.BroadcastMessage(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
+                //BroadcastSystem.BroadcastMessage(_enemyInputController, BroadcastType.Detect);
+            }
+            
             // Check if the player health is low
             if (_enemyInputController.EnemyHUD.enemy.CurrentHealth < 50)
             {
@@ -49,10 +70,18 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                     _enemyInputController.StateManager.TransitionToState(EnemyState.Flee);
                 }
             }
-            // If health is not low check if enemy can attack
-            else if (_enemyInputController.CanAttack())
+            // If health is not low check if enemy can attack and not a charger type
+            else if (_enemyInputController.CanAttack() && (_enemyInputController.enemyType != EnemyType.Charger))
             {
                 AttackPlayer();
+            }
+            
+            // If enemy is charger type start attacking directly
+            else if (_enemyInputController.enemyType == EnemyType.Charger)
+            {
+                _enemyInputController.RotateTowardsPlayer();
+                _enemyInputController.StartChasing();
+                _enemyInputController.StartAttack();
             }
         }
 
@@ -66,7 +95,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             
             // Attack and move towards the player till the DistanceFromPlayer is reached
             if ( Vector3.Distance(_enemyInputController.Enemy.transform.position,
-                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.DistanceFromPlayer)
+                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.EnemyDistanceFromPlayer)
             {
                _enemyInputController.StopChasing();
             }
@@ -78,7 +107,17 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.enemyType == EnemyType.Basic)
+            {
+                if (_enemyInputController.RangedWeapon.IsReloading)
+                {
+                    Debug.Log("is reloading going to patrol");
+                    return EnemyState.Patrol;
+                }
+            }
+            
             // If a player is still in attack range, stay in attack state
+
             if (_enemyInputController.IsPlayerInAttackRange())
             {
                 return EnemyState.Attack;

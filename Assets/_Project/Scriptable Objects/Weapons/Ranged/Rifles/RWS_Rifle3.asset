@@ -13,13 +13,18 @@ MonoBehaviour:
   m_Name: RWS_Rifle3
   m_EditorClassIdentifier: 
   weaponID: Rifle3
-  weaponType: 0
+  weaponType: 1
   weaponName: Crossbow
   damage: 60
   range: 100
   attackSpeed: 4
+  weaponEra: 1
+  timeStabilityEffect: 14
   fireModes: 00000000
-  reloadTime: 4
+  projectilePrefab: {fileID: 3585076104673698268, guid: d5d5414df1dcdd544b7e10df57f273c9,
+    type: 3}
+  projectileSpeed: 50
+  reloadTime: 2
   spread: 0
   recoil: 0
   magazineSize: 1

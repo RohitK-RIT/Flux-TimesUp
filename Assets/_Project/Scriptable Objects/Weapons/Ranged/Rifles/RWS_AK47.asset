@@ -18,8 +18,12 @@ MonoBehaviour:
   damage: 30
   range: 75
   attackSpeed: 10
-  itemIcon: {fileID: 21300000, guid: d7fbd86a4b5934d3d9e7d2a74780d0ff, type: 3}
+  weaponEra: 0
+  timeStabilityEffect: 3
   fireModes: 0200000001000000
+  projectilePrefab: {fileID: 3585076104673698268, guid: d5d5414df1dcdd544b7e10df57f273c9,
+    type: 3}
+  projectileSpeed: 100
   reloadTime: 3.5
   spread: 0.05
   recoil: 0.01

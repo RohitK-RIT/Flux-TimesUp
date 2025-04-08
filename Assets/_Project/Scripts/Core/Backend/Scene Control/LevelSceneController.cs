@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.UI;
@@ -11,27 +10,20 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
     //General class to manage the game
     public class LevelSceneController : BaseSystem<LevelSceneController>
     {
+        [SerializeField] public PlayerHUD playerHUD;
         protected override bool IsPersistent => false;
         public LocalPlayerController Player => player;
         public GameObject WinPage => winPage;
         public GameObject LoosePage => loosePage;
-        public AbilitySelectionPage AbilitySelectionPage => abilitySelectionPage;
 
         [SerializeField] private GameObject pauseMenuPage, winPage, loosePage; // Drag your game scene UI panel here
-        [SerializeField] private AbilitySelectionPage abilitySelectionPage; // Drag your ability selection page here
 
         [Space(25f), Header("Players in Scene")] [SerializeField]
         private LocalPlayerController player; // Drag your player here
 
-        [SerializeField] public EnemyController[] enemies; // Array to store all enemies in the scene
-
         private bool _isPaused; // Variable to check if the game is paused
-
-        private void Start()
-        {
-            // Remove all null elements from the array.
-            enemies = Array.FindAll(enemies, enemy => enemy != null);
-        }
+        
+        public EnemyController BossEnemy { get; set; }
 
         private void Update()
         {
@@ -52,8 +44,13 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
 
             if (player.CurrentHealth <= 0) // Check if the player is dead
                 GameOver(false);
-            else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
-                GameOver(true);
+            /*else if (Array.TrueForAll(enemies, enemy => enemy.CurrentHealth <= 0)) // Check if all enemies are dead.
+                GameOver(true);*/
+            else if (BossEnemy)
+            {
+                if(BossEnemy.CurrentHealth <= 0)
+                    GameOver(true);
+            }
         }
 
         private void OnDestroy()
@@ -74,8 +71,8 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             {
                 loosePage.SetActive(true);
             }
-
-            Time.timeScale = 0f; // Freeze the game
+            PauseGame();
+            //Time.timeScale = 0f; // Freeze the game
         }
 
         // Call this function to resume the game
@@ -86,13 +83,13 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         }
 
         // Call this function to pause the game
-        public void Pause()
+        private void Pause()
         {
             PauseGame();
             pauseMenuPage.SetActive(true); // Show pause menu
         }
 
-        public void PauseGame()
+        private void PauseGame()
         {
             Cursor.visible = true; // Show the cursor
             Cursor.lockState = CursorLockMode.None; // Unlock the cursor
@@ -100,7 +97,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             _isPaused = true; // Update pause state
         }
 
-        public void ResumeGame()
+        private void ResumeGame()
         {
             Cursor.visible = false; // Show the cursor
             Cursor.lockState = CursorLockMode.Locked; // Unlock the cursor

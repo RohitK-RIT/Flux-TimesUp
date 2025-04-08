@@ -101,7 +101,7 @@ namespace _Project.Scripts.Gameplay.PCG
                     continue;
                 }
                 var enemies = FindObjectsOfType<EnemyController>(true);
-                LevelSceneController.Instance.enemies = enemies;
+                //LevelSceneController.Instance.enemies = enemies;
             }
         }
         /// <summary>

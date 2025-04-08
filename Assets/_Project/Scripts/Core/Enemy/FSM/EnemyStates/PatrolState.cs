@@ -35,7 +35,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // ReSharper disable Unity.PerformanceAnalysis
         public override void UpdateState()
         {
-            _enemyInputController.StartRoaming();
+            _enemyInputController.StartRoaming(_enemyInputController.RoamingPosition);
             
             // Get a new roaming position if the enemy reaches the previous roaming position
             if (Vector3.Distance(_enemyInputController.Enemy.transform.position, _enemyInputController.RoamingPosition) <= 1f)
@@ -46,6 +46,15 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 
         public override EnemyState GetNextState()
         {
+            // If enemy is reloading stay in patrol state
+            if (_enemyInputController.enemyType == EnemyType.Basic)
+            {
+                if (_enemyInputController.RangedWeapon.IsReloading)
+                {
+                    return EnemyState.Patrol;
+                }
+            }
+            
             // Check if players are in the detection range
             return _enemyInputController.FindPlayer()? EnemyState.Detect :
                 EnemyState.Patrol;

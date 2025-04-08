@@ -79,32 +79,35 @@ namespace _Project.Scripts.Core.Loadout
                     // Capture the current weapon type in a local variable
                     WeaponType weaponType = weapon.weaponStats.WeaponType; 
                     
+                    //Capture the Weapon Name in a local variable
+                    string weaponName = weapon.weaponStats.WeaponName;
+                    
                     // Add the onClick listener
                     button.onClick.AddListener(() =>
                     {
-                        OnWeaponSlotClicked(weaponID, weaponType);
+                        OnWeaponSlotClicked(weaponID, weaponType, weaponName);
                     });
                 }
             }
         }
 
         // Method to assign weapon Ids to the loadout list on clicking the weapon on UI
-        private void OnWeaponSlotClicked(string weaponID, WeaponType weaponType)
+        private void OnWeaponSlotClicked(string weaponID, WeaponType weaponType, string weaponName)
         {
             if (weaponType == WeaponType.Primary)
             {
                 _loadout[0] = weaponID;
-                feedbackText.text = "You have selected " + weaponID + " as your Primary Weapon";
+                feedbackText.text = "You have selected " + weaponName + " as your Primary Weapon";
             }
             else if (weaponType == WeaponType.Secondary)
             {
                 _loadout[1] = weaponID;
-                feedbackText.text = "You have selected " + weaponID + " as your Secondary Weapon";
+                feedbackText.text = "You have selected " + weaponName + " as your Secondary Weapon";
             }
             else if (weaponType == WeaponType.Melee)
             {
                 _loadout[2] = weaponID;
-                feedbackText.text = "You have selected " + weaponID + " as your Melee Weapon";
+                feedbackText.text = "You have selected " + weaponName + " as your Melee Weapon";
             }
             // Show overlay for the selected weapon and persist previous selections
             var allWeaponSlots = FindObjectsOfType<WeaponSlots>();

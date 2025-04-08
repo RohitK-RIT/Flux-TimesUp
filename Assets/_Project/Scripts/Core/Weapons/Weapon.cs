@@ -25,7 +25,6 @@ namespace _Project.Scripts.Core.Weapons
         public PlayerController CurrentPlayerController { get; private set; }
         
         public abstract string WeaponID { get; }
-        
 
         /// <summary>
         /// Function called when the weapon is picked up.
@@ -34,6 +33,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnPickup(PlayerController currentPlayerController)
         {
             CurrentPlayerController = currentPlayerController;
+            gameObject.layer = currentPlayerController.gameObject.layer;
         }
 
         /// <summary>
@@ -42,6 +42,7 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
+            gameObject.layer = LayerMask.NameToLayer("Default");
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace _Project.Scripts.Core.Weapons
         /// Get the damage of the weapon.
         /// </summary>
         /// <returns>damage dealt by the weapon</returns>
-        protected virtual float GetDamage()
+        public virtual float GetDamage()
         {
             // TODO: Implement damage calculation in base classes
             return 0f;

@@ -1,4 +1,6 @@
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
@@ -13,6 +15,7 @@ namespace _Project.Scripts.Core.Enemy
             base.Awake();
 
             _enemyInputController = GetComponent<EnemyInputController>();
+            
         }
 
         protected override void Start()
@@ -36,11 +39,22 @@ namespace _Project.Scripts.Core.Enemy
             _enemyInputController.OnAttackInputBegan -= BeginAttack;
             _enemyInputController.OnAttackInputEnded -= EndAttack;
         }
-
-        protected override void Die(PlayerController enemyPlayer)
+        
+        public void Reset()
         {
-            base.Die(enemyPlayer);
+            currentHealth = Stats.maxHealth;
+            var currentRangedWeapon = WeaponController.CurrentWeapon as RangedWeapon;
+            if (!currentRangedWeapon) return;
+            currentRangedWeapon.InitializeAmo();
+            Debug.Log("current amo"+currentRangedWeapon.CurrentAmmo);
+            Debug.Log("max amo"+currentRangedWeapon.MaxAmmo);
+            Debug.Log("Enemy reset to initial state.");
+        }
+
+        protected override void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
+        {
             gameObject.SetActive(false);
+            base.Die(enemyPlayer, weaponKilledBy);
         }
     }
 }
