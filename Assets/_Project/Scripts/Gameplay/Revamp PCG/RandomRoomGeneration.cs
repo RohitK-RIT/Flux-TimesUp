@@ -10,6 +10,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
     {
         [SerializeField] private DungeonRoom[] poolOfRoomPrefabs;
         [SerializeField] private BossEnemyRoom bossRoom;
+        public DungeonRoom CurrentRoom => _currentRoom;
         private DungeonRoom _currentRoom;
         private bool _hasInstantiatedBossRoom = false;
 
@@ -55,8 +56,10 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             var spawnedRoom = InstantiateRoom(poolOfRoomPrefabs[randomRoomIndex]);
             _currentRoom = spawnedRoom;
 
+            // LevelSceneController.Instance.Player.gameObject.SetActive(false);
             //Instantiate Player in the new room at the entry point
-            LevelSceneController.Instance.Player.transform.position = _currentRoom.EntryPoint.transform.position;
+            LevelSceneController.Instance.Player.MovementController.SetPosition(_currentRoom.EntryPoint.transform.position);
+            // LevelSceneController.Instance.Player.gameObject.SetActive(true);
 
             //TODO: all enemies killed => spawn loot
         }
@@ -71,7 +74,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             var bossRoomInstance = Instantiate(bossRoomToSpawn, transform.position, Quaternion.identity, transform);
 
             //Instantiate Player in the boss room at the entry point
-            LevelSceneController.Instance.Player.transform.position = bossRoomInstance.EntryPoint.transform.position;
+            LevelSceneController.Instance.Player.MovementController.SetPosition(bossRoomInstance.EntryPoint.transform.position);
         }
     }
 }

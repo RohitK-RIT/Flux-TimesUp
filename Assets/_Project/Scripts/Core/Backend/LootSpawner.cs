@@ -1,9 +1,10 @@
 using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
+using _Project.Scripts.Onboarding;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -26,15 +27,15 @@ namespace _Project.Scripts.Core.Backend
         /// <summary>
         /// Function to spawn loot on Player Death.
         /// </summary>
-        /// <param name="killingplayer"></param>
-        /// <param name="playerkilled"></param>
-        /// <param name="weaponkilledby"></param>
-        private void OnPlayerDeath(PlayerController killingplayer, PlayerController playerkilled, Weapon weaponkilledby)
+        /// <param name="killingplayer">the attacker</param>
+        /// <param name="playerkilled">the dead player</param>
+        /// <param name="itemKilledBy">item killed by</param>
+        private void OnPlayerDeath(PlayerController killingplayer, PlayerController playerkilled, IHandItem itemKilledBy)
         {
             if (killingplayer != LevelSceneController.Instance.Player)
                 return;
             
-            Debug.Log("Room: " + playerkilled.transform.parent.name);
+            //Debug.Log("Room: " + playerkilled.transform.parent.name);
             DropLoot(playerkilled.transform.position, playerkilled.transform.parent);
         }
 
@@ -46,6 +47,11 @@ namespace _Project.Scripts.Core.Backend
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void DropLoot(Vector3 lootDropPosition, Transform currentRoom)
         {
+            var onboarding = FindObjectOfType<OnboardingManager>();
+            if (onboarding != null)
+            {
+                onboarding.OnLootDroppedAfterTeleport(); 
+            }
             var dropType = Random.Range(0, 2);
             switch (dropType)
             {
@@ -55,12 +61,13 @@ namespace _Project.Scripts.Core.Backend
                     break;
                 case 1:
                     // Spawn Random Abilities
-                    var abilityType = Random.Range(0, 4) switch
+                    var abilityType = Random.Range(0, 5) switch
                     {
                         0 => AbilityType.Heal,
                         1 => AbilityType.Shield,
                         2 => AbilityType.Grenades,
                         3 => AbilityType.Teleport,
+                        4 => AbilityType.TsmFreeze,
                         _ => throw new ArgumentOutOfRangeException()
                     };
                     SpawnRandomAbilities(abilityType, lootDropPosition, currentRoom);

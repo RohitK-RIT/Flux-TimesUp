@@ -1,6 +1,5 @@
-using _Project.Scripts.Core.Enemy;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
 using IPickupItem = _Project.Scripts.Core.Backend.Interfaces.IPickupItem;
@@ -17,6 +16,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// The current pickup item the player has.
         /// </summary>
         public IPickupItem CurrentPickupItem { get; private set; }
+
+        public override string FriendlyLayerName => "Player";
+        public override string OpponentLayerName => "Enemy";
 
         /// <summary>
         /// Component that handles player input.
@@ -124,34 +126,27 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         private void AbilityEquipped()
         {
-            WeaponController.OnAbilityEquipped();
+            HandController.OnAbilityEquipped();
         }
 
         /// <summary>
         /// Overrides the TakeDamage method to include shield ability check.
         /// </summary>
-        /// <param name="weapon"></param>
-        /// <param name="damageDealt"></param>
+        /// <param name="damageInfo"></param>
         /// <returns>if the player is dead</returns>
-        public override void TakeDamage(Weapon weapon, float damageDealt)
+        public override void TakeDamage(IDamageable.DamageInfo damageInfo)
         {
-            // Check if the shield ability is active, if so, return false
-            var shield = WeaponController.CurrentAbility as ShieldAbility;
-            if (shield && shield.isAbilityActive)
-                return;
+            // Check if the attacker is not null, (which means that TSM is killing the player)
+            if (damageInfo.Attacker != null)
+            {
+                // Check if the shield ability is active, if so, return false
+                var shield = HandController.CurrentAbility as ShieldAbility;
+                if (shield && shield.isAbilityActive)
+                    return;
+            }
 
             // If the shield ability is not active, take damage
-            base.TakeDamage(weapon, damageDealt);
-        }
-
-        /// <summary>
-        /// Called when an enemy is killed.
-        /// </summary>
-        /// <param name="enemyPlayer"></param>
-        protected override void OnKillConfirmed(PlayerController enemyPlayer)
-        {
-            // Cast the enemyPlayer to an enemy controller
-            if (enemyPlayer is EnemyController enemyController) { }
+            base.TakeDamage(damageInfo);
         }
 
         private void PickUpItem()

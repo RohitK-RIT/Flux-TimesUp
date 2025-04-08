@@ -1,8 +1,8 @@
-﻿using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Helper;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character;
 using _Project.Scripts.Core.Character.Animation;
-using _Project.Scripts.Core.Character.Weapon_Controller;
-using _Project.Scripts.Core.Weapons;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Player_Controllers
@@ -10,12 +10,15 @@ namespace _Project.Scripts.Core.Player_Controllers
     /// <summary>
     /// Base class for player controllers.
     /// </summary>
-    [RequireComponent(typeof(MovementController), typeof(WeaponController), typeof(AnimationController))]
+    [RequireComponent(typeof(MovementController), typeof(HandController), typeof(AnimationController))]
     [RequireComponent(typeof(IKController))]
     public abstract class PlayerController : MonoBehaviour, IDamageable
     {
-        public delegate void PlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy);
+        public delegate void PlayerDeath(PlayerController attacker, PlayerController deadPlayer, IHandItem itemKilledBy);
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static event PlayerDeath OnDeath;
 
         /// <summary>
@@ -26,13 +29,13 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// Property to access the weapon controller.
         /// </summary>
-        public WeaponController WeaponController { get; private set; }
+        public HandController HandController { get; private set; }
 
         /// <summary>
         /// Property to access the animation controller.
         /// </summary>
         public AnimationController AnimationController { get; private set; }
-        
+
         public IKController IKController { get; private set; }
 
         /// <summary>
@@ -54,6 +57,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Property to access the enemy layer.
         /// </summary>
         public LayerMask OpponentLayer => opponentLayer;
+
+        public abstract string FriendlyLayerName { get; }
+        public abstract string OpponentLayerName { get; }
 
         /// <summary>
         /// Component that handles Character Stats.
@@ -79,7 +85,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Get the MovementController, WeaponController and AnimationController component attached to the player
             MovementController = GetComponent<MovementController>();
-            WeaponController = GetComponent<WeaponController>();
+            HandController = GetComponent<HandController>();
             AnimationController = GetComponentInChildren<AnimationController>();
             IKController = GetComponent<IKController>();
         }
@@ -88,12 +94,13 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             // Initialize the player's movement, weapon controller and animation controller
             MovementController.Initialize(this);
-            WeaponController.Initialize(this);
+            HandController.Initialize(this);
             AnimationController.Initialize(this);
             IKController.Initialize(this);
 
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
+            gameObject.SetLayerRecursively(FriendlyLayerName);
         }
 
         /// <summary>
@@ -111,12 +118,12 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <param name="direction">the number by which the weapon is supposed to switch</param>
         protected virtual void SwitchWeapon(int direction)
         {
-            WeaponController.SwitchWeapon(direction);
+            HandController.SwitchWeapon(direction);
         }
 
         protected virtual void Reload()
         {
-            WeaponController.ReloadWeapon();
+            HandController.ReloadWeapon();
         }
 
         /// <summary>
@@ -124,7 +131,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         protected void BeginAttack()
         {
-            WeaponController.BeginAttack();
+            HandController.BeginAttack();
         }
 
         /// <summary>
@@ -132,22 +139,20 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// </summary>
         protected void EndAttack()
         {
-            WeaponController.EndAttack();
+            HandController.EndAttack();
         }
 
         /// <summary>
         /// Function to take damage by reducing the stat's value.
         /// </summary>
-        /// <param name="weapon">weapon that is dealing the damage.</param>
-        /// <param name="damageDealt">damage dealt by the weapon</param>
-        public virtual void TakeDamage(Weapon weapon, float damageDealt)
+        /// <param name="damageInfo">damage dealt by the weapon</param>
+        public virtual void TakeDamage(IDamageable.DamageInfo damageInfo)
         {
-            currentHealth -= damageDealt;
+            currentHealth -= damageInfo.Damage;
             currentHealth = Mathf.Clamp(currentHealth, 0f, Stats.maxHealth);
-            OnHitConfirmed(weapon?.CurrentPlayerController);
 
             if (currentHealth <= 0)
-                Die(weapon?.CurrentPlayerController, weapon);
+                Die(damageInfo.Attacker, damageInfo.Item);
         }
 
         /// <summary>
@@ -164,23 +169,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// Function to handle the character's death.
         /// </summary>
         /// <param name="enemyPlayer"></param>
-        /// <param name="weaponKilledBy"></param>
-        protected virtual void Die(PlayerController enemyPlayer, Weapon weaponKilledBy)
+        /// <param name="itemKilledBy"></param>
+        protected virtual void Die(PlayerController enemyPlayer, IHandItem itemKilledBy)
         {
-            // Handle the character's death
-            enemyPlayer?.OnKillConfirmed(this);
-
-            OnDeath?.Invoke(enemyPlayer, this, weaponKilledBy);
-        }
-
-        protected virtual void OnKillConfirmed(PlayerController enemyPlayer)
-        {
-            // Handle the kill confirmation
-        }
-
-        protected virtual void OnHitConfirmed(PlayerController enemyPlayer)
-        {
-            // Handle the hit confirmation
+            OnDeath?.Invoke(enemyPlayer, this, itemKilledBy);
         }
     }
 }

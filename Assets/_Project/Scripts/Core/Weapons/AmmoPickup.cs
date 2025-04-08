@@ -21,7 +21,7 @@ namespace _Project.Scripts.Core.Weapons
 
         public void OnItemPickup()
         {
-            var currentWeapon = LevelSceneController.Instance.Player.WeaponController.CurrentWeapon;
+            var currentWeapon = LevelSceneController.Instance.Player.HandController.CurrentItem;
 
             switch (currentWeapon)
             {
@@ -37,25 +37,26 @@ namespace _Project.Scripts.Core.Weapons
                             rangedWeapon.AddAmmo(ammo);
                             break;
                     }
+
                     break;
-                case MeleeWeapon meleeWeapon:
+                default:
                     //add ammo to primary weapon
-                    var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
-                    var primaryWeapon = playerWeaponController.Weapons[0] as RangedWeapon;
-                    if (primaryWeapon != null) primaryWeapon.AddAmmo(ammo);
+                    var playerWeaponController = LevelSceneController.Instance.Player.HandController;
+                    if (playerWeaponController.Weapons[0] is RangedWeapon primaryWeapon)
+                        primaryWeapon.AddAmmo(ammo);
                     break;
             }
+
             var msg = "You picked up " + ammo + " ammo.";
             LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
             Destroy(gameObject);
         }
+
         public void OnItemEnterRange()
         {
             this.OnItemPickup();
         }
 
-        public void OnItemExitRange()
-        {
-        }
+        public void OnItemExitRange() { }
     }
 }

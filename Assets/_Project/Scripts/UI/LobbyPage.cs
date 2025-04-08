@@ -18,12 +18,12 @@ namespace _Project.Scripts.UI
 
         private void OnEnable()
         {
-            // Set the lobby code text to the current session name
-            lobbyCodeText.text = NetworkSystem.Instance.CurrentSessionInfo.Name;
-
-            // Set the continue button interactable based on whether the player has scene authority
-            continueButton.interactable = NetworkSystem.Instance.IsSceneAuthority;
-            continueButton.onClick.AddListener(OnContinueButtonClicked);
+            // // Set the lobby code text to the current session name
+            // lobbyCodeText.text = NetworkSystem.Instance.CurrentSessionInfo.Name;
+            //
+            // // Set the continue button interactable based on whether the player has scene authority
+            // continueButton.interactable = NetworkSystem.Instance.IsSceneAuthority;
+            // continueButton.onClick.AddListener(OnContinueButtonClicked);
         }
 
         private void OnDisable()
@@ -35,13 +35,13 @@ namespace _Project.Scripts.UI
         private void OnContinueButtonClicked()
         {
             // Load the game scene
-            SceneSystem.Instance.LoadNetworkScene(new SceneLoadRequest(gameSceneName, LoadSceneMode.Single));
+            // SceneSystem.Instance.LoadNetworkScene(new SceneLoadRequest(gameSceneName, LoadSceneMode.Single));
         }
 
         private void Update()
         {
             // Update the player count text
-            playerCountText.text = NetworkSystem.Instance.CurrentSessionInfo.PlayerCount.ToString();
+            // playerCountText.text = NetworkSystem.Instance.CurrentSessionInfo.PlayerCount.ToString();
         }
     }
 }

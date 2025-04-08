@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponID: Pistol6
   weaponType: 1
-  weaponName: TBD
-  damage: 10
+  weaponName: Hand Cannon
+  damage: 55
   range: 75
   attackSpeed: 9
-  weaponEra: 0
-  timeStabilityEffect: 3
-  fireModes: 01000000
+  weaponEra: 1
+  timeStabilityEffect: 8
+  fireModes: 00000000
   projectilePrefab: {fileID: 3585076104673698268, guid: d5d5414df1dcdd544b7e10df57f273c9,
     type: 3}
-  projectileSpeed: 100
-  reloadTime: 5
-  spread: 0.03
+  projectileSpeed: 50
+  reloadTime: 1
+  spread: 0.02
   recoil: 0.02
-  magazineSize: 15
-  maxBulletCount: 75
-  burstAmount: 3
-  burstDuration: 0.15
+  magazineSize: 1
+  maxBulletCount: 80
+  burstAmount: 2
+  burstDuration: 0.01
   trailSpeed: 100
   missDistance: 100

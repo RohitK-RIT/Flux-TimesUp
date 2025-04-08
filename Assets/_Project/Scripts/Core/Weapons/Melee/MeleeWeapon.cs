@@ -8,33 +8,52 @@ namespace _Project.Scripts.Core.Weapons.Melee
     /// <summary>
     /// Melee weapon class.
     /// </summary>
-    public class MeleeWeapon : Weapon
+    public sealed class MeleeWeapon : Weapon
     {
+        public override string WeaponID => stats.WeaponID;
+        public MeleeWeaponStats Stats => stats;
+
+        /// <summary>
+        /// Is the weapon currently attacking.
+        /// </summary>
+        public bool IsAttacking => _attackCoroutine != null;
+
         /// <summary>
         /// Melee weapon stats.
         /// </summary>
         [SerializeField] private MeleeWeaponStats stats;
 
-        public override string WeaponID => stats.WeaponID;
+        private float _lastAttackTime = float.MinValue;
+        private Coroutine _attackCoroutine;
 
-        public MeleeWeaponStats Stats => stats;
-        
-        private DateTime _lastAttackTime = DateTime.MinValue;
+        public override void BeginUse()
+        {
+            if (IsAttacking)
+                return;
+
+            StartCoroutine(OnAttack());
+        }
+
+        public override void EndUse()
+        {
+            if (!IsAttacking)
+                return;
+
+            StopCoroutine(_attackCoroutine);
+        }
 
         /// <summary>
         /// Coroutine for attacking.
         /// </summary>
-        protected override IEnumerator OnAttack()
+        private IEnumerator OnAttack()
         {
             // Attack until the attack ends
             while (true)
             {
                 // Wait for the attack speed and then fire the bullet.
-                yield return new WaitWhile(() => (DateTime.Now - _lastAttackTime).Seconds < 1 / stats.AttackSpeed);
+                yield return new WaitWhile(() => Time.time - _lastAttackTime < 1 / stats.AttackSpeed);
                 Slash();
-                _lastAttackTime = DateTime.Now;
-                
-                yield return new WaitForSeconds(1 / stats.AttackSpeed);
+                _lastAttackTime = Time.time;
             }
         }
 
@@ -72,14 +91,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
 
                 // Check if the enemy is a player and deal damage
                 var playerController = collidersFound[i].gameObject.GetComponent<IDamageable>();
-                playerController?.TakeDamage(this, GetDamage());
+                playerController?.TakeDamage(GetDamageInfo());
             }
         }
 
-        public override float GetDamage()
+        public override IDamageable.DamageInfo GetDamageInfo()
         {
             // TODO: Implement era specific damage calculation
-            return stats.Damage;
+            return new IDamageable.DamageInfo(stats.Damage, this);
         }
     }
 }
