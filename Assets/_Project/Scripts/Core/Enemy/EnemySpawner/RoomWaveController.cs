@@ -43,12 +43,14 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
         {
             if(_enemyDeathListener != null)
                 _enemyDeathListener.OnAllEnemiesDead += OnAllEnemiesDead;
+            _spawnedWaves.Clear();
         }
         
         private void OnDisable()
         {
             if(_enemyDeathListener != null)
                 _enemyDeathListener.OnAllEnemiesDead -= OnAllEnemiesDead;
+            _spawnedWaves.Clear();
         }
         
         // Called when all enemies in the room are dead. Triggers the next wave if conditions are met.
