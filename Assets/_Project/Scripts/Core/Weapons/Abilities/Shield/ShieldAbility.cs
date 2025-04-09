@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using _Project.Scripts.Core.Backend.Helper;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
 
@@ -10,11 +11,6 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
     public class ShieldAbility : Ability
     {
         public override AbilityType Type => AbilityType.Shield;
-
-        /// <summary>
-        /// Gets a value indicating whether the shield is active.
-        /// </summary>
-        public bool IsActive { get; private set; }
 
         /// <summary>
         /// The stats for the shield ability.
@@ -37,6 +33,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
             _shieldVisual = Instantiate(shieldVisualPrefab, currentPlayerController.transform);
+            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
             SetShieldVisual(false);
         }
 
@@ -63,16 +60,16 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// </summary>
         private void Shield()
         {
-            if (IsAbilityActive || IsCooldownActive)
+            if (isAbilityActive || IsCooldownActive)
             {
                 Debug.Log("Ability is on cooldown or already active.");
                 return;
             }
 
             SetShieldVisual(true);
-            IsActive = true;
-            IsAbilityActive = true;
+            isAbilityActive = true;
             CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Duration));
+            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>
@@ -84,18 +81,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         {
             yield return new WaitForSeconds(time);
             Debug.Log("Ability deactivated!!");
-            IsActive = false;
+            isAbilityActive = false;
             SetShieldVisual(false);
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
-        }
-
-        /// <summary>
-        /// Overrides the OnAttack method to provide custom attack behavior for the shield ability.
-        /// </summary>
-        /// <returns>An IEnumerator for the coroutine.</returns>
-        protected override IEnumerator OnAttack()
-        {
-            yield break;
         }
 
         /// <summary>

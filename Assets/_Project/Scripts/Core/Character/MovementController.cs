@@ -51,11 +51,6 @@ namespace _Project.Scripts.Core.Character
         private Vector3 _moveDirection;
 
         /// <summary>
-        /// Current Movement of the player
-        /// </summary>
-        private Vector3 _currentMovement;
-
-        /// <summary>
         /// Vertical velocity for player's falling speed.
         /// </summary>
         private float _velocity;
@@ -107,7 +102,7 @@ namespace _Project.Scripts.Core.Character
             // Can add jump here if needed by modifying the y component of the movement vector. 
 
             // Move the character via the character controller.
-            _characterController.Move(_currentMovement * (PlayerController.Stats.movementSpeed * Time.deltaTime));
+            _characterController.Move(_moveDirection * (PlayerController.Stats.movementSpeed * Time.deltaTime));
         }
 
         /// <summary>
@@ -132,17 +127,25 @@ namespace _Project.Scripts.Core.Character
         {
             // Check if the player is on ground
             if (_characterController.isGrounded && _velocity < 0.0f)
-            {
                 _velocity = -1.0f; // Small negative value to keep the character grounded
-            }
             else
-            {
                 // Apply gravity when not grounded
                 _velocity += _gravity * _gravityMultiplier * Time.deltaTime;
-            }
 
             // Combine horizontal and vertical movement
-            _currentMovement = new Vector3(_moveDirection.x, _velocity, _moveDirection.z);
+            _moveDirection.y = _velocity;
+        }
+
+        /// <summary>
+        /// Sets the world position of the character.
+        /// </summary>
+        /// <param name="position"></param>
+        public void SetPosition(Vector3 position)
+        {
+            // Disable the character controller to avoid issues while setting the position
+            _characterController.enabled = false;
+            transform.position = position;
+            _characterController.enabled = true;
         }
     }
 }

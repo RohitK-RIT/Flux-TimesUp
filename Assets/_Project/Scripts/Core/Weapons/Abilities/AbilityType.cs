@@ -6,7 +6,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities
             Shield,
             Grenades,
             Heal,
-            Teleport
+            Teleport,
+            TsmFreeze,
         }
 }
 

@@ -14949,6 +14949,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1220829149706847262, guid: 05e098613554f4e4f98ceaaf4f9c4d8b,
         type: 3}
+      propertyPath: pauseTimeStability
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1220829149706847262, guid: 05e098613554f4e4f98ceaaf4f9c4d8b,
+        type: 3}
       propertyPath: startingTimeStability
       value: 25
       objectReference: {fileID: 0}
@@ -15007,7 +15012,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Time Stability Meter
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4374542468136542874, guid: 05e098613554f4e4f98ceaaf4f9c4d8b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -16868,6 +16874,7 @@ MonoBehaviour:
   winPage: {fileID: 762427771}
   loosePage: {fileID: 1151406847}
   player: {fileID: 392042112}
+  randomRoomGeneration: {fileID: 0}
 --- !u!114 &1493662880
 MonoBehaviour:
   m_ObjectHideFlags: 0

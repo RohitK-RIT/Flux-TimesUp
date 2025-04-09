@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -36,13 +37,19 @@ namespace _Project.Scripts.Gameplay.PCG
             
             PlayerController.OnDeath += OnEnemyDeath;
         }
+        
+        public EnemyDeathListener(IEnumerable<EnemyController> enemies)
+        {
+            _enemies = enemies.ToList();
+            PlayerController.OnDeath += OnEnemyDeath;
+        }
 
         ~EnemyDeathListener()
         {
             PlayerController.OnDeath -= OnEnemyDeath;
         }
 
-        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
+        private void OnEnemyDeath(PlayerController killingPlayer, PlayerController playerKilled, IHandItem itemKilledBy)
         {
             if(!_enemies.Contains(playerKilled))
                 return;

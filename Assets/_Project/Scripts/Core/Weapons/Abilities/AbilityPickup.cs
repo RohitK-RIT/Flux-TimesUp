@@ -18,7 +18,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
         public void OnItemPickup()
         {
-            var playerWeaponController = LevelSceneController.Instance.Player.WeaponController;
+            var playerWeaponController = LevelSceneController.Instance.Player.HandController;
             
             // Get the new ability. 
             if (!playerWeaponController.CurrentAbility)
@@ -31,7 +31,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
             if(playerWeaponController.CurrentAbility.Type != abilityType)
             {
-                LevelSceneController.Instance.Player.WeaponController.SwitchAbility(abilityType);
+                LevelSceneController.Instance.Player.HandController.SwitchAbility(abilityType);
                 var msg = "You switched to " + abilityType.ToString();
                 LevelSceneController.Instance.playerHUD.ShowPickupFeedback(msg);
                 LevelSceneController.Instance.playerHUD.ShowAbilityHUD(abilityType);
@@ -63,7 +63,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         
         private bool CheckForCurrentAbility()
         {
-            return LevelSceneController.Instance.Player.WeaponController.CurrentAbility;
+            return LevelSceneController.Instance.Player.HandController.CurrentAbility;
         }
     }
 }

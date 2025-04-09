@@ -1,4 +1,7 @@
-﻿using _Project.Scripts.Core.Backend.Scene_Control;
+﻿using System.Collections;
+using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -47,12 +50,12 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             PlayerController.OnDeath -= OnPlayerDeath;
         }
 
-        private void OnPlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, Weapon weaponKilledBy)
+        private void OnPlayerDeath(PlayerController killingPlayer, PlayerController playerKilled, IHandItem itemKilledBy)
         {
             if (killingPlayer != LevelSceneController.Instance.Player)
                 return;
 
-            switch (weaponKilledBy)
+            switch (itemKilledBy)
             {
                 case RangedWeapon rangedWeapon:
                     TimeStability += rangedWeapon.Stats.TimeStabilityEffect;
@@ -77,8 +80,24 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             {
                 TimeStability = 0;
                 var player = LevelSceneController.Instance.Player;
-                player.TakeDamage(null, player.CurrentHealth);
+
+                player.TakeDamage(new IDamageable.DamageInfo(player.CurrentHealth, null));
             }
+        }
+        
+        public void DecreaseTSM(float amount) 
+        {
+            StartCoroutine(DecreaseTSMValue(amount));
+            Debug.Log("boss is affecting TSM");
+        }
+
+        // Coroutine to heal the boss over time
+        IEnumerator DecreaseTSMValue(float amount) {
+            // Decrease TSM value
+            TimeStability -= amount;
+                    
+            // Wait for 2 second before reducing again
+            yield return new WaitForSeconds(2f);
         }
     }
 }

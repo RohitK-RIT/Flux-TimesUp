@@ -62,7 +62,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
                 if ((_enemyInputController.LastFleeDuration >= _enemyInputController.FleeTimeout && _enemyInputController.CanAttack())|| _enemyInputController.enemyType == EnemyType.Boss)
                 {
                     // Continue attacking as timeout condition overrides health
-                    AttackPlayer();
+                    _enemyInputController.AttackPlayer();
                 }
                 else
                 {
@@ -73,7 +73,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             // If health is not low check if enemy can attack and not a charger type
             else if (_enemyInputController.CanAttack() && (_enemyInputController.enemyType != EnemyType.Charger))
             {
-                AttackPlayer();
+                _enemyInputController.AttackPlayer();
             }
             
             // If enemy is charger type start attacking directly
@@ -85,25 +85,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             }
         }
 
-        private void AttackPlayer()
-        {
-            // Face towards the player
-            _enemyInputController.RotateTowardsPlayer();
-
-            // Player is in attack range, so keep attacking
-            _enemyInputController.TryAttack();
-            
-            // Attack and move towards the player till the DistanceFromPlayer is reached
-            if ( Vector3.Distance(_enemyInputController.Enemy.transform.position,
-                    _enemyInputController.ClosestPlayer.transform.position) <= _enemyInputController.EnemyDistanceFromPlayer)
-            {
-               _enemyInputController.StopChasing();
-            }
-            else
-            {
-                _enemyInputController.StartChasing();
-            }
-        }
+        
         
         public override EnemyState GetNextState()
         {
