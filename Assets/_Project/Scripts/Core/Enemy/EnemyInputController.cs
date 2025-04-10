@@ -424,7 +424,6 @@ namespace _Project.Scripts.Core.Enemy
 
         private void Update()
         {
-            UpdateMoveDirection(Enemy.velocity.sqrMagnitude > 0f ? Enemy.steeringTarget : Vector3.zero);
             IsPlayerOnNavMesh();
         }
 
@@ -459,6 +458,20 @@ namespace _Project.Scripts.Core.Enemy
         private void UpdateMoveDirection(Vector3 moveDirection)
         {
             OnMoveInputUpdated?.Invoke(new Vector2(moveDirection.x, moveDirection.z));
+        }
+        
+        private void LateUpdate()
+        {
+            Vector3 movementDir = Enemy.velocity;
+    
+            if (movementDir.sqrMagnitude > 0.01f)
+            {
+                UpdateMoveDirection(movementDir.normalized);
+            }
+            else
+            {
+                UpdateMoveDirection(Vector3.zero);
+            }
         }
     }
 }
