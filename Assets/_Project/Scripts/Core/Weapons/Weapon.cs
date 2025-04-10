@@ -11,7 +11,7 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
-    public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable
+    public abstract class Weapon : MonoBehaviour, IHandItem
     {
         /// <summary>
         /// Current player controller.
@@ -23,43 +23,14 @@ namespace _Project.Scripts.Core.Weapons
 
         protected bool Equipped { get; private set; }
 
-        private TMP_Text _pickUpInstruction;
-        private BoxCollider _pickupCollider;
-
-        private void Awake()
-        {
-            try
-            {
-                _pickupCollider = gameObject.GetComponent<BoxCollider>();
-
-                _pickUpInstruction = GetComponentInChildren<TMP_Text>();
-                _pickUpInstruction.text = "Press 'F' to pick up";
-                _pickUpInstruction.gameObject.SetActive(false);
-
-                gameObject.SetLayerRecursively("Pickup");
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e, gameObject);
-            }
-        }
-
         /// <summary>
         /// Function called when the weapon is picked up.
         /// </summary>
         /// <param name="controller">the player controller that will control the weapon</param>
         public virtual void OnPickup(PlayerController controller)
         {
-            try
-            {
-                CurrentPlayerController = controller;
-                gameObject.SetLayerRecursively(controller.FriendlyLayerName);
-                _pickupCollider.enabled = false;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e, gameObject);
-            }
+            CurrentPlayerController = controller;
+            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
         }
 
         /// <summary>
@@ -67,26 +38,8 @@ namespace _Project.Scripts.Core.Weapons
         /// </summary>
         public virtual void OnDrop()
         {
-            try
-            {
-                CurrentPlayerController = null;
-                gameObject.SetLayerRecursively("Pickup");
-                _pickupCollider.enabled = true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e, gameObject);
-            }
-        }
-
-        public void OnHoverEnter(PlayerController controller)
-        {
-            _pickUpInstruction.gameObject.SetActive(true);
-        }
-
-        public void OnHoverExit()
-        {
-            _pickUpInstruction.gameObject.SetActive(false);
+            CurrentPlayerController = null;
+            gameObject.SetLayerRecursively("Pickup");
         }
 
         /// <summary>

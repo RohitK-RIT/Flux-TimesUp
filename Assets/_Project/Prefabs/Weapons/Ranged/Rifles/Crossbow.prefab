@@ -205,7 +205,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4068554712008636691}
   - component: {fileID: 7052611767422597503}
-  - component: {fileID: 817172882133024336}
   m_Layer: 0
   m_Name: Crossbow
   m_TagString: Untagged
@@ -246,27 +245,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 32cdba17ded424638941d380c8a6df12, type: 2}
   muzzle: {fileID: 1619547666470843636}
---- !u!65 &817172882133024336
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2201032449165890969}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2315841492674228576
 GameObject:
   m_ObjectHideFlags: 0
