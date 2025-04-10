@@ -2,17 +2,17 @@
 
 namespace _Project.Scripts.Core.Backend.Interfaces
 {
-    public interface IPickable
+    public interface IInteractable : IPickable
     {
         /// <summary>
-        /// Function called when the item is picked up.
+        /// Function called when the item is hovered over.
         /// </summary>
         /// <param name="controller">the controller that is trying to pick the item</param>
-        public void OnPickup(PlayerController controller);
+        public void OnHoverEnter(PlayerController controller);
 
         /// <summary>
-        /// Function called when the item is dropped.
+        /// Function called when the item is no longer hovered over.
         /// </summary>
-        public void OnDrop();
+        public void OnHoverExit();
     }
 }

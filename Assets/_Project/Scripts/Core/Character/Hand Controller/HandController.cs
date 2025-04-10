@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -18,7 +19,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     {
         public event Action OnWeaponSwitched;
         public event Action<int> OnAmmoPicked;
-        public event Action<AbilityType> OnAbilitySwitched;
+        public event Action<AbilityType> OnAbilityPicked;
 
         /// <summary>
         /// The parent transform for the weapons.
@@ -82,7 +83,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
                 _currentAbility = value;
                 _currentAbility.OnPickup(PlayerController);
-                OnAbilitySwitched?.Invoke(value.Type);
+                OnAbilityPicked?.Invoke(value.Type);
             }
         }
 
@@ -102,18 +103,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The currently equipped ability.
         /// </summary>
         private Ability _currentAbility;
-
-        private void OnEnable()
-        {
-            AbilityPickup.OnAbilityPicked += OnAbilityPicked;
-            AmmoPickup.OnAmmoCollected += OnAmmoCollected;
-        }
-
-        private void OnDisable()
-        {
-            AbilityPickup.OnAbilityPicked -= OnAbilityPicked;
-            AmmoPickup.OnAmmoCollected -= OnAmmoCollected;
-        }
 
         public override void Initialize(PlayerController playerController)
         {
@@ -166,7 +155,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// Loads a weapon by its ID.
         /// </summary>
         /// <param name="weaponID">The ID of the weapon to load.</param>
-        internal void LoadWeapon(List<string> weaponIDs)
+        private void LoadWeapon(List<string> weaponIDs)
         {
             // Validate input
             if (weaponIDs == null || weaponIDs.Count == 0)
@@ -275,20 +264,30 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             CurrentItem.EndUse();
         }
 
-
-        private void OnAbilityPicked(PlayerController controller, AbilityType type)
+        public bool OnItemPicked(IPickable pickable)
         {
-            if (!IsPlayer(controller))
-                return;
+            switch (pickable)
+            {
+                case AmmoPickup ammoPickup:
+                    OnAmmoCollected(ammoPickup.Ammo);
+                    return true;
+                case AbilityPickup abilityPickup:
+                    return TrySwitchAbility(abilityPickup.Type);
+                default:
+                    return false;
+            }
+        }
 
+        private bool TrySwitchAbility(AbilityType type)
+        {
             if (type == AbilityType.None)
             {
                 Debug.LogError("Ability type is None");
-                return;
+                return false;
             }
 
             if (CurrentAbility?.Type == type)
-                return;
+                return false;
 
             // Destroy the current ability
             if (CurrentAbility)
@@ -296,39 +295,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             // Load the new ability
             LoadAbility(type);
+
+            return true;
         }
 
-        private void OnAmmoCollected(PlayerController controller, int amount)
+        private void OnAmmoCollected(int amount)
         {
-            if (!IsPlayer(controller))
-                return;
-            
             OnAmmoPicked?.Invoke(amount);
-        }
-
-        private bool IsPlayer(PlayerController controller)
-        {
-            return controller == PlayerController;
-        }
-
-        /// <summary>
-        /// Switches the ability to the specified type.
-        /// </summary>
-        /// <param name="abilityType">type of the ability</param>
-        public void SwitchAbility(AbilityType abilityType)
-        {
-            if (abilityType == AbilityType.None)
-            {
-                Debug.LogError("Ability type is None");
-                return;
-            }
-
-            // Destroy the current ability
-            if (CurrentAbility)
-                Destroy(CurrentAbility.gameObject);
-
-            // Load the new ability
-            LoadAbility(abilityType);
         }
     }
 }

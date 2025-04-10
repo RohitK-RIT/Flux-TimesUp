@@ -27,12 +27,12 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// </summary>
         private GameObject _shieldVisual;
 
-        public override void OnPickup(PlayerController playerController)
+        public override void OnPickup(PlayerController controller)
         {
-            base.OnPickup(playerController);
+            base.OnPickup(controller);
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
-            _shieldVisual = Instantiate(shieldVisualPrefab, playerController.transform);
+            _shieldVisual = Instantiate(shieldVisualPrefab, controller.transform);
             _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
             SetShieldVisual(false);
         }

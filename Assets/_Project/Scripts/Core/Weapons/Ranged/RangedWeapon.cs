@@ -132,11 +132,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _projectilePool?.Dispose();
         }
 
-        public override void OnPickup(PlayerController playerController)
+        public override void OnPickup(PlayerController controller)
         {
-            base.OnPickup(playerController);
+            base.OnPickup(controller);
 
-            playerController.HandController.OnAmmoPicked += AddAmmo;
+            controller.HandController.OnAmmoPicked += AddAmmo;
         }
 
         public override void OnDrop()

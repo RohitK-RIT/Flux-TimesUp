@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
@@ -7,14 +6,15 @@ namespace _Project.Scripts.Core.Weapons
 {
     public class AmmoPickup : MonoBehaviour, ICollectible
     {
-        public static event Action<PlayerController, int> OnAmmoCollected;
+        public int Ammo => ammo;
 
         [SerializeField] private int ammo;
 
-        public void OnCollected(PlayerController playerController)
+        public void OnPickup(PlayerController controller)
         {
-            OnAmmoCollected?.Invoke(playerController, ammo);
             Destroy(gameObject);
         }
+
+        public void OnDrop() { }
     }
 }

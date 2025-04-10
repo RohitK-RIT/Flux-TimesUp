@@ -38,10 +38,10 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
         public PlayerController CurrentPlayerController { get; private set; }
 
-        public virtual void OnPickup(PlayerController playerController)
+        public virtual void OnPickup(PlayerController controller)
         {
-            CurrentPlayerController = playerController;
-            gameObject.SetLayerRecursively(playerController.FriendlyLayerName);
+            CurrentPlayerController = controller;
+            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
         }
 
         public virtual void OnDrop()
