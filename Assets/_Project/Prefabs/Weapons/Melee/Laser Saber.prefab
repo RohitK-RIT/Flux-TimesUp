@@ -259,7 +259,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6826502498893992340}
   - component: {fileID: 1210268584845851345}
-  - component: {fileID: 4840593810415051272}
   m_Layer: 0
   m_Name: Laser Saber
   m_TagString: Untagged
@@ -297,27 +296,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 63b8d58c7602c4763b8c4533e5f70013, type: 2}
---- !u!65 &4840593810415051272
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5658496891946868453}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.41389614, y: 0.9291953, z: 1.546768}
-  m_Center: {x: 0.17504445, y: -0.25961643, z: -0.4975983}
 --- !u!1001 &8238271112617480316
 PrefabInstance:
   m_ObjectHideFlags: 0

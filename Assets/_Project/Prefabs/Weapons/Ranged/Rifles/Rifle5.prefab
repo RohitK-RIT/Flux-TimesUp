@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 4068554712008636691}
   - component: {fileID: 1537638363520638495}
   - component: {fileID: 7607700682445425654}
-  - component: {fileID: 4400650788546934984}
   - component: {fileID: 7052611767422597503}
   m_Layer: 0
   m_Name: Rifle5
@@ -117,27 +116,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4400650788546934984
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2201032449165890969}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7052611767422597503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +130,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: cfe0d0d2493794ee7b88dde37dffc5ee, type: 2}
   muzzle: {fileID: 1619547666470843636}
-  trailRendererPrefab: {fileID: 3577689957102526741, guid: 86b5e158990bad84f84846c77f2c6e70,
-    type: 3}
-  bulletImpactPrefab: {fileID: 5801626513479221714, guid: 53708d74893f0a24f80e4bd6e265d798,
-    type: 3}

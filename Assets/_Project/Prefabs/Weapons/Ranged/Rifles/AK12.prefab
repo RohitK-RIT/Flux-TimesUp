@@ -205,7 +205,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4068554712008636691}
   - component: {fileID: 7052611767422597503}
-  - component: {fileID: 4804398541544606162}
   m_Layer: 0
   m_Name: AK12
   m_TagString: Untagged
@@ -244,30 +243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4fc3311e76f4111a7ecdc958de43ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickUpInstruction: {fileID: 21110633861596763}
   stats: {fileID: 11400000, guid: 9206cd9a80cc94535895cc526f898687, type: 2}
   muzzle: {fileID: 1619547666470843636}
---- !u!65 &4804398541544606162
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2201032449165890969}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.5727125, y: 3.8051655, z: 1.2647758}
-  m_Center: {x: 0.19920382, y: -0.88512504, z: 0.61661965}
 --- !u!1 &2683397553333376015
 GameObject:
   m_ObjectHideFlags: 0
