@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
@@ -48,21 +49,21 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The property that gets or sets the current pickable item.
         /// </summary>
-        private IPickable CurrentPickable
+        private IInteractable CurrentInteractable
         {
-            get => _currentPickable;
+            get => _currentInteractable;
             set
             {
-                _currentPickable?.OnHoverExit();
-                _currentPickable = value;
-                _currentPickable?.OnHoverEnter(this);
+                _currentInteractable?.OnHoverExit();
+                _currentInteractable = value;
+                _currentInteractable?.OnHoverEnter(this);
             }
         }
 
         /// <summary>
         /// The current pickable item the player is interacting with.
         /// </summary>
-        private IPickable _currentPickable;
+        private IInteractable _currentInteractable;
 
         protected override void Awake()
         {
@@ -124,7 +125,19 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent<ICollectible>(out var collectible))
+            CheckForCollectibles(other);
+        }
+
+        /// <summary>
+        /// Checks if the player has picked up a collectible item.
+        /// </summary>
+        /// <param name="other">collider of the object collided</param>
+        private void CheckForCollectibles(Collider other)
+        {
+            if (!other.TryGetComponent<ICollectible>(out var collectible)) 
+                return;
+            
+            if (HandController.OnItemPicked(collectible))
                 collectible.OnCollected(this);
         }
 
@@ -158,25 +171,27 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void UpdatePickable()
         {
-            if (Physics.Raycast(_camera.ViewportPointToRay(ViewportCenter),
-                    out var hit,
-                    8f,
-                    LayerMask.GetMask("Pickup")))
+            if (Physics.Raycast(_camera.ViewportPointToRay(ViewportCenter), out var hit, 8f))
             {
-                if (hit.collider.TryGetComponent<IPickable>(out var pickable))
-                    CurrentPickable = pickable;
+                if (hit.collider.TryGetComponent<IInteractable>(out var interactable))
+                    CurrentInteractable = interactable;
             }
             else
             {
-                CurrentPickable = null;
+                CurrentInteractable = null;
             }
         }
 
         private void PickUpItem()
         {
-            if (CurrentPickable == null) return;
-            CurrentPickable.OnPickup(this);
-            CurrentPickable = null;
+            if (CurrentInteractable == null)
+                return;
+
+            if (!HandController.OnItemPicked(CurrentInteractable))
+                return;
+
+            CurrentInteractable.OnPickup(this);
+            CurrentInteractable = null;
         }
     }
 }

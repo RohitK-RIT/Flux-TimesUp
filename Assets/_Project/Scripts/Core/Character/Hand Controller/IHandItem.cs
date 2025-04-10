@@ -14,8 +14,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// Function called when the item is picked up.
         /// </summary>
-        /// <param name="playerController">the player controller that will control the item</param>
-        public void OnPickup(PlayerController playerController);
+        /// <param name="controller">the player controller that will control the item</param>
+        public void OnPickup(PlayerController controller);
 
         /// <summary>
         /// Function called when the item is dropped.

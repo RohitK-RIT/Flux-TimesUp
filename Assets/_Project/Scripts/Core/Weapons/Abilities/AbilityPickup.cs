@@ -1,44 +1,43 @@
-﻿using System;
-using _Project.Scripts.Core.Backend.Interfaces;
+﻿using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Player_Controllers;
 using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities
 {
-    public class AbilityPickup : MonoBehaviour, IPickable
+    public class AbilityPickup : MonoBehaviour, IInteractable
     {
-        public static event Action<PlayerController, AbilityType> OnAbilityPicked;
-        [SerializeField] private AbilityType abilityType;
+        public AbilityType Type => abilityType;
 
+        [SerializeField] private AbilityType abilityType;
         [SerializeField] private TMP_Text abilityPickUpInstruction;
 
         private void Start()
         {
-            abilityPickUpInstruction.text = "Press 'F' for \"" + abilityType + "\" Ability";
+            abilityPickUpInstruction.text = $"Press 'F' for \"{abilityType}\" Ability";
             abilityPickUpInstruction.gameObject.SetActive(false);
         }
 
-        public void OnPickup(PlayerController playerController)
+        public void OnPickup(PlayerController controller)
         {
-            OnAbilityPicked?.Invoke(playerController, abilityType);
             gameObject.SetActive(false);
-            Destroy(gameObject, 2f);
         }
 
         public void OnDrop() { }
 
-        public void OnHoverEnter(PlayerController playerController)
+        public void OnHoverEnter(PlayerController controller)
         {
-            if (!playerController.HandController.CurrentAbility)
+            if (!controller.HandController.CurrentAbility)
             {
                 //Get Ability
-                OnPickup(playerController);
-                return;
+                if (controller.HandController.OnItemPicked(this))
+                    OnPickup(controller);
             }
-
-            //Press F to pick up new ability
-            abilityPickUpInstruction.gameObject.SetActive(true);
+            else
+            {
+                //Press F to pick up new ability
+                abilityPickUpInstruction.gameObject.SetActive(true);
+            }
         }
 
         public void OnHoverExit()

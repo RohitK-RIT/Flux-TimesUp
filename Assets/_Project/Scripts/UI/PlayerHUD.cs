@@ -1,5 +1,6 @@
 using System;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -18,7 +19,9 @@ namespace _Project.Scripts.UI
     public class PlayerHUD : MonoBehaviour
     {
         private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
-        
+
+        private LocalPlayerController Player => LevelSceneController.Instance.Player;
+
         // References to the UI components
         [SerializeField] public Slider healthBar;
         [SerializeField] public Slider timeStabilityBar;
@@ -71,14 +74,14 @@ namespace _Project.Scripts.UI
 
         private void OnEnable()
         {
-            AmmoPickup.OnAmmoCollected += OnAmmoPickup;
-            LevelSceneController.Instance.Player.HandController.OnAbilitySwitched += OnAbilitySwitched;
+            Player.HandController.OnAmmoPicked += OnAmmoPickup;
+            Player.HandController.OnAbilityPicked += OnAbilityPicked;
         }
 
         private void OnDisable()
         {
-            AmmoPickup.OnAmmoCollected -= OnAmmoPickup;
-            LevelSceneController.Instance.Player.HandController.OnAbilitySwitched -= OnAbilitySwitched;
+            Player.HandController.OnAmmoPicked -= OnAmmoPickup;
+            Player.HandController.OnAbilityPicked -= OnAbilityPicked;
         }
 
         private void Update()
@@ -224,19 +227,17 @@ namespace _Project.Scripts.UI
         /// <summary>
         /// Function for event when ammo is picked up.
         /// </summary>
-        /// <param name="controller">the controller that picked up ammo</param>
         /// <param name="amount">the amount of ammo that is picked up</param>
-        private void OnAmmoPickup(PlayerController controller, int amount)
+        private void OnAmmoPickup(int amount)
         {
-            if (controller == LevelSceneController.Instance.Player)
-                ShowPickupFeedback($"You picked up {amount} ammo.");
+            ShowPickupFeedback($"You picked up {amount} ammo.");
         }
 
         /// <summary>
         /// Function for event when an ability is picked up by the player.
         /// </summary>
         /// <param name="type">type of the ability that is picked up</param>
-        private void OnAbilitySwitched(AbilityType type)
+        private void OnAbilityPicked(AbilityType type)
         {
             ShowPickupFeedback($"You picked up {type}");
             ShowAbilityHUD(type);
