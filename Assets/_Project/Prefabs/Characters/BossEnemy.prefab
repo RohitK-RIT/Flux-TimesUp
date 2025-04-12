@@ -1218,6 +1218,7 @@ GameObject:
   - component: {fileID: 1991303006998598943}
   - component: {fileID: 1358199139427676378}
   - component: {fileID: 3880361818240976733}
+  - component: {fileID: 725896742905638278}
   m_Layer: 11
   m_Name: BossEnemy
   m_TagString: Enemy
@@ -1313,6 +1314,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 2
   enemyType: 1
+  slowPlayerVFX: {fileID: 3744133877081091469, guid: 7e5e27db0cf1644f3917dd41d1316793,
+    type: 3}
+  reduceTSMVFX: {fileID: 7478731271839673279, guid: 70accc193021c48fe8322a0278d4e573,
+    type: 3}
 --- !u!114 &7350352694099059543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1326,7 +1331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 6695076461426248051}
-  currentWeapon: {fileID: 4372811483543633570}
   weapons:
   - {fileID: 4372811483543633570}
   hasPreMadeLoadout: 1
@@ -1453,6 +1457,22 @@ MonoBehaviour:
   chargerEnemyPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
     type: 3}
   basicEnemyPrefab: {fileID: 0}
+--- !u!114 &725896742905638278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8669512272685826618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb5d0f8122fc24f5e95e238b6158c7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healingOrbPrefab: {fileID: 3473613526463779720, guid: 3b6b4ce696c4343b189b2ee77118fdb3,
+    type: 3}
+  healBossVFX: {fileID: 7155335147208632822, guid: 6ee5efaef1ea54520b661dbc4e990c80,
+    type: 3}
 --- !u!1 &8868932900736931432
 GameObject:
   m_ObjectHideFlags: 0

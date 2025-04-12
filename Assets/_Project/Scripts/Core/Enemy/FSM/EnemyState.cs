@@ -14,6 +14,9 @@ namespace _Project.Scripts.Core.Enemy.FSM
         Attack,
         
         // Represents the state where the enemy moves away from the player when its health is low
-        Flee
+        Flee,
+        
+        // Represents the state only for boss enemy
+        BossAttack,
     }
 }

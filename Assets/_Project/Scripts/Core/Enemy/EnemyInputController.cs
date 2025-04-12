@@ -76,6 +76,9 @@ namespace _Project.Scripts.Core.Enemy
         private Vector3 _lastKnownPlayerPosition; // player's last known position
 
         internal float AttackHealthThreshold = 60;
+        
+        [SerializeField] internal GameObject slowPlayerVFX;
+        [SerializeField] internal GameObject reduceTSMVFX;
 
 
         private void Awake()
@@ -110,7 +113,7 @@ namespace _Project.Scripts.Core.Enemy
                 case EnemyType.Boss:
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
-                    states[EnemyState.Attack] = new AttackState(this);
+                    states[EnemyState.BossAttack] = new BossAttackState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 
@@ -207,6 +210,26 @@ namespace _Project.Scripts.Core.Enemy
             Enemy.velocity = Vector3.zero;
         }
 
+        internal void AttackPlayer()
+        {
+            // Face towards the player
+            RotateTowardsPlayer();
+
+            // Player is in attack range, so keep attacking
+            TryAttack();
+            
+            // Attack and move towards the player till the DistanceFromPlayer is reached
+            if ( Vector3.Distance(Enemy.transform.position,
+                    ClosestPlayer.transform.position) <= EnemyDistanceFromPlayer)
+            {
+                StopChasing();
+            }
+            else
+            {
+                StartChasing();
+            }
+        }
+        
         // Method to check if the player is in attack range and conical field of view
         // ReSharper disable Unity.PerformanceAnalysis
         internal bool CanAttack()

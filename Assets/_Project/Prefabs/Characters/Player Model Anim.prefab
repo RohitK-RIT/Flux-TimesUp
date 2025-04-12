@@ -3055,6 +3055,7 @@ GameObject:
   - component: {fileID: 7013915823912738777}
   - component: {fileID: 23111003881748303}
   - component: {fileID: 6384024653887011652}
+  - component: {fileID: 2650904113671221821}
   m_Layer: 10
   m_Name: Player Model Anim
   m_TagString: Player
@@ -3210,6 +3211,18 @@ MonoBehaviour:
   gunIKRig: {fileID: 2527452254745049575}
   gunAimingIKRig: {fileID: 4830727813781160060}
   meleeIKRig: {fileID: 2422923292859562182}
+--- !u!114 &2650904113671221821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5423629894960440112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38ae2b6ef43744eba143678d2ecad69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5462859729107208663
 GameObject:
   m_ObjectHideFlags: 0
