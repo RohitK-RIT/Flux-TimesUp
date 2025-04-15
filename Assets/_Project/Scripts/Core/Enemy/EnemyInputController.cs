@@ -41,7 +41,7 @@ namespace _Project.Scripts.Core.Enemy
 
         internal StateManager StateManager; // reference to state manager
 
-        private const float ChaseRange = 20f; // chase range
+        private const float ChaseRange = 25f; // chase range
 
         internal Vector3 RoamingPosition; // random roaming position for an enemy
 
@@ -322,9 +322,9 @@ namespace _Project.Scripts.Core.Enemy
             {
                 // Move towards the player
                 Enemy.SetDestination(ClosestPlayer.position);
-
+        
                 var stoppingDistance = enemyType == EnemyType.Charger ? _chargerDistanceFromPlayer : EnemyDistanceFromPlayer;
-
+        
                 // If a player is in DistanceFromPlayer range, stop chasing
                 if (Vector3.Distance(Enemy.transform.position,
                         ClosestPlayer.transform.position) <= stoppingDistance)
@@ -332,10 +332,12 @@ namespace _Project.Scripts.Core.Enemy
                     StopChasing(); // Stop chasing once the DistanceFromPlayer range is reached
                     break;
                 }
-
+        
                 yield return null; // Keep following every frame
             }
         }
+        
+        
 
         // Method to make the enemy move towards roam position
         private IEnumerator MoveToRoamPosition(Vector3 targetPosition)

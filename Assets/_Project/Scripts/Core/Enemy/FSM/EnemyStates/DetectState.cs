@@ -18,7 +18,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         public override void EnterState()
         {
             // Resets player movement when entering the state
-            _enemyInputController.StopChasing(); 
+            //_enemyInputController.StopChasing(); 
             
             // If the broadcaster re-enters the detect state it should not be the broadcaster again
             if (_enemyInputController.MemberType == MemberType.Broadcaster)
@@ -45,6 +45,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             // If the player is detected, rotate towards them
             _enemyInputController.RotateTowardsPlayer();
+            _enemyInputController.StartChasing();
             
             // Broadcast message when player is detected and helpers are less than 3
             if (EnemyManager.Instance.HelperEnemies.Count <=3)
