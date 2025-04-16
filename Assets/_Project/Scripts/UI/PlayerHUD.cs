@@ -6,6 +6,7 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -18,7 +19,14 @@ namespace _Project.Scripts.UI
         private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
         
         // References to the UI components
+        
+        //Health Bar
         [SerializeField] public Slider healthBar;
+        [SerializeField] private TMP_Text healthText;
+        [SerializeField] private Gradient gradient;
+        [SerializeField] private Image fill;
+        
+        
         [SerializeField] public Slider timeStabilityBar;
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
@@ -45,7 +53,6 @@ namespace _Project.Scripts.UI
 
         [SerializeField] private Animator animator;
 
-        [SerializeField] private TMP_Text healthText;
         [SerializeField] private TMP_Text tmsValueText;
 
         //[SerializeField] private TMP_Text currentRoomText;
@@ -147,6 +154,7 @@ namespace _Project.Scripts.UI
             healthBar.value = player.CurrentHealth;
             healthBar.maxValue = player.Stats.maxHealth;
             healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
+            fill.color = gradient.Evaluate(healthBar.normalizedValue);
         }
         
         /// <summary>

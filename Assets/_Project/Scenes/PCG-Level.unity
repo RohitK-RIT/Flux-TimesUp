@@ -16874,7 +16874,6 @@ MonoBehaviour:
   winPage: {fileID: 762427771}
   loosePage: {fileID: 1151406847}
   player: {fileID: 392042112}
-  randomRoomGeneration: {fileID: 0}
 --- !u!114 &1493662880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22484,6 +22483,16 @@ PrefabInstance:
     - target: {fileID: 1386188859625466439, guid: 2a784e46f5e48c042bd7896f14b38ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1666119978228583423, guid: 2a784e46f5e48c042bd7896f14b38ee2,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1666119978228583423, guid: 2a784e46f5e48c042bd7896f14b38ee2,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2571213379175126173, guid: 2a784e46f5e48c042bd7896f14b38ee2,
