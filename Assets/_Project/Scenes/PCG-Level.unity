@@ -14945,7 +14945,7 @@ PrefabInstance:
     - target: {fileID: 1220829149706847262, guid: 05e098613554f4e4f98ceaaf4f9c4d8b,
         type: 3}
       propertyPath: decreaseRate
-      value: 0.5
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 1220829149706847262, guid: 05e098613554f4e4f98ceaaf4f9c4d8b,
         type: 3}
@@ -16874,7 +16874,6 @@ MonoBehaviour:
   winPage: {fileID: 762427771}
   loosePage: {fileID: 1151406847}
   player: {fileID: 392042112}
-  randomRoomGeneration: {fileID: 0}
 --- !u!114 &1493662880
 MonoBehaviour:
   m_ObjectHideFlags: 0
