@@ -37,6 +37,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             {
                 Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity, transform.parent);
                 Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity, transform.parent);
+                
             }
 
             if (type == EnemyType.Boss)
@@ -63,7 +64,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
 
                     // Reactivate the enemy GameObject
                     enemy.gameObject.SetActive(true);
-
+                    _roomWaveController._enemyInputController.PlayerController.MovementController.SetPosition(enemy.transform.position);
                     // Call Reset() on the enemy controller
                     enemy.gameObject.GetComponent<EnemyController>().Reset();
                 }

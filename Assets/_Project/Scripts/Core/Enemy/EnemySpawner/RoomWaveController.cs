@@ -16,7 +16,7 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
     
         // Keeps track of which waves have been triggered to prevent duplicate spawns
         private readonly HashSet<int> _spawnedWaves = new HashSet<int>();
-        private EnemyInputController _enemyInputController;
+        internal EnemyInputController _enemyInputController;
         private SpawnManager _spawnManager;
         private EnemyController _enemyController;
         private EnemyDeathListener _enemyDeathListener;
