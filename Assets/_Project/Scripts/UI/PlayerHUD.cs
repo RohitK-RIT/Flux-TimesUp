@@ -23,11 +23,17 @@ namespace _Project.Scripts.UI
         //Health Bar
         [SerializeField] public Slider healthBar;
         [SerializeField] private TMP_Text healthText;
-        [SerializeField] private Gradient gradient;
-        [SerializeField] private Image fill;
+        [SerializeField] private Gradient healthGradient;
+        [SerializeField] private Image healthFill;
         
-        
+        //Time Stability Bar
         [SerializeField] public Slider timeStabilityBar;
+        [SerializeField] private TMP_Text tmsValueText;
+        [SerializeField] private Gradient tsmGradient;
+        [SerializeField] private Image tsmFill;
+        //[SerializeField] private Animator animator;
+        
+        
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public TMP_Text pickupText;
@@ -50,10 +56,6 @@ namespace _Project.Scripts.UI
 
         private AbilityData abilityData;
         private AbilityCooldown abilityCooldown;
-
-        [SerializeField] private Animator animator;
-
-        [SerializeField] private TMP_Text tmsValueText;
 
         //[SerializeField] private TMP_Text currentRoomText;
 
@@ -148,36 +150,6 @@ namespace _Project.Scripts.UI
             }
         }
 
-        // Updates the health bar based on the player's current and max health
-        private void UpdateHealthBar()
-        {
-            healthBar.value = player.CurrentHealth;
-            healthBar.maxValue = player.Stats.maxHealth;
-            healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
-            fill.color = gradient.Evaluate(healthBar.normalizedValue);
-        }
-        
-        /// <summary>
-        /// Function to update the time stability bar.
-        /// </summary>
-        private void UpdateTimeStabilityBar()
-        {
-            timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
-            timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
-            tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
-            animator.SetBool(IsBlinking, false);
-            if (timeStabilityBar.value < 50)
-            {
-                animator.SetBool(IsBlinking, true);
-                animator.speed = 0.5f;
-            }
-            else if(timeStabilityBar.value < 25)
-            {
-                animator.SetBool(IsBlinking, true);
-                animator.speed = 1f;
-            }
-        }
-
         // Updates the ammo display based on the player's current and total ammo
         private void UpdateAmmoDisplay()
         {
@@ -212,7 +184,6 @@ namespace _Project.Scripts.UI
             // Ensure it resets exactly to the original rotation
             reloadingIcon.transform.rotation = originalRotation;
         }
-
         
         /// <summary>
         /// Function to show pickup feedback.
@@ -231,6 +202,37 @@ namespace _Project.Scripts.UI
         private void HidePickupFeedback()
         {
             pickupText.gameObject.SetActive(false);
+        }
+        
+        /// <summary>
+        /// Function to update the time stability bar.
+        /// </summary>
+        private void UpdateTimeStabilityBar()
+        {
+            timeStabilityBar.value = TimeStabilityMeter.Instance.TimeStability;
+            timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
+            tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
+            tsmFill.color = tsmGradient.Evaluate(timeStabilityBar.normalizedValue);
+            /*animator.SetBool(IsBlinking, false);
+            if (timeStabilityBar.value < 50)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 0.5f;
+            }
+            else if(timeStabilityBar.value < 25)
+            {
+                animator.SetBool(IsBlinking, true);
+                animator.speed = 1f;
+            }*/
+        }
+        
+        // Updates the health bar based on the player's current and max health
+        private void UpdateHealthBar()
+        {
+            healthBar.value = player.CurrentHealth;
+            healthBar.maxValue = player.Stats.maxHealth;
+            healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
+            healthFill.color = healthGradient.Evaluate(healthBar.normalizedValue);
         }
     }
 }
