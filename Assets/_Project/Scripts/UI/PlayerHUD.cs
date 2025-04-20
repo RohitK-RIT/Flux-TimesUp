@@ -21,14 +21,14 @@ namespace _Project.Scripts.UI
         //Health Bar
         [SerializeField] public Slider healthBar;
         [SerializeField] private TMP_Text healthText;
-        [SerializeField] private Gradient healthGradient;
         [SerializeField] private Image healthFill;
+        [SerializeField] private Gradient healthGradient;
         
         //Time Stability Bar
         [SerializeField] public Slider timeStabilityBar;
         [SerializeField] private TMP_Text tmsValueText;
-        [SerializeField] private Gradient tsmGradient;
         [SerializeField] private Image tsmFill;
+        [SerializeField] private Gradient tsmGradient;
         //[SerializeField] private Animator animator;
         //private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
         
@@ -36,11 +36,9 @@ namespace _Project.Scripts.UI
         [SerializeField] private TMP_Text enemiesRemaining;
         [SerializeField] public TMP_Text pickupText;
         
+        //Loadout Information
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
-        
-        [SerializeField] public LocalPlayerController player;
-        
         [SerializeField] public Image primaryIconSlot;
         [SerializeField] public Image secondaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
@@ -58,10 +56,9 @@ namespace _Project.Scripts.UI
 
         private AbilityData abilityData;
         private AbilityCooldown abilityCooldown;
-
-        //[SerializeField] private TMP_Text currentRoomText;
-
-        //private Ability currentAbility;
+        
+        // References to the player controller
+        [SerializeField] public LocalPlayerController player;
 
         private void Start()
         {
@@ -69,10 +66,11 @@ namespace _Project.Scripts.UI
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
-            primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform);
-            secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform);
-            meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform);
-            abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform);
+            
+            primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform.parent);
+            secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform.parent);
+            meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform.parent);
+            abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform.parent);
             abilityCooldown = abilityOverlay.GetComponent<AbilityCooldown>();
             abilityIconSlot.gameObject.SetActive(false);
             abilitySlotHolder.SetActive(false);
@@ -161,30 +159,52 @@ namespace _Project.Scripts.UI
         }
 
         // Updates the reloading text based on the player's current weapon state
+        private Coroutine reloadingCoroutine;
+
         private void UpdateReloadingText()
         {
             var currentRangedWeapon = player.HandController.CurrentItem as RangedWeapon;
             if (!currentRangedWeapon)
                 return;
 
-            reloadingText.SetActive(currentRangedWeapon.IsReloading);
-            StartCoroutine(UpdateReloadingIcon(currentRangedWeapon.IsReloading, currentRangedWeapon));
-        }
-        
-        private System.Collections.IEnumerator UpdateReloadingIcon(bool isReloading, RangedWeapon currentRangedWeapon)
-        {
-            var originalRotation = reloadingIcon.transform.rotation; // Store original rotation
-            var reloadTime = currentRangedWeapon.Stats.ReloadTime;
-            const float totalRotation = 360f; // Full circle rotation
+            bool isReloading = currentRangedWeapon.IsReloading;
+            reloadingText.SetActive(isReloading);
 
             if (isReloading)
             {
-                reloadingIcon.transform.Rotate(Vector3.forward, totalRotation * Time.deltaTime / reloadTime);
-                yield return new WaitForSeconds(reloadTime);
+                if (reloadingCoroutine == null) // Don't start multiple coroutines
+                {
+                    reloadingCoroutine = StartCoroutine(UpdateReloadingIcon(currentRangedWeapon));
+                }
             }
-            // Ensure it resets exactly to the original rotation
-            reloadingIcon.transform.rotation = originalRotation;
+            else
+            {
+                if (reloadingCoroutine != null)
+                {
+                    StopCoroutine(reloadingCoroutine);
+                    reloadingCoroutine = null;
+                    reloadingIcon.transform.rotation = Quaternion.identity; // Reset icon rotation to default
+                }
+            }
         }
+
+        private System.Collections.IEnumerator UpdateReloadingIcon(RangedWeapon currentRangedWeapon)
+        {
+            float reloadTime = currentRangedWeapon.Stats.ReloadTime;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < reloadTime)
+            {
+                float rotationAmount = (elapsedTime / reloadTime) * 360f;
+                reloadingIcon.transform.localRotation = Quaternion.Euler(0f, 0f, -rotationAmount); // Rotate in local space
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            reloadingIcon.transform.localRotation = Quaternion.identity; // Ensure perfect reset
+            reloadingCoroutine = null;
+        }
+
         
         /// <summary>
         /// Function to show pickup feedback.
