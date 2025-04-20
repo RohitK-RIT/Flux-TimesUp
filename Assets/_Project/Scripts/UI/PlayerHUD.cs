@@ -16,8 +16,6 @@ namespace _Project.Scripts.UI
     /// </summary>
     public class PlayerHUD : MonoBehaviour
     {
-        private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
-        
         // References to the UI components
         
         //Health Bar
@@ -32,11 +30,15 @@ namespace _Project.Scripts.UI
         [SerializeField] private Gradient tsmGradient;
         [SerializeField] private Image tsmFill;
         //[SerializeField] private Animator animator;
+        //private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
         
+        //Enemies Remaining & Pick up Info
+        [SerializeField] private TMP_Text enemiesRemaining;
+        [SerializeField] public TMP_Text pickupText;
         
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
-        [SerializeField] public TMP_Text pickupText;
+        
         [SerializeField] public LocalPlayerController player;
         
         [SerializeField] public Image primaryIconSlot;
@@ -83,7 +85,6 @@ namespace _Project.Scripts.UI
             UpdateAmmoDisplay();
             UpdateReloadingText();
             UpdateLoadoutInfo();
-            //currentRoomText.text = LevelSceneController.Instance.randomRoomGeneration.CurrentRoom.name + player.transform.position;
         }
         
         public void ShowAbilityHUD(AbilityType abilityType)
