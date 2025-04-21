@@ -1,12 +1,13 @@
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -43,22 +44,21 @@ namespace _Project.Scripts.UI
         [SerializeField] public Image secondaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
         [SerializeField] public Image abilityIconSlot;
-        [SerializeField] public GameObject abilitySlotHolder;
         [SerializeField] private GameObject overlay;
-
         [SerializeField] public GameObject reloadingText;
         [SerializeField] public GameObject reloadingIcon;
-
-        private GameObject primaryOverlay;
-        private GameObject secondaryOverlay;
-        private GameObject meleeOverlay;
-        private GameObject abilityOverlay;
-
-        private AbilityData abilityData;
-        private AbilityCooldown abilityCooldown;
+        // Updates the reloading text based on the player's current weapon state
+        private Coroutine _reloadingCoroutine;
+        private GameObject _primaryOverlay;
+        private GameObject _secondaryOverlay;
+        private GameObject _meleeOverlay;
+        private GameObject _abilityOverlay;
+        private AbilityData _abilityData;
+        private AbilityCooldown _abilityCooldown;
         
         // References to the player controller
         [SerializeField] public LocalPlayerController player;
+        private RoomWaveController _roomWaveController;
 
         private void Start()
         {
@@ -67,13 +67,17 @@ namespace _Project.Scripts.UI
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
             
-            primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform.parent);
-            secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform.parent);
-            meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform.parent);
-            abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform.parent);
-            abilityCooldown = abilityOverlay.GetComponent<AbilityCooldown>();
-            abilityIconSlot.gameObject.SetActive(false);
-            abilitySlotHolder.SetActive(false);
+            _primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform.parent);
+            _secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform.parent);
+            _meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform.parent);
+            _abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform.parent);
+            _abilityCooldown = _abilityOverlay.GetComponent<AbilityCooldown>();
+            
+            _roomWaveController = FindObjectOfType<RoomWaveController>();
+            if (_roomWaveController == null)
+            {
+                Debug.LogError("RoomWaveController not found in the scene.");
+            }
         }
 
         private void Update()
@@ -83,15 +87,40 @@ namespace _Project.Scripts.UI
             UpdateAmmoDisplay();
             UpdateReloadingText();
             UpdateLoadoutInfo();
+            UpdateEnemiesRemaining();
         }
         
+        // Updates the number of enemies remaining in the room
+        private void UpdateEnemiesRemaining()
+        {
+            if (_roomWaveController == null) return;
+            var enemiesCount = 0;
+            foreach (var enemy in _roomWaveController.EnemiesInRoom)
+            {
+                if(enemy!=null && enemy.activeInHierarchy)
+                {
+                    enemiesCount++;
+                }
+            }
+
+            if (enemiesCount > 0)
+            {
+                enemiesRemaining.text = "Enemies Remaining: " + enemiesCount.ToString();
+            }
+            else
+            {
+                enemiesRemaining.text = "Portal is now open!";
+            }
+        }
+        
+        // Shows the ability HUD with the specified ability type
         public void ShowAbilityHUD(AbilityType abilityType)
         {
-            abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
-            abilityIconSlot.sprite = abilityData.Icon;
-            abilitySlotHolder.SetActive(true);
-            abilityIconSlot.gameObject.SetActive(true);
+            _abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
+            abilityIconSlot.sprite = _abilityData.Icon;
+            abilityIconSlot.color = Color.white;
         }
+        
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
@@ -101,17 +130,17 @@ namespace _Project.Scripts.UI
             if (player.HandController.CurrentItem is Ability)
             {
                 abilityIconSlot.enabled = true;
-                abilityIconSlot.sprite = abilityData.Icon;
-                primaryOverlay.SetActive(true);
-                secondaryOverlay.SetActive(true);
-                meleeOverlay.SetActive(true);
-                abilityOverlay.SetActive(false);
+                abilityIconSlot.sprite = _abilityData.Icon;
+                _primaryOverlay.SetActive(true);
+                _secondaryOverlay.SetActive(true);
+                _meleeOverlay.SetActive(true);
+                _abilityOverlay.SetActive(false);
             }
 
             if (currentAbility != null && currentAbility.IsCooldownActive)
             {
                 Debug.Log("Current ability is on cooldown" + currentAbility.name);
-                abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
+                _abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
             }
 
             primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[0].WeaponID);
@@ -126,26 +155,26 @@ namespace _Project.Scripts.UI
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
-            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
+            if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[0])
             {
-                primaryOverlay.SetActive(false);
-                secondaryOverlay.SetActive(true);
-                meleeOverlay.SetActive(true);
-                abilityOverlay.SetActive(true);
+                _primaryOverlay.SetActive(false);
+                _secondaryOverlay.SetActive(true);
+                _meleeOverlay.SetActive(true);
+                _abilityOverlay.SetActive(true);
             }
-            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
+            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[1])
             {
-                primaryOverlay.SetActive(true);
-                secondaryOverlay.SetActive(false);
-                meleeOverlay.SetActive(true);
-                abilityOverlay.SetActive(true);
+                _primaryOverlay.SetActive(true);
+                _secondaryOverlay.SetActive(false);
+                _meleeOverlay.SetActive(true);
+                _abilityOverlay.SetActive(true);
             }
-            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
+            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
-               primaryOverlay.SetActive(true);
-               secondaryOverlay.SetActive(true);
-               meleeOverlay.SetActive(false);
-               abilityOverlay.SetActive(true);
+               _primaryOverlay.SetActive(true);
+               _secondaryOverlay.SetActive(true);
+               _meleeOverlay.SetActive(false);
+               _abilityOverlay.SetActive(true);
             }
         }
 
@@ -158,9 +187,6 @@ namespace _Project.Scripts.UI
             maxAmmo.text = currentRangedWeapon.MaxAmmo.ToString();
         }
 
-        // Updates the reloading text based on the player's current weapon state
-        private Coroutine reloadingCoroutine;
-
         private void UpdateReloadingText()
         {
             var currentRangedWeapon = player.HandController.CurrentItem as RangedWeapon;
@@ -172,17 +198,17 @@ namespace _Project.Scripts.UI
 
             if (isReloading)
             {
-                if (reloadingCoroutine == null) // Don't start multiple coroutines
+                if (_reloadingCoroutine == null) // Don't start multiple coroutines
                 {
-                    reloadingCoroutine = StartCoroutine(UpdateReloadingIcon(currentRangedWeapon));
+                    _reloadingCoroutine = StartCoroutine(UpdateReloadingIcon(currentRangedWeapon));
                 }
             }
             else
             {
-                if (reloadingCoroutine != null)
+                if (_reloadingCoroutine != null)
                 {
-                    StopCoroutine(reloadingCoroutine);
-                    reloadingCoroutine = null;
+                    StopCoroutine(_reloadingCoroutine);
+                    _reloadingCoroutine = null;
                     reloadingIcon.transform.rotation = Quaternion.identity; // Reset icon rotation to default
                 }
             }
@@ -202,7 +228,7 @@ namespace _Project.Scripts.UI
             }
 
             reloadingIcon.transform.localRotation = Quaternion.identity; // Ensure perfect reset
-            reloadingCoroutine = null;
+            _reloadingCoroutine = null;
         }
 
         
