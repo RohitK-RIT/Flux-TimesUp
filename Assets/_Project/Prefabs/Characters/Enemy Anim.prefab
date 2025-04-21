@@ -1135,6 +1135,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4423684741945385195}
   - component: {fileID: 1415051378859495054}
+  - component: {fileID: 5443641431433464484}
   m_Layer: 11
   m_Name: HealthBar
   m_TagString: Untagged
@@ -1214,6 +1215,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5443641431433464484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2589338690799537911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52bdf9c92d0228b4dac45f672a4e1aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2628797676084617360
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,6 +1397,7 @@ GameObject:
   - component: {fileID: 7881729464612551882}
   - component: {fileID: 4631585478307863869}
   - component: {fileID: 6653366642584054539}
+  - component: {fileID: 2657154220036284997}
   m_Layer: 11
   m_Name: Enemy Anim
   m_TagString: Enemy
@@ -1691,6 +1705,21 @@ MonoBehaviour:
   - {fileID: 7804362294424705927}
   - {fileID: 5409381723742386626}
   - {fileID: 4645940495723264551}
+--- !u!114 &2657154220036284997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3102790284094187583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3f055ab0b5f4df19ef1d30fe4f712c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunIKRig: {fileID: 0}
+  gunAimingIKRig: {fileID: 0}
+  meleeIKRig: {fileID: 0}
 --- !u!1 &3484214420700779357
 GameObject:
   m_ObjectHideFlags: 0
@@ -3576,9 +3605,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: b5e2c6694d9df4c5da50771b1a71374a, type: 2}
   muzzle: {fileID: 7480933145652931046}
-  trailRendererPrefab: {fileID: 3577689957102526741, guid: 86b5e158990bad84f84846c77f2c6e70,
-    type: 3}
-  bulletImpactPrefab: {fileID: 0}
 --- !u!1 &6522713327118196769
 GameObject:
   m_ObjectHideFlags: 0
