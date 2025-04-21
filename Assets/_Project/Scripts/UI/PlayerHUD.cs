@@ -59,7 +59,7 @@ namespace _Project.Scripts.UI
         // References to the player controller
         [SerializeField] public LocalPlayerController player;
         private RoomWaveController _roomWaveController;
-
+        
         private void Start()
         {
             // Initialize the health bar and ammo display with the player's starting values
@@ -93,21 +93,21 @@ namespace _Project.Scripts.UI
         // Updates the number of enemies remaining in the room
         private void UpdateEnemiesRemaining()
         {
+            _roomWaveController = FindObjectOfType<RoomWaveController>();
             if (_roomWaveController == null) return;
             var enemiesCount = 0;
             foreach (var enemy in _roomWaveController.EnemiesInRoom)
             {
-                if(enemy!=null && enemy.activeInHierarchy)
+                if (enemy != null && enemy.activeInHierarchy)
                 {
                     enemiesCount++;
                 }
             }
-
             if (enemiesCount > 0)
             {
                 enemiesRemaining.text = "Enemies Remaining: " + enemiesCount.ToString();
             }
-            else
+            else if(enemiesCount == 0)
             {
                 enemiesRemaining.text = "Portal is now open!";
             }
