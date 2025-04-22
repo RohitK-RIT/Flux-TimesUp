@@ -4,8 +4,8 @@ namespace _Project.Scripts.UI
 {
     public class LookAtPlayer : MonoBehaviour
     {
-
         private Camera mainCamera;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -13,11 +13,11 @@ namespace _Project.Scripts.UI
         }
 
         // Update is called once per frame
-        void Update()
+        void LateUpdate()
         {
             LookAtCamera();
         }
-    
+
         private void LookAtCamera()
         {
             //if the player is in the range of this pickup item, rotate the instruction to pick up the ability.
