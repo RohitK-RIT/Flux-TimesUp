@@ -48,7 +48,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             _enemyInputController.StartChasing();
             
             // Broadcast message when player is detected and helpers are less than 3
-            if (EnemyManager.Instance.HelperEnemies.Count <=3)
+            if (EnemyManager.Instance.HelperEnemies.Count <=3 && _enemyInputController.ClosestPlayer != null)
             {
                 //memberType = MemberType.Broadcaster;
                 EnemyManager.Instance.BroadcastMessage(_enemyInputController, _enemyInputController.ClosestPlayer.transform.position);
@@ -58,17 +58,22 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
-            // check if the closest player in range
+            // If a player is detected, move to Detect state
+            if (!_enemyInputController.FindPlayer())
+            {
+                return EnemyState.Detect;
+            }
+            
+            // If the enemy can chase the player, transition to Chase
             if (_enemyInputController.CanChasePlayer())
             {
                 return EnemyState.Chase;
             }
+
+            // Otherwise, keep patrolling
+            return EnemyState.Patrol;
             
-            // check if any player is in the player detection range
-            return _enemyInputController.FindPlayer()? 
-                // If player is in Detect range, stay in detected state
-                EnemyState.Detect :
-                EnemyState.Patrol;
+            
         }
     }
 }

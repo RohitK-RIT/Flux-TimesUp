@@ -41,7 +41,8 @@ namespace _Project.Scripts.Core.Enemy
 
         internal StateManager StateManager; // reference to state manager
 
-        private const float ChaseRange = 25f; // chase range
+        private const float EnemyChaseRange = 25f; // chase range
+        private const float ChargerChaseRange = 100f; // chase range
 
         internal Vector3 RoamingPosition; // random roaming position for an enemy
 
@@ -181,9 +182,10 @@ namespace _Project.Scripts.Core.Enemy
         // Method to check if player is in chase range and conical field of view
         internal bool CanChasePlayer()
         {
-            if (!IsPlayerInCone()) return false;
+            if (!IsPlayerInCone() && enemyType != EnemyType.Charger) return false;
+            var range = enemyType == EnemyType.Charger ? ChargerChaseRange : EnemyChaseRange;
             var distance = Vector3.Distance(Enemy.transform.position, ClosestPlayer.position);
-            return distance <= ChaseRange; // Return true if within chase range
+            return distance <= range; // Return true if within chase range
         }
 
         // Method to check if a player is in conical field of view
@@ -386,10 +388,12 @@ namespace _Project.Scripts.Core.Enemy
 
             // Visualization of the chase range (sphere)
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, ChaseRange);
+            var chaseRange = enemyType == EnemyType.Charger ? ChargerChaseRange : EnemyChaseRange;
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, chaseRange);
 
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, PlayerDetection._detectionRange);
+            var detectionRange = enemyType == EnemyType.Charger ? PlayerDetection._ChargerDetectionRange : PlayerDetection._EnemyDetectionRange;
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, detectionRange);
 
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
@@ -400,9 +404,9 @@ namespace _Project.Scripts.Core.Enemy
 
             // Visualization of the field of view (cone)
             Gizmos.color = Color.yellow;
-
+            
             // Use the current forward direction of the enemy
-            Vector3 forwardDirection = PlayerController.MovementController.Body.forward * ChaseRange; // Adjust cone length with chase range
+            Vector3 forwardDirection = PlayerController.MovementController.Body.forward * chaseRange; // Adjust cone length with chase range
             float fovHalfAngle = _playerDetection.fieldOfViewAngle * 0.5f;
 
             // Calculate the boundaries of the cone
