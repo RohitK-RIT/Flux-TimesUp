@@ -38,6 +38,9 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// Event that is called when the player switches weapons.
         /// </summary>
         public override event Action<int> OnSwitchWeaponInput;
+        
+        [SerializeField] private float scrollCooldown = 0.25f; // Cooldown for weapon switching
+        private float _lastScrollTime;
 
         public override event Action OnReloadInput;
 
@@ -205,8 +208,16 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// <param name="context">input callback context</param>
         private void OnSwitchWeaponInputReceived(InputAction.CallbackContext context)
         {
-            // Invoke the OnSwitchWeaponInput event.
-            OnSwitchWeaponInput?.Invoke((int)context.ReadValue<float>());
+            // Prevents firing too often
+            if (Time.time - _lastScrollTime < scrollCooldown) return;
+
+            float scrollY = context.ReadValue<float>();
+            if (Mathf.Abs(scrollY) > 0.01f)
+            {
+                int direction = scrollY > 0 ? 1 : -1;
+                OnSwitchWeaponInput?.Invoke(direction);
+                _lastScrollTime = Time.time;
+            }
         }
 
         #endregion
