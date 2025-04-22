@@ -1,4 +1,4 @@
-    using _Project.Scripts.Core.Enemy;
+using _Project.Scripts.Core.Enemy;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.UI;
 using UnityEngine;
@@ -10,25 +10,33 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
     //General class to manage the game
     public class LevelSceneController : BaseSystem<LevelSceneController>
     {
-        [SerializeField] public PlayerHUD playerHUD;
         protected override bool IsPersistent => false;
         public LocalPlayerController Player => player;
         public GameObject WinPage => winPage;
         public GameObject LoosePage => loosePage;
+        public Camera Camera { get; private set; }
 
+        [SerializeField] public PlayerHUD playerHUD;
         [SerializeField] private GameObject pauseMenuPage, winPage, loosePage; // Drag your game scene UI panel here
 
         [Space(25f), Header("Players in Scene")] [SerializeField]
         private LocalPlayerController player; // Drag your player here
 
         private bool _isPaused; // Variable to check if the game is paused
-        
+
         public EnemyController BossEnemy { get; set; }
         
         // The name of the next scene to load after onboarding
         private string _nextSceneName = "PCG-Level";
         
         //[SerializeField] public RandomRoomGeneration randomRoomGeneration;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            Camera = Camera.main;
+        }
 
         private void Update()
         {
@@ -53,7 +61,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
                 GameOver(true);*/
             else if (BossEnemy)
             {
-                if(BossEnemy.CurrentHealth <= 0)
+                if (BossEnemy.CurrentHealth <= 0)
                     GameOver(true);
             }
         }
@@ -76,6 +84,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             {
                 loosePage.SetActive(true);
             }
+
             PauseGame();
             //Time.timeScale = 0f; // Freeze the game
         }

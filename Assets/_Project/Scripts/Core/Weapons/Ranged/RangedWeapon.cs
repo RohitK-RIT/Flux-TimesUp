@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
+using _Project.Scripts.Core.Player_Controllers;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -59,14 +60,23 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
+        public override string WeaponID => stats.WeaponID;
+
         /// <summary>
         /// Dictionary of fire mode strategies.
         /// </summary>
         private Dictionary<FireModes, FiringPin> _fireModeStrategies;
 
+        /// <summary>
+        /// Current firing pin implementation.
+        /// </summary>
         private FiringPin _currentFiringPin;
 
+        /// <summary>
+        /// Current fire mode enum.
+        /// </summary>
         private FireModes _currentFireMode;
+
 
         /// <summary>
         /// Object pool for projectiles.
@@ -78,6 +88,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private Coroutine _reloadCoroutine;
 
+        /// <summary>
+        /// Coroutine for firing.
+        /// </summary>
         private Coroutine _fireCoroutine;
 
         private void Start()
@@ -115,7 +128,25 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void OnDestroy()
         {
+            // Dispose of the projectile pool.
             _projectilePool?.Dispose();
+        }
+
+        public override void OnPickup(PlayerController controller)
+        {
+            base.OnPickup(controller);
+
+            controller.HandController.OnAmmoPicked += AddAmmo;
+        }
+
+        public override void OnDrop()
+        {
+            base.OnDrop();
+
+            if (IsReloading)
+                StopReloading();
+
+            CurrentPlayerController.HandController.OnAmmoPicked -= AddAmmo;
         }
 
         public override void OnEquip()
@@ -149,8 +180,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             CurrentFireMode = stats.FireModes[indexOf];
         }
 
-        public override string WeaponID => stats.WeaponID;
-
         /// <summary>
         /// Start attacking.
         /// </summary>
@@ -162,7 +191,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             IsTriggerPulled = true;
             StartFiring();
         }
-
 
         public override void EndUse()
         {
@@ -261,8 +289,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Function to Add ammo to the weapon when the ammo is picked up.
         /// </summary>
         /// <param name="ammo">the ammo to be added</param>
-        public void AddAmmo(int ammo)
+        private void AddAmmo(int ammo)
         {
+            if (stats.WeaponType != WeaponType.Primary && !Equipped)
+                return;
+
             MaxAmmo += ammo;
         }
     }

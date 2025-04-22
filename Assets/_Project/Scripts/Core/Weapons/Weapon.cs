@@ -1,7 +1,9 @@
+using System;
 using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
+using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons
@@ -16,16 +18,19 @@ namespace _Project.Scripts.Core.Weapons
         /// </summary>
         public PlayerController CurrentPlayerController { get; private set; }
 
+
         public abstract string WeaponID { get; }
+
+        protected bool Equipped { get; private set; }
 
         /// <summary>
         /// Function called when the weapon is picked up.
         /// </summary>
-        /// <param name="currentPlayerController">the player controller that will control the weapon</param>
-        public virtual void OnPickup(PlayerController currentPlayerController)
+        /// <param name="controller">the player controller that will control the weapon</param>
+        public virtual void OnPickup(PlayerController controller)
         {
-            CurrentPlayerController = currentPlayerController;
-            gameObject.SetLayerRecursively(currentPlayerController.FriendlyLayerName);
+            CurrentPlayerController = controller;
+            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
         }
 
         /// <summary>
@@ -34,18 +39,24 @@ namespace _Project.Scripts.Core.Weapons
         public virtual void OnDrop()
         {
             CurrentPlayerController = null;
-            gameObject.SetLayerRecursively("Default");
+            gameObject.SetLayerRecursively("Pickup");
         }
 
         /// <summary>
         /// Function called when the weapon is equipped.
         /// </summary>
-        public virtual void OnEquip() { }
+        public virtual void OnEquip()
+        {
+            Equipped = true;
+        }
 
         /// <summary>
         /// Function called when the weapon is unequipped.
         /// </summary>
-        public virtual void OnUnequip() { }
+        public virtual void OnUnequip()
+        {
+            Equipped = false;
+        }
 
         /// <summary>
         /// Start attacking.
