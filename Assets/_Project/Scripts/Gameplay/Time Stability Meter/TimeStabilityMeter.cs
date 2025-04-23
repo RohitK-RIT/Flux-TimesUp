@@ -70,6 +70,7 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
 
         private void Update()
         {
+            Debug.Log("current TSM"+TimeStability);
 #if UNITY_EDITOR
             if (pauseTimeStability)
                 return;
