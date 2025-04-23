@@ -52,28 +52,31 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
         // Resets their state and reactivates them.
         internal void WaveEnemySpawner()
         {
-            for (int i = 0; i < _roomWaveController.EnemiesInRoom.Count; i++)
+            // Clear old enemy references
+            _roomWaveController.EnemiesInRoom.Clear();
+
+            for (int i = 0; i < _roomWaveController.OriginalSpawnPoints.Count; i++)
             {
-                if (_roomWaveController.EnemiesInRoom[i] != null)
+                Vector3 spawnPosition = _roomWaveController.OriginalSpawnPoints[i];
+
+                // Instantiate a brand new enemy
+                GameObject newEnemy = Instantiate(basicEnemyPrefab, spawnPosition, Quaternion.identity, transform.parent);
+
+                // Make sure it's active (optional if prefab is active)
+                newEnemy.SetActive(true);
+
+                // Reset any state or values
+                var enemyController = newEnemy.GetComponent<EnemyController>();
+                if (enemyController != null)
                 {
-                    // Get enemy reference
-                    var enemy = _roomWaveController.EnemiesInRoom[i];
-
-                    // Reset enemy position to its original spawn point
-                    enemy.transform.position = _roomWaveController.OriginalSpawnPoints[i];
-
-                    // Reactivate the enemy GameObject
-                    enemy.gameObject.SetActive(true);
-                    _roomWaveController._enemyInputController.PlayerController.MovementController.SetPosition(enemy.transform.position);
-                    // Call Reset() on the enemy controller
-                    enemy.gameObject.GetComponent<EnemyController>().Reset();
+                    enemyController.Reset(); // should internally reset animator, health, state, etc.
                 }
+
+                // Add to current room’s list
+                _roomWaveController.EnemiesInRoom.Add(newEnemy);
             }
 
-            // Reset the enemy list in RoomWaveController to reflect the changes
-            _roomWaveController.ResetEnemiesInRoom();
-
-            Debug.Log($"Reactivated {_roomWaveController.EnemiesInRoom.Count} enemies in room {gameObject.name}.");
+            Debug.Log($"Spawned {_roomWaveController.EnemiesInRoom.Count} fresh enemies in room {gameObject.name}.");
         }
     }
 }
