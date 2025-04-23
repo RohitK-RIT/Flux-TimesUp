@@ -41,6 +41,8 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         
         [SerializeField] private float scrollCooldown = 0.25f; // Cooldown for weapon switching
         private float _lastScrollTime;
+        public override event Action<int> OnSwitchWeaponHotkey;
+
 
         public override event Action OnReloadInput;
 
@@ -76,6 +78,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             _playerInput.PlayerControl.EquipAbility.performed += OnEquipAbilityInput;
 
             _playerInput.PlayerControl.SwitchWeapon.performed += OnSwitchWeaponInputReceived;
+            _playerInput.PlayerControl.SwitchWeaponHotkey.performed += OnSwitchWeaponHotkeyInput;
             
             _playerInput.PlayerControl.Reload.performed += OnReloadInputReceived;
             
@@ -108,6 +111,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             _playerInput.PlayerControl.EquipAbility.performed -= OnEquipAbilityInput;
 
             _playerInput.PlayerControl.SwitchWeapon.performed -= OnSwitchWeaponInputReceived;
+            _playerInput.PlayerControl.SwitchWeaponHotkey.performed -= OnSwitchWeaponHotkeyInput;
             
             _playerInput.PlayerControl.Reload.performed -= OnReloadInputReceived;
             
@@ -214,10 +218,26 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             float scrollY = context.ReadValue<float>();
             if (Mathf.Abs(scrollY) > 0.01f)
             {
-                int direction = scrollY > 0 ? 1 : -1;
+                int direction = scrollY > 0 ? -1 : 1;
                 OnSwitchWeaponInput?.Invoke(direction);
                 _lastScrollTime = Time.time;
             }
+        }
+        
+        private void OnSwitchWeaponHotkeyInput(InputAction.CallbackContext context)
+        {
+            string key = context.control.displayName;
+
+            int slotIndex = key switch
+            {
+                "1" => 0,
+                "2" => 1,
+                "3" => 2,
+                _ => -1
+            };
+
+            if (slotIndex >= 0)
+                OnSwitchWeaponHotkey?.Invoke(slotIndex);
         }
 
         #endregion
