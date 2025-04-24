@@ -11,6 +11,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         public virtual event Action OnReloadInput;
         public virtual event Action OnAbilityEquipped;
         public virtual event Action<int> OnSwitchWeaponInput;
+        public virtual event Action<int> OnSwitchWeaponHotkey;
         public virtual event Action OnLootPickupInput;
     }
 }

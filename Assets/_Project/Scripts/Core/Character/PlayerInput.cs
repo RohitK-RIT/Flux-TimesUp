@@ -89,6 +89,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Switch Weapon Hotkey"",
+                    ""type"": ""Button"",
+                    ""id"": ""d96aba67-486e-449a-ba2a-222ddbc75c58"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +221,39 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Loot Pick Up"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1c05b5a4-3700-4ddd-94f7-6b06c689c959"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Weapon Hotkey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93825cba-c118-4061-85c1-bbcfbeefa006"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Weapon Hotkey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f623737f-4845-41f7-b51e-3a01ac65b76d"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Weapon Hotkey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -238,6 +280,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerControl_SwitchWeapon = m_PlayerControl.FindAction("Switch Weapon", throwIfNotFound: true);
         m_PlayerControl_Reload = m_PlayerControl.FindAction("Reload", throwIfNotFound: true);
         m_PlayerControl_LootPickUp = m_PlayerControl.FindAction("Loot Pick Up", throwIfNotFound: true);
+        m_PlayerControl_SwitchWeaponHotkey = m_PlayerControl.FindAction("Switch Weapon Hotkey", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -306,6 +349,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControl_SwitchWeapon;
     private readonly InputAction m_PlayerControl_Reload;
     private readonly InputAction m_PlayerControl_LootPickUp;
+    private readonly InputAction m_PlayerControl_SwitchWeaponHotkey;
     public struct PlayerControlActions
     {
         private @PlayerInput m_Wrapper;
@@ -317,6 +361,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @SwitchWeapon => m_Wrapper.m_PlayerControl_SwitchWeapon;
         public InputAction @Reload => m_Wrapper.m_PlayerControl_Reload;
         public InputAction @LootPickUp => m_Wrapper.m_PlayerControl_LootPickUp;
+        public InputAction @SwitchWeaponHotkey => m_Wrapper.m_PlayerControl_SwitchWeaponHotkey;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControl; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -347,6 +392,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LootPickUp.started += instance.OnLootPickUp;
             @LootPickUp.performed += instance.OnLootPickUp;
             @LootPickUp.canceled += instance.OnLootPickUp;
+            @SwitchWeaponHotkey.started += instance.OnSwitchWeaponHotkey;
+            @SwitchWeaponHotkey.performed += instance.OnSwitchWeaponHotkey;
+            @SwitchWeaponHotkey.canceled += instance.OnSwitchWeaponHotkey;
         }
 
         private void UnregisterCallbacks(IPlayerControlActions instance)
@@ -372,6 +420,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LootPickUp.started -= instance.OnLootPickUp;
             @LootPickUp.performed -= instance.OnLootPickUp;
             @LootPickUp.canceled -= instance.OnLootPickUp;
+            @SwitchWeaponHotkey.started -= instance.OnSwitchWeaponHotkey;
+            @SwitchWeaponHotkey.performed -= instance.OnSwitchWeaponHotkey;
+            @SwitchWeaponHotkey.canceled -= instance.OnSwitchWeaponHotkey;
         }
 
         public void RemoveCallbacks(IPlayerControlActions instance)
@@ -416,5 +467,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnLootPickUp(InputAction.CallbackContext context);
+        void OnSwitchWeaponHotkey(InputAction.CallbackContext context);
     }
 }

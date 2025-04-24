@@ -207,6 +207,29 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
+        
+        /// <summary>
+        /// Switches the weapon by a delta value.
+        /// </summary>
+        /// <param name="slotIndex">The value with which the weapon switches</param>
+        public void SwitchWeaponUsingHotkey(int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= weapons.Length)
+            {
+                Debug.LogWarning($"Invalid slot index {slotIndex}.");
+                return;
+            }
+
+            if (_currentWeaponIndex == slotIndex)
+            {
+                Debug.Log($"Already using weapon in slot {slotIndex}");
+                return;
+            }
+
+            _currentWeaponIndex = slotIndex;
+            CurrentItem = weapons[_currentWeaponIndex];
+            Debug.Log($"[Hotkey] Switched to weapon slot: {_currentWeaponIndex}");
+        }
 
         /// <summary>
         /// Equips the current ability and starts the weapon switch coroutine.

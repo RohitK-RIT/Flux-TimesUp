@@ -102,6 +102,8 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAbilityEquipped += AbilityEquipped;
 
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
+            _localInputController.OnSwitchWeaponHotkey += SwitchWeaponHotKey;
+            
             _localInputController.OnReloadInput += Reload;
 
             _localInputController.OnLootPickupInput += PickUpItem;
