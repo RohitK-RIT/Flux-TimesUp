@@ -2,6 +2,7 @@ using System.Collections;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Gameplay.Revamp_PCG
@@ -10,9 +11,8 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
     {
         [SerializeField] private DungeonRoom[] poolOfRoomPrefabs;
         [SerializeField] private BossEnemyRoom bossRoom;
-        public DungeonRoom CurrentRoom => _currentRoom;
         private DungeonRoom _currentRoom;
-        private bool _hasInstantiatedBossRoom = false;
+        public bool hasInstantiatedBossRoom = false;
 
         private void Start()
         {
@@ -22,7 +22,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void Update()
         {
             //check if the room if cleared of enemies and the TSM is 100
-            if (_hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() &&
+            if (hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() &&
                 TimeStabilityMeter.Instance.TimeStability >= TimeStabilityMeter.Instance.TotalTimeStability)
             {
                 TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
@@ -33,12 +33,12 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
                     Destroy(_currentRoom.gameObject);
                     //spawn boss room
                     InstantiateBossRoom(bossRoom);
-                    _hasInstantiatedBossRoom = true;
+                    hasInstantiatedBossRoom = true;
                 }
             }
 
             //if the player enters the portal, generate a new room
-            if (!_hasInstantiatedBossRoom && _currentRoom.CheckIfRoomIsCleared() && _currentRoom.CheckIfPlayerEntersPortal())
+            if (!hasInstantiatedBossRoom && _currentRoom.CheckIfRoomIsCleared() && _currentRoom.CheckIfPlayerEntersPortal())
             {
                 InitializeRoomGeneration();
             }
