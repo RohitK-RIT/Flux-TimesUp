@@ -947,7 +947,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 2496357285699307275}
-  currentWeapon: {fileID: 8628729083433965750}
   weapons:
   - {fileID: 8628729083433965750}
   - {fileID: 8628729083433965750}
@@ -982,6 +981,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 2
   enemyType: 2
+  slowPlayerVFX: {fileID: 0}
+  reduceTSMVFX: {fileID: 0}
 --- !u!114 &779967032003919024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1339,7 +1340,7 @@ RectTransform:
   m_GameObject: {fileID: 7399747763444341973}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.02, y: 0.025, z: 0.1}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6211684055335311666}
