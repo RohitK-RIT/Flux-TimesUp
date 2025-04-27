@@ -28,7 +28,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         public override void ExitState()
         {
             Debug.Log("Exiting Patrol State");
-            _enemyInputController.StopChasing();
+            //_enemyInputController.StopChasing();
         }
 
         // Called every frame while the enemy is in the ChaseState

@@ -1,18 +1,27 @@
+using System;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Character;
+using _Project.Scripts.Core.Enemy.FSM;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy
 {
     public class PlayerDetection : CharacterComponent
     {
-        internal static readonly float _detectionRange = 25f;  // The distance at which the enemy detects the player
+        internal static readonly float _EnemyDetectionRange = 25f;  // The distance at which the enemy detects the player
+        internal static readonly float _ChargerDetectionRange = 100f;  // The distance at which the enemy detects the player
         public float fieldOfViewAngle = 60f; // The conical angle at which the enemy detects the player
         
         public LayerMask layerMask; // A LayerMask to specify which layers the detection should interact with
 
         internal readonly List<Transform> _playersInRange = new List<Transform>();  // List of players currently in range
-        
+
+        private EnemyInputController _enemyInputController;
+        private void Awake()
+        {
+            _enemyInputController = GetComponent<EnemyInputController>();
+        }
+
         void Update()
         {
             // Find all players in range
@@ -26,7 +35,8 @@ namespace _Project.Scripts.Core.Enemy
         private void FindPlayersInRange()
         {
             // Get all colliders within the detection range
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, _detectionRange, layerMask);
+            var range = _enemyInputController.enemyType == EnemyType.Charger ? _ChargerDetectionRange : _EnemyDetectionRange;
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, range, layerMask);
 
             // Create a temporary list to track the players in this frame
             List<Transform> currentPlayers = new List<Transform>();
@@ -81,7 +91,8 @@ namespace _Project.Scripts.Core.Enemy
             Transform closest = null;
             
             // Initialize the closest distance as the detection range
-            float closestDistance = _detectionRange;
+            var range = _enemyInputController.enemyType == EnemyType.Charger ? _ChargerDetectionRange : _EnemyDetectionRange;
+            float closestDistance = range;
             foreach (Transform player in _playersInRange)
             {
                 // Calculate the distance between the enemy and the current player
