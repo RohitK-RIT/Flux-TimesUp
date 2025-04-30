@@ -179,21 +179,21 @@ namespace _Project.Scripts.UI
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
-            if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[0])
+            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
             {
                 _primaryOverlay.SetActive(false);
                 _secondaryOverlay.SetActive(true);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[1])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
             {
                 _primaryOverlay.SetActive(true);
                 _secondaryOverlay.SetActive(false);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[2])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
                _primaryOverlay.SetActive(true);
                _secondaryOverlay.SetActive(true);
