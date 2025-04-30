@@ -2002,7 +2002,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 2496357285699307275}
-  currentWeapon: {fileID: 6995247377189928667}
   weapons:
   - {fileID: 6995247377189928667}
   - {fileID: 8628729083433965750}
@@ -2037,6 +2036,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 2
   enemyType: 0
+  slowPlayerVFX: {fileID: 0}
+  reduceTSMVFX: {fileID: 0}
 --- !u!114 &779967032003919024
 MonoBehaviour:
   m_ObjectHideFlags: 0

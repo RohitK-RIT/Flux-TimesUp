@@ -61,15 +61,14 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
 
                 // Instantiate a brand new enemy
                 GameObject newEnemy = Instantiate(basicEnemyPrefab, spawnPosition, Quaternion.identity, transform.parent);
-
-                // Make sure it's active (optional if prefab is active)
+                
                 newEnemy.SetActive(true);
 
                 // Reset any state or values
                 var enemyController = newEnemy.GetComponent<EnemyController>();
                 if (enemyController != null)
                 {
-                    enemyController.Reset(); // should internally reset animator, health, state, etc.
+                    enemyController.Reset();
                 }
 
                 // Add to current room’s list
