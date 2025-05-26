@@ -59,9 +59,11 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
             {
                 case RangedWeapon rangedWeapon:
                     TimeStability += rangedWeapon.Stats.TimeStabilityEffect;
+                    TimeStability = Mathf.Clamp(TimeStability, 0, totalTimeStability);
                     break;
                 case MeleeWeapon meleeWeapon:
                     TimeStability += meleeWeapon.Stats.TimeStabilityEffect;
+                    TimeStability = Mathf.Clamp(TimeStability, 0, totalTimeStability);
                     break;
             }
         }
@@ -95,6 +97,7 @@ namespace _Project.Scripts.Gameplay.Time_Stability_Meter
         IEnumerator DecreaseTSMValue(float amount) {
             // Decrease TSM value
             TimeStability -= amount;
+            TimeStability = Mathf.Clamp(TimeStability, 0, totalTimeStability);
                     
             // Wait for 2 second before reducing again
             yield return new WaitForSeconds(2f);
