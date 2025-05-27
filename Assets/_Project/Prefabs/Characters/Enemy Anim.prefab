@@ -1152,7 +1152,7 @@ RectTransform:
   m_GameObject: {fileID: 2589338690799537911}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.02, y: 0.025, z: 0.1}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5295501672355757481}
@@ -1477,7 +1477,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 2546134264459172214}
-  currentWeapon: {fileID: 6477897859629107060}
   weapons:
   - {fileID: 6477897859629107060}
   - {fileID: 4898050822295915232}
@@ -1512,6 +1511,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 2
   enemyType: 0
+  slowPlayerVFX: {fileID: 0}
+  reduceTSMVFX: {fileID: 0}
 --- !u!114 &3298286596392028047
 MonoBehaviour:
   m_ObjectHideFlags: 0

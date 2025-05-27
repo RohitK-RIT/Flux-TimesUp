@@ -1,13 +1,17 @@
+using System;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
+using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -17,6 +21,8 @@ namespace _Project.Scripts.UI
     /// </summary>
     public class PlayerHUD : MonoBehaviour
     {
+        private LocalPlayerController Player => LevelSceneController.Instance.Player;
+
         // References to the UI components
         
         //Health Bar
@@ -59,6 +65,7 @@ namespace _Project.Scripts.UI
         // References to the player controller
         [SerializeField] public LocalPlayerController player;
         private RoomWaveController _roomWaveController;
+        [SerializeField] private RandomRoomGeneration randomRoomGeneration;
         
         private void Start()
         {
@@ -80,6 +87,18 @@ namespace _Project.Scripts.UI
             }
         }
 
+        private void OnEnable()
+        {
+            Player.HandController.OnAmmoPicked += OnAmmoPickup;
+            Player.HandController.OnAbilityPicked += OnAbilityPicked;
+        }
+
+        private void OnDisable()
+        {
+            Player.HandController.OnAmmoPicked -= OnAmmoPickup;
+            Player.HandController.OnAbilityPicked -= OnAbilityPicked;
+        }
+
         private void Update()
         {
             UpdateHealthBar();
@@ -93,6 +112,11 @@ namespace _Project.Scripts.UI
         // Updates the number of enemies remaining in the room
         private void UpdateEnemiesRemaining()
         {
+            if (randomRoomGeneration.hasInstantiatedBossRoom)
+            {
+                enemiesRemaining.gameObject.SetActive(false);
+                return;
+            }
             _roomWaveController = FindObjectOfType<RoomWaveController>();
             if (_roomWaveController == null) return;
             var enemiesCount = 0;
@@ -114,7 +138,7 @@ namespace _Project.Scripts.UI
         }
         
         // Shows the ability HUD with the specified ability type
-        public void ShowAbilityHUD(AbilityType abilityType)
+        private void ShowAbilityHUD(AbilityType abilityType)
         {
             _abilityData = AbilityDataSystem.Instance.GetAbilityData(abilityType);
             abilityIconSlot.sprite = _abilityData.Icon;
@@ -137,7 +161,7 @@ namespace _Project.Scripts.UI
                 _abilityOverlay.SetActive(false);
             }
 
-            if (currentAbility != null && currentAbility.IsCooldownActive)
+            if (currentAbility && currentAbility.IsCooldownActive)
             {
                 Debug.Log("Current ability is on cooldown" + currentAbility.name);
                 _abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
@@ -151,25 +175,25 @@ namespace _Project.Scripts.UI
             meleeIconSlot.enabled = true;
             ShowActiveWeaponSlot();
         }
-        
+
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
-            if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[0])
+            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
             {
                 _primaryOverlay.SetActive(false);
                 _secondaryOverlay.SetActive(true);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[1])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
             {
                 _primaryOverlay.SetActive(true);
                 _secondaryOverlay.SetActive(false);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[2])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
                _primaryOverlay.SetActive(true);
                _secondaryOverlay.SetActive(true);
@@ -203,6 +227,7 @@ namespace _Project.Scripts.UI
                     _reloadingCoroutine = StartCoroutine(UpdateReloadingIcon(currentRangedWeapon));
                 }
             }
+
             else
             {
                 if (_reloadingCoroutine != null)
@@ -231,18 +256,36 @@ namespace _Project.Scripts.UI
             _reloadingCoroutine = null;
         }
 
-        
+        /// <summary>
+        /// Function for event when ammo is picked up.
+        /// </summary>
+        /// <param name="amount">the amount of ammo that is picked up</param>
+        private void OnAmmoPickup(int amount)
+        {
+            ShowPickupFeedback($"You picked up {amount} ammo.");
+        }
+
+        /// <summary>
+        /// Function for event when an ability is picked up by the player.
+        /// </summary>
+        /// <param name="type">type of the ability that is picked up</param>
+        private void OnAbilityPicked(AbilityType type)
+        {
+            ShowPickupFeedback($"You picked up {type}");
+            ShowAbilityHUD(type);
+        }
+
         /// <summary>
         /// Function to show pickup feedback.
         /// </summary>
         /// <param name="msg">Message to display on loot pickup.</param>
-        public void ShowPickupFeedback(string msg)
+        private void ShowPickupFeedback(string msg)
         {
             pickupText.text = msg;
             pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);
         }
-        
+
         /// <summary>
         /// Function to hide pickup feedback.
         /// </summary>
@@ -260,6 +303,7 @@ namespace _Project.Scripts.UI
             timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
             tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
             tsmFill.color = tsmGradient.Evaluate(timeStabilityBar.normalizedValue);
+            
             /*animator.SetBool(IsBlinking, false);
             if (timeStabilityBar.value < 50)
             {

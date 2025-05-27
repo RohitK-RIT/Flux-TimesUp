@@ -19,7 +19,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         public override void EnterState()
         {
             // Stop chasing the player when entering attack state
-            _enemyInputController.StopChasing();
+            //_enemyInputController.StopChasing();
             
             // If the broadcaster re-enters the attack state it should not be the broadcaster again
             if (_enemyInputController.MemberType == MemberType.Broadcaster)

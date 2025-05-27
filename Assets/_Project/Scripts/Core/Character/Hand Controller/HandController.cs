@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
@@ -17,6 +18,9 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     public class HandController : CharacterComponent
     {
         public event Action OnWeaponSwitched;
+        public event Action<int> OnAmmoPicked;
+        public event Action<AbilityType> OnAbilityPicked;
+
         /// <summary>
         /// The parent transform for the weapons.
         /// </summary>
@@ -40,13 +44,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             get => _currentItem;
             private set
             {
-                if (value == null)
+                if (value is null)
                 {
                     Debug.LogError("Item not found");
                     return;
                 }
 
-                if (_currentItem != null)
+                if (_currentItem is not null)
                 {
                     _currentItem.OnUnequip();
                     _currentItem.gameObject.SetActive(false);
@@ -61,9 +65,27 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         }
 
         /// <summary>
-        /// Gets the current ability.
+        /// Property to get the current ability.
         /// </summary>
-        public Ability CurrentAbility { get; private set; }
+        public Ability CurrentAbility
+        {
+            get => _currentAbility;
+            private set
+            {
+                if (value is null)
+                    return;
+
+                if (_currentAbility is not null)
+                {
+                    _currentAbility.OnDrop();
+                    Destroy(_currentAbility.gameObject);
+                }
+
+                _currentAbility = value;
+                _currentAbility.OnPickup(PlayerController);
+                OnAbilityPicked?.Invoke(value.Type);
+            }
+        }
 
         [SerializeField] private bool hasPreMadeLoadout;
 
@@ -71,12 +93,16 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The index of the current weapon.
         /// </summary>
         private int _currentWeaponIndex;
-        
 
         /// <summary>
         /// The currently equipped weapon.  
         /// </summary>
         private IHandItem _currentItem;
+
+        /// <summary>
+        /// The currently equipped ability.
+        /// </summary>
+        private Ability _currentAbility;
 
         public override void Initialize(PlayerController playerController)
         {
@@ -87,13 +113,9 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             {
                 var selectedLoadoutWeaponIDs = WeaponDataSystem.Instance.GetSelectedWeapons();
                 if (selectedLoadoutWeaponIDs is { Count: > 0 })
-                {
                     LoadWeapon(selectedLoadoutWeaponIDs);
-                }
                 else
-                {
                     Debug.LogError("No selected weapons found in WeaponDataSystem");
-                }
             }
 
             // The player controller has picked up all the weapons
@@ -102,8 +124,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
-        
-        
 
         /// <summary>
         /// Loads an ability by its type.
@@ -135,7 +155,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// Loads a weapon by its ID.
         /// </summary>
         /// <param name="weaponID">The ID of the weapon to load.</param>
-        internal void LoadWeapon(List<string> weaponIDs)
+        private void LoadWeapon(List<string> weaponIDs)
         {
             // Validate input
             if (weaponIDs == null || weaponIDs.Count == 0)
@@ -187,6 +207,29 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
+        
+        /// <summary>
+        /// Switches the weapon by a delta value.
+        /// </summary>
+        /// <param name="slotIndex">The value with which the weapon switches</param>
+        public void SwitchWeaponUsingHotkey(int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= weapons.Length)
+            {
+                Debug.LogWarning($"Invalid slot index {slotIndex}.");
+                return;
+            }
+
+            if (_currentWeaponIndex == slotIndex)
+            {
+                Debug.Log($"Already using weapon in slot {slotIndex}");
+                return;
+            }
+
+            _currentWeaponIndex = slotIndex;
+            CurrentItem = weapons[_currentWeaponIndex];
+            Debug.Log($"[Hotkey] Switched to weapon slot: {_currentWeaponIndex}");
+        }
 
         /// <summary>
         /// Equips the current ability and starts the weapon switch coroutine.
@@ -198,7 +241,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 Debug.LogError("Ability not found");
                 return;
             }
-            if(CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
+
+            if (CurrentAbility.IsCooldownActive || CurrentAbility.isAbilityActive)
                 return;
 
             CurrentItem = CurrentAbility;
@@ -243,24 +287,44 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             CurrentItem.EndUse();
         }
 
-        /// <summary>
-        /// Switches the ability to the specified type.
-        /// </summary>
-        /// <param name="abilityType">type of the ability</param>
-        public void SwitchAbility(AbilityType abilityType)
+        public bool OnItemPicked(IPickable pickable)
         {
-            if (abilityType == AbilityType.None)
+            switch (pickable)
+            {
+                case AmmoPickup ammoPickup:
+                    OnAmmoCollected(ammoPickup.Ammo);
+                    return true;
+                case AbilityPickup abilityPickup:
+                    return TrySwitchAbility(abilityPickup.Type);
+                default:
+                    return false;
+            }
+        }
+
+        private bool TrySwitchAbility(AbilityType type)
+        {
+            if (type == AbilityType.None)
             {
                 Debug.LogError("Ability type is None");
-                return;
+                return false;
             }
+
+            if (CurrentAbility?.Type == type)
+                return false;
 
             // Destroy the current ability
             if (CurrentAbility)
                 Destroy(CurrentAbility.gameObject);
 
             // Load the new ability
-            LoadAbility(abilityType);
+            LoadAbility(type);
+
+            return true;
+        }
+
+        private void OnAmmoCollected(int amount)
+        {
+            OnAmmoPicked?.Invoke(amount);
         }
     }
 }

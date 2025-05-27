@@ -27,6 +27,7 @@ namespace _Project.Scripts.Core.Enemy
             base.Start();
 
             _enemyInputController.Initialize(this);
+            Reset();
         }
 
         private void OnEnable()

@@ -121,6 +121,15 @@ namespace _Project.Scripts.Core.Player_Controllers
         {
             HandController.SwitchWeapon(direction);
         }
+        
+        /// <summary>
+        /// Switch the player's weapon using Hotkey.
+        /// </summary>
+        /// <param name="slot">the number by which the weapon is supposed to switch</param>
+        protected virtual void SwitchWeaponHotKey(int slot)
+        {
+            HandController.SwitchWeaponUsingHotkey(slot);
+        }
 
         protected virtual void Reload()
         {
