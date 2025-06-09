@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
@@ -18,12 +19,18 @@ namespace _Project.Scripts.Core.Enemy.Types.Boss
             Instance = this;
         }
 
-        void Start()
+        private void OnEnable()
         {
             _player = GetComponent<PlayerController>(); 
             _originalSpeed = _player.Stats.movementSpeed;
         }
 
+        private void OnDisable()
+        {
+            
+            _player.Stats.movementSpeed = _originalSpeed;
+        }
+        
         public void ReduceSpeed(float duration) {
             Debug.Log("boss is slowing player movement");
             StartCoroutine(SlowPlayer(duration));
