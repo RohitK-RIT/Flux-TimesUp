@@ -7,9 +7,11 @@ using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
+using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -63,6 +65,7 @@ namespace _Project.Scripts.UI
         // References to the player controller
         [SerializeField] public LocalPlayerController player;
         private RoomWaveController _roomWaveController;
+        [SerializeField] private RandomRoomGeneration randomRoomGeneration;
         
         private void Start()
         {
@@ -109,6 +112,11 @@ namespace _Project.Scripts.UI
         // Updates the number of enemies remaining in the room
         private void UpdateEnemiesRemaining()
         {
+            if (randomRoomGeneration.hasInstantiatedBossRoom)
+            {
+                enemiesRemaining.gameObject.SetActive(false);
+                return;
+            }
             _roomWaveController = FindObjectOfType<RoomWaveController>();
             if (_roomWaveController == null) return;
             var enemiesCount = 0;
@@ -171,21 +179,21 @@ namespace _Project.Scripts.UI
         //Shows the active weapon slot based on the player's current weapon.
         private void ShowActiveWeaponSlot()
         {
-            if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[0])
+            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
             {
                 _primaryOverlay.SetActive(false);
                 _secondaryOverlay.SetActive(true);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[1])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
             {
                 _primaryOverlay.SetActive(true);
                 _secondaryOverlay.SetActive(false);
                 _meleeOverlay.SetActive(true);
                 _abilityOverlay.SetActive(true);
             }
-            else if ((Weapon)player.HandController.CurrentItem == player.HandController.Weapons[2])
+            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
             {
                _primaryOverlay.SetActive(true);
                _secondaryOverlay.SetActive(true);
@@ -295,6 +303,7 @@ namespace _Project.Scripts.UI
             timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
             tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
             tsmFill.color = tsmGradient.Evaluate(timeStabilityBar.normalizedValue);
+            
             /*animator.SetBool(IsBlinking, false);
             if (timeStabilityBar.value < 50)
             {
