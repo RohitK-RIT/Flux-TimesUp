@@ -27,7 +27,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called when the enemy exits the FleeState
         public override void ExitState()
         {
-            Debug.Log("Exiting Patrol State");
+            //Debug.Log("Exiting Patrol State");
             //_enemyInputController.StopChasing();
         }
 

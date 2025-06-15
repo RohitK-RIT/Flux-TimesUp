@@ -15,7 +15,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called when the enemy enters the ChaseState
         public override void EnterState()
         {
-            Debug.Log("Entering Chase State");
+            //Debug.Log("Entering Chase State");
         }
 
         // Called when the enemy exits the ChaseState
