@@ -9,15 +9,19 @@ namespace _Project.Scripts.Onboarding
         private static readonly int OpenLeftDoor = Animator.StringToHash("OpenLeftDoor");
         private static readonly int OpenRightDoor = Animator.StringToHash("OpenRightDoor");
 
-        private enum OnboardingStep
+        public enum OnboardingStep
         {
             None,
             Room1MoveLook,
             Room1Completed,
             Room2Lore,
             Room3Combat,
-            Room3Completed
+            Room4Combat,
+            Room5Combat,
+            Room6Interaction,
+            Room6Completed
         }
+        public OnboardingStep CurrentStep => _currentStep;
         private OnboardingStep _currentStep = OnboardingStep.Room1MoveLook;
         private bool _hasMoved = false;
         private bool _hasLooked = false;
@@ -29,7 +33,9 @@ namespace _Project.Scripts.Onboarding
         private LocalInputController _inputController;
         
         [SerializeField] private GameObject[] doors;
-    
+        [SerializeField] private int targetsPerRoom = 3;
+        private int destroyedTargets = 0;
+        
         private void Awake()
         {
             _inputController = FindObjectOfType<LocalInputController>();
@@ -41,8 +47,7 @@ namespace _Project.Scripts.Onboarding
             if (!_inputController) return;
             _inputController.OnLookInputUpdated += OnLookDetected;
             _inputController.OnMoveInputUpdated += OnMoveDetected;
-            /*_inputController.OnAttackInputBegan += OnAttackDetected;
-            _inputController.OnSwitchWeaponInput += OnWeaponSwitchDetected;
+            /*_inputController.OnSwitchWeaponInput += OnWeaponSwitchDetected;
             _inputController.OnLootPickupInput += OnLootPickupDetected;
             _inputController.OnAbilityEquipped += OnAbilityEquipped;*/
         }
@@ -52,8 +57,7 @@ namespace _Project.Scripts.Onboarding
             if (!_inputController) return;
             _inputController.OnLookInputUpdated -= OnLookDetected;
             _inputController.OnMoveInputUpdated -= OnMoveDetected;
-            /*_inputController.OnAttackInputBegan -= OnAttackDetected;
-            _inputController.OnSwitchWeaponInput -= OnWeaponSwitchDetected;
+            /*_inputController.OnSwitchWeaponInput -= OnWeaponSwitchDetected;
             _inputController.OnLootPickupInput -= OnLootPickupDetected;
             _inputController.OnAbilityEquipped -= OnAbilityEquipped;*/
         }
@@ -85,7 +89,39 @@ namespace _Project.Scripts.Onboarding
         }
         public void CheckRoom2Progress()
         {
-            PlayAnimation(doors[2]);
+            PlayAnimation(doors[1]);
+            _currentStep = OnboardingStep.Room3Combat;
+        }
+        public void NotifyDummyDestroyedOnShooting()
+        {
+            destroyedTargets++;
+
+            if (destroyedTargets >= targetsPerRoom)
+            {
+                switch (_currentStep)
+                {
+                    case OnboardingStep.Room3Combat:
+                        destroyedTargets = 0;
+                        PlayAnimation(doors[2]);
+                        _currentStep = OnboardingStep.Room4Combat;
+                        break;
+                    case OnboardingStep.Room4Combat:
+                        destroyedTargets = 0;
+                        _currentStep = OnboardingStep.Room5Combat;
+                        PlayAnimation(doors[3]);
+                        break;
+                    case OnboardingStep.Room5Combat:
+                        destroyedTargets = 0;
+                        PlayAnimation(doors[4]);
+                        _currentStep = OnboardingStep.Room6Interaction;
+                        break;
+                }
+            }
+        }
+        public void CheckRoom6Progress()
+        {
+            PlayAnimation(doors[5]);
+            _currentStep = OnboardingStep.Room6Completed;
         }
         private string PlayAnimation(GameObject door)
         {

@@ -63,8 +63,14 @@ namespace _Project.Scripts.Onboarding
             if (playerInside && !hasFinishedOnce)
             {
                 hasFinishedOnce = true;
-                onboardingSequenceManager.CheckRoom2Progress();
-                Debug.Log("Voiceover finished once. Door opened.");
+                if (onboardingSequenceManager.CurrentStep == OnboardingSequenceManager.OnboardingStep.Room2Lore)
+                {
+                    onboardingSequenceManager.CheckRoom2Progress();
+                }
+                if(onboardingSequenceManager.CurrentStep == OnboardingSequenceManager.OnboardingStep.Room6Interaction)
+                {
+                    onboardingSequenceManager.CheckRoom6Progress();
+                }
                 voiceoverAudio.loop = true;
                 voiceoverAudio.Play();
             }
