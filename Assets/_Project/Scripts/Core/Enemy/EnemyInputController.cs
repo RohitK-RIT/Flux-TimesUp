@@ -161,7 +161,13 @@ namespace _Project.Scripts.Core.Enemy
             // Create a mask for the "Room" area on the NavMesh. 
             // NavMesh.GetAreaFromName("Room") fetches the index of the "Room" area,
             // and the bitwise shift (1 << index) creates a mask for this area.
-            int roomAreaMask = 1 << NavMesh.GetAreaFromName("Room");
+            int roomAreaIndex = NavMesh.GetAreaFromName("Room");
+            // Check if the area exists
+            if (roomAreaIndex == -1)
+            {
+                return false;
+            }
+            int roomAreaMask = 1 << roomAreaIndex;
             bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 3.0f, roomAreaMask);
             if (isOnNavMesh)
             {
@@ -171,6 +177,7 @@ namespace _Project.Scripts.Core.Enemy
             // Return true if the player's position is on the NavMesh within the specified area.
             return isOnNavMesh;
         }
+
 
         // Method to find the closest player and check if its in detection range and in conical field of view
         internal bool FindPlayer()
