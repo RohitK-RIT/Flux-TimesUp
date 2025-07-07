@@ -1,37 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Audio Config", menuName = "Audio Config")]
-public class AudioConfig : ScriptableObject
+namespace _Project.Scripts.Core.Weapons
 {
-    [Range(0f, 1f)]
-    private float _volume = 1f;
-    private AudioClip _fireClip;
-    private AudioClip _emptyClip;
-    private AudioClip _reloadClip;
-
-    private void PlayShootingClip(AudioSource audioSource, bool isReloading)
+    [CreateAssetMenu(menuName = "Audio/Audio Config")]
+    public class AudioConfig : ScriptableObject
     {
-        if (!isReloading && _fireClip != null)
-        {
-            audioSource.PlayOneShot(_fireClip, _volume);
-        }
-    }
+        [Header("Volume")]
+        [SerializeField, Range(0f, 1f)]
+        private float volume = 1f;
 
-    private void PlayOutOfAmmoClip(AudioSource audioSource)
-    {
-        if (_emptyClip != null)
-        {
-            audioSource.PlayOneShot(_emptyClip, _volume);
-        }
-    }
+        [Header("Clips")]
+        [SerializeField] private AudioClip fireClip;
+        [SerializeField] private AudioClip emptyClip;
+        [SerializeField] private AudioClip reloadClip;
 
-    private void PlayReloadClip(AudioSource audioSource, bool isReloading)
-    {
-        if (isReloading && _reloadClip != null)
-        {
-            audioSource.PlayOneShot(_reloadClip, _volume);
-        }
+        // Overall volume multiplier for this audio config. </summary>
+        public float Volume => volume;
+
+        // Clip played when firing the weapon. </summary>
+        public AudioClip FireClip => fireClip;
+
+        // Clip played when trying to fire an empty weapon. </summary>
+        public AudioClip EmptyClip => emptyClip;
+
+        // Clip played when reloading the weapon. </summary>
+        public AudioClip ReloadClip => reloadClip;
     }
 }
