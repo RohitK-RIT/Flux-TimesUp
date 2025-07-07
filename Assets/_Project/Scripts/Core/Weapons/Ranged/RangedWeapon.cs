@@ -92,6 +92,10 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Coroutine for firing.
         /// </summary>
         private Coroutine _fireCoroutine;
+        
+        [SerializeField] private AudioConfig audioConfig;
+        private AudioSource _shootingAudioSource;
+        private AudioPlayer _audioPlayer;
 
         private void Start()
         {
@@ -106,6 +110,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             // Initialize the projectile pool.
             _projectilePool = new ObjectPool<Projectile>(CreateProjectile);
+            _shootingAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
         }
 
         internal void InitializeAmo()
@@ -210,7 +216,10 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 return;
 
             if (_currentFiringPin != null)
+            {
+                _audioPlayer.PlayShootingClip(_shootingAudioSource, IsReloading);
                 _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
+            }
         }
 
         private void StopFiring()
@@ -224,12 +233,19 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         private void StartReloading()
         {
-            if (CurrentAmmo == stats.MagazineSize || MaxAmmo == 0)
+            if (CurrentAmmo == stats.MagazineSize)
                 return;
+
+            if (MaxAmmo == 0)
+            {
+                _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
+                return;
+            }
 
             if (IsReloading)
                 return;
 
+            _audioPlayer.PlayReloadClip(_shootingAudioSource, IsReloading);
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
 

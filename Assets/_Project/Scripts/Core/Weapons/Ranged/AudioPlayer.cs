@@ -14,7 +14,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        private void PlayOutOfAmmoClip(AudioSource audioSource)
+        internal void PlayOutOfAmmoClip(AudioSource audioSource)
         {
             if (audioConfig.EmptyClip != null)
             {
@@ -22,7 +22,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        private void PlayReloadClip(AudioSource audioSource, bool isReloading)
+        internal void PlayReloadClip(AudioSource audioSource, bool isReloading)
         {
             if (isReloading && audioConfig.ReloadClip != null)
             {
