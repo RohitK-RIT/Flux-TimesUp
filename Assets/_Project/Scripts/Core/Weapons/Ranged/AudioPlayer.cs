@@ -22,9 +22,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        internal void PlayReloadClip(AudioSource audioSource, bool isReloading)
+        internal void PlayReloadClip(AudioSource audioSource)
         {
-            if (isReloading && audioConfig.ReloadClip != null)
+            if (audioConfig.ReloadClip != null)
             {
                 audioSource.PlayOneShot(audioConfig.ReloadClip, audioConfig.Volume);
             }

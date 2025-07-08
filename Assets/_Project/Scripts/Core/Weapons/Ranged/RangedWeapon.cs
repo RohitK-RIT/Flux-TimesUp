@@ -93,10 +93,16 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private Coroutine _fireCoroutine;
         
-        [SerializeField] private AudioConfig audioConfig;
+        //[SerializeField] private AudioConfig audioConfig;
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 
+        private void Awake()
+        {
+            _shootingAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+            InitializeAmo();
+        }
         private void Start()
         {
             // Initialize the dictionary of fire mode strategies
@@ -106,12 +112,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             // Set the default fire mode and magazine count.
             CurrentFireMode = _fireModeStrategies.First().Key;
-            InitializeAmo();
 
             // Initialize the projectile pool.
             _projectilePool = new ObjectPool<Projectile>(CreateProjectile);
-            _shootingAudioSource = GetComponent<AudioSource>();
-            _audioPlayer = GetComponent<AudioPlayer>();
         }
 
         internal void InitializeAmo()
@@ -217,8 +220,11 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             if (_currentFiringPin != null)
             {
-                _audioPlayer.PlayShootingClip(_shootingAudioSource, IsReloading);
                 _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
+            }
+            if (MaxAmmo == 0)
+            {
+                _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
             }
         }
 
@@ -245,7 +251,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (IsReloading)
                 return;
 
-            _audioPlayer.PlayReloadClip(_shootingAudioSource, IsReloading);
+            _audioPlayer.PlayReloadClip(_shootingAudioSource);
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
 
@@ -276,6 +282,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             projectile.transform.rotation = muzzle.rotation;
             projectile.Initialize(this);
             projectile.gameObject.SetActive(true);
+            _audioPlayer.PlayShootingClip(_shootingAudioSource, IsReloading);
             projectile.OnHit += theProjectile => { _projectilePool.Release(theProjectile); };
 
             if (--CurrentAmmo > 0)
