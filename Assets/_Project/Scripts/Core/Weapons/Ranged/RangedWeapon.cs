@@ -93,7 +93,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private Coroutine _fireCoroutine;
         
-        //[SerializeField] private AudioConfig audioConfig;
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 

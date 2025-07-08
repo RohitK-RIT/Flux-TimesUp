@@ -6,7 +6,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     {
         [SerializeField] private AudioConfig audioConfig;
         
-        internal void PlayShootingClip(AudioSource audioSource, bool isReloading)
+        internal void PlayShootingClip(AudioSource audioSource, bool isReloading = false)
         {
             if (!isReloading && audioConfig.FireClip != null)
             {
