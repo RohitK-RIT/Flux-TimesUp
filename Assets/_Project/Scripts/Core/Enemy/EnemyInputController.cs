@@ -25,8 +25,10 @@ namespace _Project.Scripts.Core.Enemy
 
         private Transform _currentTarget; // current target to assign
 
-        private readonly float _attackRange = 15f; // Attack range
-
+        private readonly float _enemyAttackRange = 15f; // Attack range
+        
+        private readonly float _chargerAttackRange = 5f; // Attack range
+        
         [SerializeField] private float attackCooldown = 3f; // Cooldown time between attacks
 
         private bool _isAttacking; // Tracks if an attack is in progress
@@ -268,7 +270,8 @@ namespace _Project.Scripts.Core.Enemy
         internal bool IsPlayerInAttackRange()
         {
             var distanceToPlayer = Vector3.Distance(Enemy.transform.position, ClosestPlayer.position);
-            return distanceToPlayer <= _attackRange;
+            var attackRange = enemyType == EnemyType.Basic ? _enemyAttackRange : _chargerAttackRange;
+            return distanceToPlayer <= attackRange;
         }
 
 
@@ -404,7 +407,7 @@ namespace _Project.Scripts.Core.Enemy
 
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _enemyAttackRange);
 
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
