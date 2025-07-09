@@ -31,7 +31,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
             if (IsAttacking)
                 return;
 
-            StartCoroutine(OnAttack());
+            _attackCoroutine = StartCoroutine(OnAttack());
         }
 
         public override void EndUse()
@@ -40,6 +40,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 return;
 
             StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
         }
 
         /// <summary>
