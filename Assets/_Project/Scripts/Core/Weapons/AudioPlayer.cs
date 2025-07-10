@@ -35,21 +35,30 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         internal void PlayRoomClip(AudioSource audioSource, RoomEra roomEraType)
         {
+            AudioClip selectedClip = GetClipByRoomEra(roomEraType);
+            if (selectedClip == null) return;
+
+            audioSource.clip = selectedClip;
+            audioSource.loop = true;
+            audioSource.volume = roomAudioConfig.Volume;
+            audioSource.Play();
+        }
+
+        private AudioClip GetClipByRoomEra(RoomEra roomEraType)
+        {
             switch (roomEraType)
             {
                 case RoomEra.Medieval when roomAudioConfig.MedievalClip != null:
-                    audioSource.PlayOneShot(roomAudioConfig.MedievalClip, roomAudioConfig.Volume);
-                    break;
+                    return roomAudioConfig.MedievalClip;
                 case RoomEra.WildWest when roomAudioConfig.WildWestClip != null:
-                    audioSource.PlayOneShot(roomAudioConfig.WildWestClip, roomAudioConfig.Volume);
-                    break;
+                    return roomAudioConfig.WildWestClip;
                 case RoomEra.WorldWar when roomAudioConfig.WorldWarClip != null:
-                    audioSource.PlayOneShot(roomAudioConfig.WorldWarClip, roomAudioConfig.Volume);
-                    break;
+                    return roomAudioConfig.WorldWarClip;
                 case RoomEra.Futuristic when roomAudioConfig.FuturisticClip != null:
-                    audioSource.PlayOneShot(roomAudioConfig.FuturisticClip, roomAudioConfig.Volume);
-                    break;
+                    return roomAudioConfig.FuturisticClip;
             }
+
+            return null;
         }
     }
 }
