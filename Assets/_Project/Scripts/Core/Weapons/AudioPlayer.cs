@@ -33,9 +33,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        internal void PlayRoomClip(AudioSource audioSource, RoomEra roomEraType)
+        internal void PlayRoomClip(AudioSource audioSource, RoomEra? roomEraType = null, bool isBossRoom = false)
         {
-            AudioClip selectedClip = GetClipByRoomEra(roomEraType);
+            AudioClip selectedClip = GetClipByRoomEra(roomEraType, isBossRoom);
             if (selectedClip == null) return;
 
             audioSource.clip = selectedClip;
@@ -44,8 +44,13 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             audioSource.Play();
         }
 
-        private AudioClip GetClipByRoomEra(RoomEra roomEraType)
+        private AudioClip GetClipByRoomEra(RoomEra? roomEraType = null, bool isBossRoom = false)
         {
+            if (isBossRoom == true && roomAudioConfig.BossRoomClip != null)
+            {
+                return roomAudioConfig.BossRoomClip;
+            }
+            
             switch (roomEraType)
             {
                 case RoomEra.Medieval when roomAudioConfig.MedievalClip != null:
