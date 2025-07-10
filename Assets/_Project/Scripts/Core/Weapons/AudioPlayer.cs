@@ -60,5 +60,13 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             return null;
         }
+
+        internal void PlayPlayerTeleportClip(AudioSource audioSource)
+        {
+            if (roomAudioConfig.TeleportClip != null)
+            {
+                audioSource.PlayOneShot(roomAudioConfig.TeleportClip, roomAudioConfig.Volume);
+            }
+        }
     }
 }

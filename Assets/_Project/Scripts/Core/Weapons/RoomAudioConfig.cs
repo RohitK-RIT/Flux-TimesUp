@@ -15,6 +15,7 @@ namespace _Project.Scripts.Core.Weapons
         [SerializeField] private AudioClip wildWestClip;
         [SerializeField] private AudioClip worldWarClip;
         [SerializeField] private AudioClip futuristicClip;
+        [SerializeField] private AudioClip teleportClip;
 
         // Overall volume multiplier for this audio config.
         public float Volume => volume;
@@ -30,5 +31,8 @@ namespace _Project.Scripts.Core.Weapons
         
         // Clip played for Sci-fi rooms.
         public AudioClip FuturisticClip => futuristicClip;
+        
+        // Clip played when player teleports to the next room
+        public AudioClip TeleportClip => teleportClip;
     }
 }
