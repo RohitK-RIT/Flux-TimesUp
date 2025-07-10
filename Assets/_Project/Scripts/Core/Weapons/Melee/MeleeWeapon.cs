@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Melee
@@ -25,6 +26,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
 
         private float _lastAttackTime = float.MinValue;
         private Coroutine _attackCoroutine;
+        private AudioSource _shootingAudioSource;
+        private AudioPlayer _audioPlayer;
+        
+        private void Awake()
+        {
+            _shootingAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
 
         public override void BeginUse()
         {
@@ -63,6 +72,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
         /// </summary>
         private void Slash()
         {
+            _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
             var count = Physics.OverlapSphereNonAlloc(CurrentPlayerController.transform.position, stats.Range, collidersFound, ~CurrentPlayerController.FriendlyLayer,

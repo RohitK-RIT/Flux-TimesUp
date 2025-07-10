@@ -281,7 +281,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             projectile.transform.rotation = muzzle.rotation;
             projectile.Initialize(this);
             projectile.gameObject.SetActive(true);
-            _audioPlayer.PlayShootingClip(_shootingAudioSource, IsReloading);
+            _audioPlayer.PlayAttackClip(_shootingAudioSource, IsReloading);
             projectile.OnHit += theProjectile => { _projectilePool.Release(theProjectile); };
 
             if (--CurrentAmmo > 0)
