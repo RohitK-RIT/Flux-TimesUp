@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons
 {
-    [CreateAssetMenu(menuName = "Audio/Audio Config")]
-    public class AudioConfig : ScriptableObject
+    [CreateAssetMenu(menuName = "Audio/Weapon Audio Config")]
+    public class WeaponAudioConfig : ScriptableObject
     {
         [Header("Volume")]
         [SerializeField, Range(0f, 1f)]
