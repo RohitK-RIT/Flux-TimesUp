@@ -1,5 +1,6 @@
 using System.Collections;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,7 +14,15 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         [SerializeField] private BossEnemyRoom bossRoom;
         private DungeonRoom _currentRoom;
         public bool hasInstantiatedBossRoom = false;
+        
+        private AudioSource _roomAudioSource;
+        private AudioPlayer _audioPlayer;
 
+        private void Awake()
+        {
+            _roomAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
         private void Start()
         {
             InitializeRoomGeneration();
@@ -30,6 +39,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
 
                 if (_currentRoom.CheckIfPlayerEntersPortal())
                 {
+                    _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
                     Destroy(_currentRoom.gameObject);
                     //spawn boss room
                     InstantiateBossRoom(bossRoom);
@@ -40,6 +50,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             //if the player enters the portal, generate a new room
             if (!hasInstantiatedBossRoom && _currentRoom.CheckIfRoomIsCleared() && _currentRoom.CheckIfPlayerEntersPortal())
             {
+                _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
                 InitializeRoomGeneration();
             }
         }
