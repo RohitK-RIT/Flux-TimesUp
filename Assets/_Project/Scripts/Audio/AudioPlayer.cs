@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Gameplay.Revamp_PCG;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,6 +9,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     {
         [SerializeField] private WeaponAudioConfig weaponAudioConfig;
         [SerializeField] private RoomAudioConfig roomAudioConfig;
+        [SerializeField] private AbilityAudioConfig abilityAudioConfig;
         
         internal void PlayAttackClip(AudioSource audioSource, bool isReloading = false)
         {
@@ -71,6 +73,46 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (roomAudioConfig.TeleportClip != null)
             {
                 audioSource.PlayOneShot(roomAudioConfig.TeleportClip, roomAudioConfig.Volume);
+            }
+        }
+
+        internal void PlayGrenadeClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.GranadeClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.GranadeClip, abilityAudioConfig.Volume);
+            }
+        }
+        
+        internal void PlayHealClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.HealClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.HealClip, abilityAudioConfig.Volume);
+            }
+        }
+        
+        internal void PlayShieldClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.ShieldClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.ShieldClip, abilityAudioConfig.Volume);
+            }
+        }
+        
+        internal void PlayTeleportClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.TeleportClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.TeleportClip, abilityAudioConfig.Volume);
+            }
+        }
+        
+        internal void PlayTSMClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.TSMFreezwClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.TSMFreezwClip, abilityAudioConfig.Volume);
             }
         }
     }
