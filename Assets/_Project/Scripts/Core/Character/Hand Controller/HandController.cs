@@ -53,7 +53,10 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 if (_currentItem is not null)
                 {
                     _currentItem.OnUnequip();
-                    _currentItem.gameObject.SetActive(false);
+                    if (_currentItem is not Ability)
+                    {
+                        _currentItem.gameObject.SetActive(false);
+                    }
                 }
 
                 _currentItem = value;
@@ -142,7 +145,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             {
                 // Instantiate the ability prefab
                 CurrentAbility = Instantiate(abilityPrefab, weaponParent);
-                CurrentAbility.gameObject.SetActive(false);
+                //CurrentAbility.gameObject.SetActive(false);
                 CurrentAbility.OnPickup(PlayerController);
             }
             else
