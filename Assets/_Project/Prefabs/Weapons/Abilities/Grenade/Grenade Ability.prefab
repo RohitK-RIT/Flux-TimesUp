@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9166759518361921770}
-  - component: {fileID: 8596951495638256996}
-  - component: {fileID: 8777140895924973327}
   - component: {fileID: 8061832237892610693}
   - component: {fileID: 4533463796864876761}
   - component: {fileID: 1012429611630165845}
@@ -36,56 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8596951495638256996
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3473613526463779720}
-  m_Mesh: {fileID: 4300000, guid: b945fc7164617984c9a7d253f5cdfab7, type: 3}
---- !u!23 &8777140895924973327
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3473613526463779720}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 257
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 931a8223b8cb7e449bd50e42d6c0a2d8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!54 &8061832237892610693
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -146,5 +94,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55abe514cc9061d4ba2a0ce156ef08e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAbilityActive: 0
   stats: {fileID: 11400000, guid: e1b25877b31e89c41bb5e2519882dd0e, type: 2}
   grenade: {fileID: 6101686783019956621, guid: bca9cc73eb539f54dba7a5a84c169696, type: 3}
