@@ -110,6 +110,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
                     states[EnemyState.Flee] = new FleeState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Patrol);
                     break;
 
@@ -117,6 +118,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.BossAttack] = new BossAttackState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 
@@ -124,6 +126,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 

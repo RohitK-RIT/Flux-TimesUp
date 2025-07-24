@@ -18,5 +18,8 @@ namespace _Project.Scripts.Core.Enemy.FSM
         
         // Represents the state only for boss enemy
         BossAttack,
+        
+        // Represents the state where the enemy dies and performs no action
+        Death,
     }
 }
