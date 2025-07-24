@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
@@ -19,6 +20,16 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         public override AbilityType Type => AbilityType.Grenades;
 
         [SerializeField] private Grenade grenade;
+        
+         
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        private void Awake()
+        {
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
 
         public override void BeginUse()
         {
@@ -45,6 +56,11 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             var forceDirection = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)).direction + Vector3.up * 0.5f; // Get the direction from the camera to the center of the screen
                 //CurrentPlayerController.MovementController.Body.forward + Vector3.up * 0.5f; // Throw the grenade in the forward direction
             
+            grenadeInstance.OnExploded += () =>
+            {
+                _audioPlayer.PlayGrenadeClip(_abilityAudioSource);
+            };
+
             grenadeInstance.ThrowGrenade(forceDirection, this);
             
             Owner.StartCoroutine(DeactivateAbility(stats.Cooldown));
