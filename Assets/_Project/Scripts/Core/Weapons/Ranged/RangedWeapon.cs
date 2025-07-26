@@ -92,7 +92,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Coroutine for firing.
         /// </summary>
         private Coroutine _fireCoroutine;
-        
+
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 
@@ -102,6 +102,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _audioPlayer = GetComponent<AudioPlayer>();
             InitializeAmo();
         }
+
         private void Start()
         {
             // Initialize the dictionary of fire mode strategies
@@ -221,6 +222,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             {
                 _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
             }
+
             if (MaxAmmo == 0)
             {
                 _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
@@ -318,5 +320,13 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             MaxAmmo += ammo;
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Copy Weapon ID")]
+        private void CopyWeaponID()
+        {
+            GUIUtility.systemCopyBuffer = stats.WeaponID;
+        }
+#endif
     }
 }

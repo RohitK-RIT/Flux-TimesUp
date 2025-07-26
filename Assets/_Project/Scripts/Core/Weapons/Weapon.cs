@@ -1,9 +1,7 @@
-using System;
 using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
-using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons
