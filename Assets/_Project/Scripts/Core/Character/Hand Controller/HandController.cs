@@ -106,21 +106,21 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The currently equipped ability.
         /// </summary>
         private Ability _currentAbility;
+        
+        private static readonly List<string> PlayerWeaponIDs = new()
+        {
+            "Pistol3",
+            "Sword1"
+        };
 
         public override void Initialize(PlayerController playerController)
         {
             base.Initialize(playerController);
 
-            // Fetch selected weapons from WeaponDataSystem
-            if (!hasPreMadeLoadout)
-            {
-                var selectedLoadoutWeaponIDs = WeaponDataSystem.Instance.GetSelectedWeapons();
-                if (selectedLoadoutWeaponIDs is { Count: > 0 })
-                    LoadWeapon(selectedLoadoutWeaponIDs);
-                else
-                    Debug.LogError("No selected weapons found in WeaponDataSystem");
-            }
 
+            if (!hasPreMadeLoadout)
+                LoadWeapon(PlayerWeaponIDs);
+            
             // The player controller has picked up all the weapons
             foreach (var weapon in weapons)
                 weapon?.OnPickup(PlayerController);
@@ -157,7 +157,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// Loads a weapon by its ID.
         /// </summary>
-        /// <param name="weaponID">The ID of the weapon to load.</param>
+        /// <param name="weaponIDs">The ID of the weapon to load.</param>
         private void LoadWeapon(List<string> weaponIDs)
         {
             // Validate input
