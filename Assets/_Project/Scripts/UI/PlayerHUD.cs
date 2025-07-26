@@ -1,17 +1,14 @@
-using System;
+using System.Linq;
 using _Project.Scripts.Core.Backend.Ability;
-using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI
@@ -21,65 +18,63 @@ namespace _Project.Scripts.UI
     /// </summary>
     public class PlayerHUD : MonoBehaviour
     {
-        private LocalPlayerController Player => LevelSceneController.Instance.Player;
-
         // References to the UI components
-        
+
         //Health Bar
         [SerializeField] public Slider healthBar;
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private Image healthFill;
         [SerializeField] private Gradient healthGradient;
-        
+
         //Time Stability Bar
         [SerializeField] public Slider timeStabilityBar;
         [SerializeField] private TMP_Text tmsValueText;
         [SerializeField] private Image tsmFill;
+
         [SerializeField] private Gradient tsmGradient;
         //[SerializeField] private Animator animator;
         //private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
-        
+
         //Enemies Remaining & Pick up Info
         [SerializeField] private TMP_Text enemiesRemaining;
         [SerializeField] public TMP_Text pickupText;
-        
+
         //Loadout Information
         [SerializeField] public TMP_Text currAmmo;
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public Image primaryIconSlot;
-        [SerializeField] public Image secondaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
         [SerializeField] public Image abilityIconSlot;
         [SerializeField] private GameObject overlay;
         [SerializeField] public GameObject reloadingText;
+
         [SerializeField] public GameObject reloadingIcon;
+
         // Updates the reloading text based on the player's current weapon state
         private Coroutine _reloadingCoroutine;
         private GameObject _primaryOverlay;
-        private GameObject _secondaryOverlay;
         private GameObject _meleeOverlay;
         private GameObject _abilityOverlay;
         private AbilityData _abilityData;
         private AbilityCooldown _abilityCooldown;
-        
+
         // References to the player controller
-        [SerializeField] public LocalPlayerController player;
+        [SerializeField] private LocalPlayerController player;
         private RoomWaveController _roomWaveController;
         [SerializeField] private RandomRoomGeneration randomRoomGeneration;
-        
+
         private void Start()
         {
             // Initialize the health bar and ammo display with the player's starting values
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
-            
+
             _primaryOverlay = Instantiate(overlay, primaryIconSlot.rectTransform.parent);
-            _secondaryOverlay = Instantiate(overlay, secondaryIconSlot.rectTransform.parent);
             _meleeOverlay = Instantiate(overlay, meleeIconSlot.rectTransform.parent);
             _abilityOverlay = Instantiate(overlay, abilityIconSlot.rectTransform.parent);
             _abilityCooldown = _abilityOverlay.GetComponent<AbilityCooldown>();
-            
+
             _roomWaveController = FindObjectOfType<RoomWaveController>();
             if (_roomWaveController == null)
             {
@@ -89,18 +84,19 @@ namespace _Project.Scripts.UI
 
         private void OnEnable()
         {
-            Player.HandController.OnAmmoPicked += OnAmmoPickup;
-            Player.HandController.OnAbilityPicked += OnAbilityPicked;
+            player.HandController.OnAmmoPicked += OnAmmoPickup;
+            player.HandController.OnAbilityPicked += OnAbilityPicked;
         }
 
         private void OnDisable()
         {
-            Player.HandController.OnAmmoPicked -= OnAmmoPickup;
-            Player.HandController.OnAbilityPicked -= OnAbilityPicked;
+            player.HandController.OnAmmoPicked -= OnAmmoPickup;
+            player.HandController.OnAbilityPicked -= OnAbilityPicked;
         }
 
         private void Update()
         {
+            if (!player) return;
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
@@ -108,7 +104,7 @@ namespace _Project.Scripts.UI
             UpdateLoadoutInfo();
             UpdateEnemiesRemaining();
         }
-        
+
         // Updates the number of enemies remaining in the room
         private void UpdateEnemiesRemaining()
         {
@@ -117,26 +113,17 @@ namespace _Project.Scripts.UI
                 enemiesRemaining.gameObject.SetActive(false);
                 return;
             }
-            _roomWaveController = FindObjectOfType<RoomWaveController>();
-            if (_roomWaveController == null) return;
-            var enemiesCount = 0;
-            foreach (var enemy in _roomWaveController.EnemiesInRoom)
+
+            _roomWaveController ??= FindObjectOfType<RoomWaveController>();
+            var enemiesCount = _roomWaveController.EnemiesInRoom.Count(enemy => enemy && enemy.activeInHierarchy);
+            enemiesRemaining.text = enemiesCount switch
             {
-                if (enemy != null && enemy.activeInHierarchy)
-                {
-                    enemiesCount++;
-                }
-            }
-            if (enemiesCount > 0)
-            {
-                enemiesRemaining.text = "Enemies Remaining: " + enemiesCount.ToString();
-            }
-            else if(enemiesCount == 0)
-            {
-                enemiesRemaining.text = "Portal is now open!";
-            }
+                > 0 => "Enemies Remaining: " + enemiesCount,
+                0 => "Portal is now open!",
+                _ => enemiesRemaining.text
+            };
         }
-        
+
         // Shows the ability HUD with the specified ability type
         private void ShowAbilityHUD(AbilityType abilityType)
         {
@@ -144,62 +131,32 @@ namespace _Project.Scripts.UI
             abilityIconSlot.sprite = _abilityData.Icon;
             abilityIconSlot.color = Color.white;
         }
-        
+
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
-            var currentAbility = player.HandController.CurrentItem as Ability;
             if (!player) return;
 
-            if (player.HandController.CurrentItem is Ability)
+            var currentAbility = player.HandController.CurrentItem as Ability;
+            if (currentAbility)
             {
                 abilityIconSlot.enabled = true;
                 abilityIconSlot.sprite = _abilityData.Icon;
-                _primaryOverlay.SetActive(true);
-                _secondaryOverlay.SetActive(true);
-                _meleeOverlay.SetActive(true);
-                _abilityOverlay.SetActive(false);
-            }
-
-            if (currentAbility && currentAbility.IsCooldownActive)
-            {
-                Debug.Log("Current ability is on cooldown" + currentAbility.name);
-                _abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
+                if (currentAbility.IsCooldownActive)
+                {
+                    Debug.Log("Current ability is on cooldown" + currentAbility.name);
+                    _abilityCooldown.ActivateCooldown(currentAbility.CooldownTime);
+                }
             }
 
             primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[0].WeaponID);
-            secondaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[1].WeaponID);
-            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[2].WeaponID);
+            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[1].WeaponID);
             primaryIconSlot.enabled = true;
-            secondaryIconSlot.enabled = true;
             meleeIconSlot.enabled = true;
-            ShowActiveWeaponSlot();
-        }
 
-        //Shows the active weapon slot based on the player's current weapon.
-        private void ShowActiveWeaponSlot()
-        {
-            if (player.HandController.CurrentItem == player.HandController.Weapons[0])
-            {
-                _primaryOverlay.SetActive(false);
-                _secondaryOverlay.SetActive(true);
-                _meleeOverlay.SetActive(true);
-                _abilityOverlay.SetActive(true);
-            }
-            else if (player.HandController.CurrentItem == player.HandController.Weapons[1])
-            {
-                _primaryOverlay.SetActive(true);
-                _secondaryOverlay.SetActive(false);
-                _meleeOverlay.SetActive(true);
-                _abilityOverlay.SetActive(true);
-            }
-            else if (player.HandController.CurrentItem == player.HandController.Weapons[2])
-            {
-               _primaryOverlay.SetActive(true);
-               _secondaryOverlay.SetActive(true);
-               _meleeOverlay.SetActive(false);
-               _abilityOverlay.SetActive(true);
-            }
+            _primaryOverlay.SetActive(!player.HandController.CurrentItem.Equals(player.HandController.Weapons[0]));
+            _meleeOverlay.SetActive(!player.HandController.CurrentItem.Equals(player.HandController.Weapons[1]));
+            _abilityOverlay.SetActive(!player.HandController.CurrentItem.Equals(currentAbility));
         }
 
         // Updates the ammo display based on the player's current and total ammo
@@ -293,7 +250,7 @@ namespace _Project.Scripts.UI
         {
             pickupText.gameObject.SetActive(false);
         }
-        
+
         /// <summary>
         /// Function to update the time stability bar.
         /// </summary>
@@ -303,7 +260,7 @@ namespace _Project.Scripts.UI
             timeStabilityBar.maxValue = TimeStabilityMeter.Instance.TotalTimeStability;
             tmsValueText.text = timeStabilityBar.value + " / " + timeStabilityBar.maxValue;
             tsmFill.color = tsmGradient.Evaluate(timeStabilityBar.normalizedValue);
-            
+
             /*animator.SetBool(IsBlinking, false);
             if (timeStabilityBar.value < 50)
             {
@@ -316,7 +273,7 @@ namespace _Project.Scripts.UI
                 animator.speed = 1f;
             }*/
         }
-        
+
         // Updates the health bar based on the player's current and max health
         private void UpdateHealthBar()
         {
