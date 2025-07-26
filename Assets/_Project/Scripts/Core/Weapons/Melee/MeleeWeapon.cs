@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
@@ -24,15 +25,33 @@ namespace _Project.Scripts.Core.Weapons.Melee
         /// </summary>
         [SerializeField] private MeleeWeaponStats stats;
 
+        [SerializeField] private Vector3 holdPositionOffset;
+        [SerializeField] private Vector3 holdRotationOffset;
+
         private float _lastAttackTime = float.MinValue;
         private Coroutine _attackCoroutine;
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
-        
+
         private void Awake()
         {
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
+        }
+
+        public override void OnPickup(PlayerController controller)
+        {
+            base.OnPickup(controller);
+
+            transform.localPosition = holdPositionOffset;
+            transform.localRotation = Quaternion.Euler(holdRotationOffset);
+        }
+
+        public override void OnDrop()
+        {
+            base.OnDrop();
+            
+            transform.localRotation = Quaternion.identity;
         }
 
         public override void BeginUse()
@@ -111,5 +130,13 @@ namespace _Project.Scripts.Core.Weapons.Melee
             // TODO: Implement era specific damage calculation
             return new IDamageable.DamageInfo(stats.Damage, this);
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Copy Weapon ID")]
+        private void CopyWeaponID()
+        {
+            GUIUtility.systemCopyBuffer = stats.WeaponID;
+        }
+#endif
     }
 }
