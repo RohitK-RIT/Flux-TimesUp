@@ -146,7 +146,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 // Instantiate the ability prefab
                 CurrentAbility = Instantiate(abilityPrefab, weaponParent);
                 //CurrentAbility.gameObject.SetActive(false);
-                CurrentAbility.OnPickup(PlayerController);
             }
             else
             {
