@@ -77,7 +77,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private FireModes _currentFireMode;
 
-
         /// <summary>
         /// Object pool for projectiles.
         /// </summary>
@@ -141,21 +140,21 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _projectilePool?.Dispose();
         }
 
-        public override void OnPickup(PlayerController controller)
+        public override void OnPickup(PlayerController owner)
         {
-            base.OnPickup(controller);
+            base.OnPickup(owner);
 
-            controller.HandController.OnAmmoPicked += AddAmmo;
+            Owner.HandController.OnAmmoPicked += AddAmmo;
         }
 
         public override void OnDrop()
         {
-            base.OnDrop();
-
             if (IsReloading)
                 StopReloading();
 
-            CurrentPlayerController.HandController.OnAmmoPicked -= AddAmmo;
+            Owner.HandController.OnAmmoPicked -= AddAmmo;
+
+            base.OnDrop();
         }
 
         public override void OnEquip()

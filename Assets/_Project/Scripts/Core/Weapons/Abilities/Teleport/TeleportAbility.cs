@@ -38,18 +38,18 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
 
             isAbilityActive = true;
             // Teleport the player to the target position
-            Vector3 targetPosition = CurrentPlayerController.transform.position + (-CurrentPlayerController.MovementController.Body.forward) * stats.Distance;
+            Vector3 targetPosition = Owner.transform.position + (-Owner.MovementController.Body.forward) * stats.Distance;
 
             // Perform a raycast to check that teleport does not happen through room walls. 
             RaycastHit hit;
-            if (Physics.Raycast(CurrentPlayerController.transform.position, -CurrentPlayerController.MovementController.Body.forward, out hit, stats.Distance))
+            if (Physics.Raycast(Owner.transform.position, -Owner.MovementController.Body.forward, out hit, stats.Distance))
             {
                 return; // Prevent teleportation
             }
 
-            CurrentPlayerController.transform.position = targetPosition;
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.transform.position = targetPosition;
+            Owner.StartCoroutine(DeactivateAbility(0));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

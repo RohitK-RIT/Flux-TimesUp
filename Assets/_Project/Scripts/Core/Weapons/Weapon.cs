@@ -9,62 +9,72 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
-    public abstract class Weapon : MonoBehaviour, IHandItem
+    public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable
     {
         /// <summary>
         /// Current player controller.
         /// </summary>
-        public PlayerController CurrentPlayerController { get; private set; }
-
+        public PlayerController Owner { get; private set; }
 
         public abstract string WeaponID { get; }
 
         protected bool Equipped { get; private set; }
 
-        /// <summary>
-        /// Function called when the weapon is picked up.
-        /// </summary>
-        /// <param name="controller">the player controller that will control the weapon</param>
-        public virtual void OnPickup(PlayerController controller)
+        [SerializeField] private Vector3 holdPositionOffset;
+        [SerializeField] private Vector3 holdRotationOffset;
+
+        #region Interactable functions
+
+        public void OnHoverEnter(PlayerController controller)
         {
-            CurrentPlayerController = controller;
-            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
+            Debug.Log($"Hovering over weapon: {WeaponID}");
         }
 
-        /// <summary>
-        /// Function called when the weapon is dropped.
-        /// </summary>
+        public void OnHoverExit()
+        {
+            Debug.Log($"Hover exited from weapon: {WeaponID}");
+        }
+
+        #region Pickable functions
+
+        public virtual void OnPickup(PlayerController owner)
+        {
+            Owner = owner;
+            gameObject.SetLayerRecursively(owner.FriendlyLayerName);
+
+            transform.localPosition = holdPositionOffset;
+            transform.localRotation = Quaternion.Euler(holdRotationOffset);
+        }
+
         public virtual void OnDrop()
         {
-            CurrentPlayerController = null;
+            Owner = null;
             gameObject.SetLayerRecursively("Pickup");
+            
+            transform.localRotation = Quaternion.identity;
         }
 
-        /// <summary>
-        /// Function called when the weapon is equipped.
-        /// </summary>
+        #endregion
+
+        #endregion
+
+        #region Hand Item functions
+
         public virtual void OnEquip()
         {
             Equipped = true;
         }
 
-        /// <summary>
-        /// Function called when the weapon is unequipped.
-        /// </summary>
         public virtual void OnUnequip()
         {
             Equipped = false;
         }
 
-        /// <summary>
-        /// Start attacking.
-        /// </summary>
         public abstract void BeginUse();
 
-        /// <summary>
-        /// End attacking.
-        /// </summary>
         public abstract void EndUse();
+
+        #endregion
 
         /// <summary>
         /// Get the damage of the weapon.

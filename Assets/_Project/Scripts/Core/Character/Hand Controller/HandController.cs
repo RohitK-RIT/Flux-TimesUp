@@ -17,7 +17,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     /// </summary>
     public class HandController : CharacterComponent
     {
-        public event Action OnWeaponSwitched;
+        public event Action OnItemSwitched;
         public event Action<int> OnAmmoPicked;
         public event Action<AbilityType> OnAbilityPicked;
 
@@ -44,12 +44,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             get => _currentItem;
             private set
             {
-                if (value is null)
-                {
-                    Debug.LogError("Item not found");
-                    return;
-                }
-
                 if (_currentItem is not null)
                 {
                     _currentItem.OnUnequip();
@@ -63,7 +57,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
                 _currentItem.gameObject.SetActive(true);
                 _currentItem.OnEquip();
-                OnWeaponSwitched?.Invoke();
+                OnItemSwitched?.Invoke();
             }
         }
 
@@ -106,7 +100,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// The currently equipped ability.
         /// </summary>
         private Ability _currentAbility;
-        
+
         private static readonly List<string> PlayerWeaponIDs = new()
         {
             "Pistol3",
@@ -120,7 +114,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             if (!hasPreMadeLoadout)
                 LoadWeapon(PlayerWeaponIDs);
-            
+
             // The player controller has picked up all the weapons
             foreach (var weapon in weapons)
                 weapon?.OnPickup(PlayerController);
@@ -209,7 +203,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
-        
+
         /// <summary>
         /// Switches the weapon by a delta value.
         /// </summary>
@@ -327,6 +321,25 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         private void OnAmmoCollected(int amount)
         {
             OnAmmoPicked?.Invoke(amount);
+        }
+
+        public void DropItem()
+        {
+            // Check if the current item is a weapon
+            if (CurrentItem is not Weapon weaponToDrop)
+                return;
+
+            // Drop the current item
+            Weapons[_currentWeaponIndex] = null;
+
+            weaponToDrop.transform.SetParent(null);
+            var body = PlayerController.MovementController.Body;
+            weaponToDrop.transform.position = body.position + body.forward;
+            weaponToDrop.transform.rotation = body.rotation;
+            weaponToDrop.OnDrop();
+
+            SwitchWeapon(1);
+            weaponToDrop.gameObject.SetActive(true);
         }
     }
 }

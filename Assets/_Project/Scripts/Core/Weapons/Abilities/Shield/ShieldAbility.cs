@@ -27,13 +27,13 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// </summary>
         private GameObject _shieldVisual;
 
-        public override void OnPickup(PlayerController controller)
+        public override void OnPickup(PlayerController owner)
         {
-            base.OnPickup(controller);
+            base.OnPickup(owner);
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
-            _shieldVisual = Instantiate(shieldVisualPrefab, controller.transform);
-            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
+            _shieldVisual = Instantiate(shieldVisualPrefab, owner.transform);
+            _shieldVisual.gameObject.SetLayerRecursively( Owner.FriendlyLayerName);
             SetShieldVisual(false);
         }
 
@@ -68,8 +68,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             SetShieldVisual(true);
             isAbilityActive = true;
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Duration));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.StartCoroutine(DeactivateAbility(stats.Duration));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

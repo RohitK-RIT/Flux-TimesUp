@@ -63,8 +63,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             hitEffect.gameObject.SetActive(false);
 
             // Set the projectile's collision layers.
-            gameObject.SetLayerRecursively(weapon.CurrentPlayerController.FriendlyLayerName);
-            _rigidbody.excludeLayers = weapon.CurrentPlayerController.FriendlyLayer;
+            gameObject.SetLayerRecursively(weapon.Owner.FriendlyLayerName);
+            _rigidbody.excludeLayers = weapon.Owner.FriendlyLayer;
 
             // Set the projectile's velocity.
             _rigidbody.velocity = transform.forward * weapon.Stats.ProjectileSpeed;

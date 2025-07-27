@@ -149,8 +149,8 @@ namespace _Project.Scripts.UI
                 }
             }
 
-            primaryIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[0].WeaponID);
-            meleeIconSlot.sprite = WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[1].WeaponID);
+            primaryIconSlot.sprite = player.HandController.Weapons[0] ? WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[0].WeaponID) : null;
+            meleeIconSlot.sprite = player.HandController.Weapons[1] ? WeaponDataSystem.Instance.GetWeaponIcon(player.HandController.Weapons[1].WeaponID) : null;
             primaryIconSlot.enabled = true;
             meleeIconSlot.enabled = true;
 

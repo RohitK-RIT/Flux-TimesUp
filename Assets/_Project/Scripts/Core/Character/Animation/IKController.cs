@@ -46,7 +46,7 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             if (_handController)
             {
-                _handController.OnWeaponSwitched += UpdateIKPoints;
+                _handController.OnItemSwitched += UpdateIKPoints;
             }
             
             RefreshRig();
@@ -56,7 +56,7 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             if (_handController)
             {
-                _handController.OnWeaponSwitched -= UpdateIKPoints;
+                _handController.OnItemSwitched -= UpdateIKPoints;
             }
         }
 

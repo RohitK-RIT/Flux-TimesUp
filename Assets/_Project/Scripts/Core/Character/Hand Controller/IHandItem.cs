@@ -9,37 +9,26 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         public GameObject gameObject { get; }
         public Transform transform { get; }
 
-        public PlayerController CurrentPlayerController { get; }
+        public PlayerController Owner { get; }
 
         /// <summary>
-        /// Function called when the item is picked up.
-        /// </summary>
-        /// <param name="controller">the player controller that will control the item</param>
-        public void OnPickup(PlayerController controller);
-
-        /// <summary>
-        /// Function called when the item is dropped.
-        /// </summary>
-        public void OnDrop();
-
-        /// <summary>
-        /// Start attacking.
+        /// Function called when use of item started.
         /// </summary>
         public void BeginUse();
 
         /// <summary>
-        /// End attacking.
+        /// Function called when use of item ended.
         /// </summary>
         public void EndUse();
 
         /// <summary>
         /// Function called when the item is equipped.
         /// </summary>
-        public virtual void OnEquip() { }
+        public void OnEquip();
 
         /// <summary>
         /// Function called when the item is unequipped.
         /// </summary>
-        public virtual void OnUnequip() { }
+        public void OnUnequip();
     }
 }
