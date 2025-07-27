@@ -135,9 +135,10 @@ namespace _Project.Scripts.UI
         //Updates the current loadout of the player in real-time.
         private void UpdateLoadoutInfo()
         {
-            if (!player) return;
-
-            var currentAbility = player.HandController.CurrentItem as Ability;
+            if (!player)
+                return;
+            
+            var currentAbility = player.HandController.CurrentAbility;
             if (currentAbility)
             {
                 abilityIconSlot.enabled = true;
@@ -154,9 +155,10 @@ namespace _Project.Scripts.UI
             primaryIconSlot.enabled = true;
             meleeIconSlot.enabled = true;
 
-            _primaryOverlay.SetActive(!player.HandController.CurrentItem.Equals(player.HandController.Weapons[0]));
-            _meleeOverlay.SetActive(!player.HandController.CurrentItem.Equals(player.HandController.Weapons[1]));
-            _abilityOverlay.SetActive(!player.HandController.CurrentItem.Equals(currentAbility));
+            var currentItem = player.HandController.CurrentItem;
+            _primaryOverlay.SetActive(currentItem != null && !currentItem.Equals(player.HandController.Weapons[0]));
+            _meleeOverlay.SetActive(currentItem != null && !currentItem.Equals(player.HandController.Weapons[1]));
+            _abilityOverlay.SetActive(currentItem != null && !currentItem.Equals(currentAbility));
         }
 
         // Updates the ammo display based on the player's current and total ammo

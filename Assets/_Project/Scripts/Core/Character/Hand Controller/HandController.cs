@@ -55,8 +55,12 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
                 _currentItem = value;
 
-                _currentItem.gameObject.SetActive(true);
-                _currentItem.OnEquip();
+                if (_currentItem is not null)
+                {
+                    _currentItem.gameObject.SetActive(true);
+                    _currentItem.OnEquip();
+                }
+
                 OnItemSwitched?.Invoke();
             }
         }

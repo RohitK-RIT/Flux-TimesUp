@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
@@ -9,6 +10,7 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
+    [RequireComponent(typeof(Collider))]
     public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable
     {
         /// <summary>
@@ -23,7 +25,16 @@ namespace _Project.Scripts.Core.Weapons
         [SerializeField] private Vector3 holdPositionOffset;
         [SerializeField] private Vector3 holdRotationOffset;
 
+        private Collider _interactableCollider;
+
         #region Interactable functions
+
+        private void Awake()
+        {
+            _interactableCollider = GetComponent<Collider>();
+            if (_interactableCollider)
+                _interactableCollider.isTrigger = true;
+        }
 
         public void OnHoverEnter(PlayerController controller)
         {
@@ -44,14 +55,20 @@ namespace _Project.Scripts.Core.Weapons
 
             transform.localPosition = holdPositionOffset;
             transform.localRotation = Quaternion.Euler(holdRotationOffset);
+
+            if (_interactableCollider)
+                _interactableCollider.enabled = false;
         }
 
         public virtual void OnDrop()
         {
             Owner = null;
             gameObject.SetLayerRecursively("Pickup");
-            
+
             transform.localRotation = Quaternion.identity;
+            
+            if (_interactableCollider)
+                _interactableCollider.enabled = true;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Weapons.Melee;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -48,7 +49,7 @@ namespace _Project.Scripts.Core.Character.Animation
             {
                 _handController.OnItemSwitched += UpdateIKPoints;
             }
-            
+
             RefreshRig();
         }
 
@@ -66,53 +67,53 @@ namespace _Project.Scripts.Core.Character.Animation
         private void UpdateIKPoints()
         {
             var item = _handController.CurrentItem;
-            if (!gunIKRig || item == null)
+            if (!gunIKRig || !gunAimingIKRig || !meleeIKRig || _handIKConstraints.Length == 0)
             {
-                Debug.LogError("Rig root or prefab is not assigned!");
+                Debug.LogError("");
                 return;
             }
 
-            // Fetch all Two Bone IK Constraints under the rig root
-            if (_handIKConstraints.Length == 0)
+            switch (item)
             {
-                Debug.LogError("No Two Bone IK Constraints found under the rig root!");
-                return;
-            }
+                case MeleeWeapon _:
+                    gunIKRig.weight = 0f;
+                    gunAimingIKRig.weight = 0f;
+                    meleeIKRig.weight = 1f;
+                    break;
+                case RangedWeapon gunWeapon:
+                    gunIKRig.weight = 1f;
+                    gunAimingIKRig.weight = 1f;
+                    meleeIKRig.weight = 0f;
 
-            if (item is MeleeWeapon)
-            {
-                gunIKRig.weight = 0f;
-                gunAimingIKRig.weight = 0f;
-                meleeIKRig.weight = 1f;
-            }
-            else
-            {
-                gunIKRig.weight = 1f;
-                gunAimingIKRig.weight = 1f;
-                meleeIKRig.weight = 0f;
-                
-                item.transform.parent.rotation = Quaternion.identity;
-                
-                // Assign transforms to each Two Bone IK Constraint
-                foreach (var constraint in _handIKConstraints)
-                {
-                    // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
-                    var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
+                    item.transform.parent.rotation = Quaternion.identity;
 
-                    // Fetch source, target, and hint transforms based on the prefab structure
-                    var targetObject = item.transform.Find($"IK Points/{constraintName}_target");
-                    var hintObject = item.transform.Find($"IK Points/{constraintName}_hint");
-
-                    if (!hintObject || !targetObject)
+                    // Assign transforms to each Two Bone IK Constraint
+                    foreach (var constraint in _handIKConstraints)
                     {
-                        Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
-                        continue;
+                        // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
+                        var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
+
+                        // Fetch source, target, and hint transforms based on the prefab structure
+                        var targetObject = item.transform.Find($"IK Points/{constraintName}_target");
+                        var hintObject = item.transform.Find($"IK Points/{constraintName}_hint");
+
+                        if (!hintObject || !targetObject)
+                        {
+                            Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
+                            continue;
+                        }
+
+                        // Assign the transforms to the constraint
+                        constraint.data.target = targetObject;
+                        constraint.data.hint = hintObject;
                     }
 
-                    // Assign the transforms to the constraint
-                    constraint.data.target = targetObject;
-                    constraint.data.hint = hintObject;
-                }
+                    break;
+                default:
+                    gunIKRig.weight = 0f;
+                    gunAimingIKRig.weight = 0f;
+                    meleeIKRig.weight = 0f;
+                    break;
             }
 
             RefreshRig();
