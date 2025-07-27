@@ -24,13 +24,13 @@ namespace _Project.Scripts.Core.Weapons
         [SerializeField] private Vector3 holdPositionOffset;
         [SerializeField] private Vector3 holdRotationOffset;
 
-        private Collider _interactableCollider;
+        private BoxCollider _interactableCollider;
 
         #region Interactable functions
 
         private void Awake()
         {
-            _interactableCollider = GetComponent<Collider>();
+            _interactableCollider = GetComponent<BoxCollider>();
             if (_interactableCollider)
                 _interactableCollider.isTrigger = true;
         }
