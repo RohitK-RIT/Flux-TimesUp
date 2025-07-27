@@ -58,7 +58,7 @@ namespace _Project.Scripts.Core.Enemy
 
         protected override void Die(PlayerController enemyPlayer, IHandItem itemKilledBy)
         {
-            gameObject.SetActive(false);
+            //_enemyInputController.gameObject.SetActive(false);
             base.Die(enemyPlayer, itemKilledBy);
         }
     }

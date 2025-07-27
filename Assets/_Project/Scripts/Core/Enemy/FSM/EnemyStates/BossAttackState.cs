@@ -87,6 +87,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
             // If a player is still in attack range, stay in attack state
             if (_enemyInputController.IsPlayerInAttackRange())
             {

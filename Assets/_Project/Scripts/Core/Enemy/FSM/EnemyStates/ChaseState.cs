@@ -36,6 +36,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
             // If the player is out of chase range, transition to Detect state
             if (!_enemyInputController.CanChasePlayer())
             {

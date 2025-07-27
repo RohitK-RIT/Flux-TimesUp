@@ -1,31 +1,35 @@
+using UnityEngine;
+
 namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 {
     public class DeathState : BaseState
     {
         private readonly EnemyInputController _enemyInputController;
-        public DeathState(EnemyInputController enemyInputController) : base(EnemyState.Detect) 
+        public DeathState(EnemyInputController enemyInputController) : base(EnemyState.Death) 
         {
             _enemyInputController = enemyInputController;
         }
 
         public override void EnterState()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Death State");
         }
 
         public override void ExitState()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Death State");
         }
 
         public override void UpdateState()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Death State");
+            _enemyInputController.gameObject.SetActive(false);
         }
 
         public override EnemyState GetNextState()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Death State");
+            return EnemyState.Death;
         }
     }
 }
