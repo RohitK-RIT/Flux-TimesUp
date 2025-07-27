@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
@@ -32,6 +33,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
         {
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
+        }
+
+        public override void OnCollected(PlayerController playerController)
+        {
+            if(playerController.HandController.Weapons[1])
+                return;
+
+            playerController.HandController.OnItemPicked(this);
         }
 
         public override void BeginUse()

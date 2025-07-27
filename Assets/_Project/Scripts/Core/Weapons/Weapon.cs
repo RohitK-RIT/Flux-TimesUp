@@ -1,4 +1,3 @@
-using System;
 using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
@@ -11,7 +10,7 @@ namespace _Project.Scripts.Core.Weapons
     /// Base class for all weapons.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable
+    public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable, ICollectible
     {
         /// <summary>
         /// Current player controller.
@@ -46,6 +45,14 @@ namespace _Project.Scripts.Core.Weapons
             Debug.Log($"Hover exited from weapon: {WeaponID}");
         }
 
+        #endregion
+
+        #region Collectible functions
+
+        public abstract void OnCollected(PlayerController playerController);
+
+        #endregion
+
         #region Pickable functions
 
         public virtual void OnPickup(PlayerController owner)
@@ -70,8 +77,6 @@ namespace _Project.Scripts.Core.Weapons
             if (_interactableCollider)
                 _interactableCollider.enabled = true;
         }
-
-        #endregion
 
         #endregion
 
