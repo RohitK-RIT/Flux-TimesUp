@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
@@ -16,12 +17,21 @@ namespace _Project.Scripts.Core.Weapons.Abilities.TSM_Freeze_Ability
         /// </summary>
         [SerializeField] private TsmFreezeAbilityStats stats;
         
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        private void Awake()
+        {
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
         public override void OnEquip()
         {
             base.OnEquip();
+            _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             FreezeTsm();
             Used = true;
         }
