@@ -144,6 +144,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4fc3311e76f4111a7ecdc958de43ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdPositionOffset: {x: 0, y: 0, z: 0}
+  holdRotationOffset: {x: 0, y: 0, z: 0}
   stats: {fileID: 11400000, guid: 19b666e0c6d194ca08788a0f0a9055ae, type: 2}
   muzzle: {fileID: 1619547666470843636}
 --- !u!114 &3652283437641818316
@@ -827,6 +829,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: jar_canon
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a95d1c0c12084185a3f1090ed5417fe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
