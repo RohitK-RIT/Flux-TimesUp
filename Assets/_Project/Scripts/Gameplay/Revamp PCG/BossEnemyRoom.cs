@@ -24,7 +24,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void Start()
         {
             LevelSceneController.Instance.BossEnemy = bossEnemy;
-            _audioPlayer.PlayRoomClip(_roomAudioSource, null, true);
+            _audioPlayer.PlayRoomClip(_roomAudioSource);
         }
         
     }
