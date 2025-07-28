@@ -108,7 +108,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
         private static readonly List<string> PlayerWeaponIDs = new()
         {
-            "SMG1",
+            "Pistol3",
             "Sword1"
         };
 
