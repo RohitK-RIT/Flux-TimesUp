@@ -58,7 +58,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             
             grenadeInstance.OnExploded += () =>
             {
-                _audioPlayer.PlayGrenadeClip(_abilityAudioSource);
+                _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             };
 
             grenadeInstance.ThrowGrenade(forceDirection, this);

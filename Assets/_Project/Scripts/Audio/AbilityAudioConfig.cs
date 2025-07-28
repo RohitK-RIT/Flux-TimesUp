@@ -11,28 +11,12 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         private float volume = 1f;
         
         [Header("Clips")]
-        [SerializeField] private AudioClip granadeClip;
-        [SerializeField] private AudioClip healClip;
-        [SerializeField] private AudioClip shieldClip;
-        [SerializeField] private AudioClip teleportClip;
-        [SerializeField] private AudioClip tsmFreezwClip;
+        [SerializeField] private AudioClip abilityClip;
 
-        // Overall volume multiplier for this audio config. </summary>
+        // Overall volume multiplier for this audio config.
         public float Volume => volume;
-
-        // Clip played when firing the weapon. </summary>
-        public AudioClip GranadeClip => granadeClip;
-
-        // Clip played when trying to fire an empty weapon. </summary>
-        public AudioClip HealClip => healClip;
-
-        // Clip played when reloading the weapon. </summary>
-        public AudioClip ShieldClip => shieldClip;
         
-        // Clip played when reloading the weapon. </summary>
-        public AudioClip TeleportClip => teleportClip;
-        
-        // Clip played when reloading the weapon. </summary>
-        public AudioClip TSMFreezwClip => tsmFreezwClip;
+        // Clip played when reloading the weapon.
+        public AudioClip AbilityClip => abilityClip;
     }
 }

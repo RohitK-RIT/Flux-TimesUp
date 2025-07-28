@@ -51,44 +51,14 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        internal void PlayGrenadeClip(AudioSource audioSource)
+        internal void PlayAbilityClip(AudioSource audioSource)
         {
-            if (abilityAudioConfig.GranadeClip != null)
+            if (abilityAudioConfig.AbilityClip != null)
             {
-                audioSource.PlayOneShot(abilityAudioConfig.GranadeClip, abilityAudioConfig.Volume);
+                audioSource.PlayOneShot(abilityAudioConfig.AbilityClip, abilityAudioConfig.Volume);
             }
         }
         
-        internal void PlayHealClip(AudioSource audioSource)
-        {
-            if (abilityAudioConfig.HealClip != null)
-            {
-                audioSource.PlayOneShot(abilityAudioConfig.HealClip, abilityAudioConfig.Volume);
-            }
-        }
         
-        internal void PlayShieldClip(AudioSource audioSource)
-        {
-            if (abilityAudioConfig.ShieldClip != null)
-            {
-                audioSource.PlayOneShot(abilityAudioConfig.ShieldClip, abilityAudioConfig.Volume);
-            }
-        }
-        
-        internal void PlayTeleportClip(AudioSource audioSource)
-        {
-            if (abilityAudioConfig.TeleportClip != null)
-            {
-                audioSource.PlayOneShot(abilityAudioConfig.TeleportClip, abilityAudioConfig.Volume);
-            }
-        }
-        
-        internal void PlayTSMClip(AudioSource audioSource)
-        {
-            if (abilityAudioConfig.TSMFreezwClip != null)
-            {
-                audioSource.PlayOneShot(abilityAudioConfig.TSMFreezwClip, abilityAudioConfig.Volume);
-            }
-        }
     }
 }
