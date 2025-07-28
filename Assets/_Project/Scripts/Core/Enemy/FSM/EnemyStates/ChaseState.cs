@@ -12,12 +12,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             _enemyInputController = enemyInputController;
         }
 
-        // Called when the enemy enters the ChaseState
-        public override void EnterState()
-        {
-            //Debug.Log("Entering Chase State");
-        }
-
         // Called when the enemy exits the ChaseState
         public override void ExitState()
         {

@@ -220,6 +220,7 @@ namespace _Project.Scripts.Core.Enemy
         // Method to stop chasing the player, i.e., resetting the navmesh agent path
         internal void StopChasing()
         {
+            StopCoroutine(FollowPlayer());
             Enemy.ResetPath(); // Stop following the player
             Enemy.velocity = Vector3.zero;
         }
@@ -286,7 +287,7 @@ namespace _Project.Scripts.Core.Enemy
             _isAttacking = true;
             _attackCoroutine = StartCoroutine(AttackCoroutine());
         }
-
+        
         // Stop the attack when the player is out of range
         internal void StopAttack()
         {

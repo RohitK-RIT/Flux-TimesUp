@@ -9,26 +9,18 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             _enemyInputController = enemyInputController;
         }
-
+        
         public override void EnterState()
         {
-            Debug.Log("Death State");
-        }
-
-        public override void ExitState()
-        {
-            Debug.Log("Death State");
-        }
-
-        public override void UpdateState()
-        {
-            Debug.Log("Death State");
+            _enemyInputController.RoamingPosition = Vector3.zero;
+            _enemyInputController.StopChasing();
+            _enemyInputController.StopAttack();
+            _enemyInputController.ClosestPlayer = null;
             _enemyInputController.gameObject.SetActive(false);
         }
 
         public override EnemyState GetNextState()
         {
-            Debug.Log("Death State");
             return EnemyState.Death;
         }
     }

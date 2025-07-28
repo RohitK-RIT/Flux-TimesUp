@@ -12,12 +12,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         {
             _enemyInputController = enemyInputController;
         }
-   
-        // Called when the enemy enters the FleeState
-        public override void EnterState()
-        {
-            Debug.Log("Flee State Enter");
-        }
 
         // Called when the enemy exits the FleeState
         public override void ExitState()
