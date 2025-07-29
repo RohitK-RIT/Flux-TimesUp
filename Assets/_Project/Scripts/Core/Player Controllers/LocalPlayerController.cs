@@ -50,7 +50,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The property that gets or sets the current pickable item.
         /// </summary>
-        private IInteractable CurrentInteractable
+        public IInteractable CurrentInteractable
         {
             get => _currentInteractable;
             set

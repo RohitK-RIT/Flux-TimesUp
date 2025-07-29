@@ -21,7 +21,8 @@ namespace _Project.Scripts.UI
         private void LookAtCamera()
         {
             //if the player is in the range of this pickup item, rotate the instruction to pick up the ability.
-            var lookAtPosition = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            var lookAtPosition = mainCamera.transform.position;
+            lookAtPosition.y = transform.position.y;
 
             transform.LookAt(lookAtPosition);
 

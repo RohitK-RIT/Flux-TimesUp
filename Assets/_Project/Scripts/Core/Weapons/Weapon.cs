@@ -16,6 +16,8 @@ namespace _Project.Scripts.Core.Weapons
         /// Current player controller.
         /// </summary>
         public PlayerController Owner { get; private set; }
+        
+        public abstract string DisplayName { get; }
 
         public abstract string WeaponID { get; }
 
@@ -28,7 +30,7 @@ namespace _Project.Scripts.Core.Weapons
 
         #region Interactable functions
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _interactableCollider = GetComponent<BoxCollider>();
             if (_interactableCollider)
@@ -73,7 +75,7 @@ namespace _Project.Scripts.Core.Weapons
             gameObject.SetLayerRecursively("Pickup");
 
             transform.localRotation = Quaternion.identity;
-            
+
             if (_interactableCollider)
                 _interactableCollider.enabled = true;
         }

@@ -12,6 +12,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
     public sealed class MeleeWeapon : Weapon
     {
         public override string WeaponID => stats.WeaponID;
+        public override string DisplayName => stats.WeaponName;
         public MeleeWeaponStats Stats => stats;
 
         /// <summary>
@@ -29,8 +30,10 @@ namespace _Project.Scripts.Core.Weapons.Melee
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
         }

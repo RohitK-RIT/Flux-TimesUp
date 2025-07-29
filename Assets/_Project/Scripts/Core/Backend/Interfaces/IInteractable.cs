@@ -1,9 +1,18 @@
 ﻿using _Project.Scripts.Core.Player_Controllers;
+using UnityEngine;
 
 namespace _Project.Scripts.Core.Backend.Interfaces
 {
     public interface IInteractable : IPickable
     {
+        public GameObject gameObject { get; }
+        public Transform transform { get; }
+
+        /// <summary>
+        /// Display name of the interactable item.
+        /// </summary>
+        public string DisplayName { get; }
+
         /// <summary>
         /// Function called when the item is hovered over.
         /// </summary>

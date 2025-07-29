@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using _Project.Scripts.Core.Backend.Ability;
+using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
@@ -20,14 +22,16 @@ namespace _Project.Scripts.UI
     {
         // References to the UI components
 
-        //Health Bar
-        [SerializeField] public Slider healthBar;
+        [Header("Health Bar")] [SerializeField]
+        public Slider healthBar;
+
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private Image healthFill;
         [SerializeField] private Gradient healthGradient;
 
-        //Time Stability Bar
-        [SerializeField] public Slider timeStabilityBar;
+        [Header("Time Stability Bar")] [SerializeField]
+        public Slider timeStabilityBar;
+
         [SerializeField] private TMP_Text tmsValueText;
         [SerializeField] private Image tsmFill;
 
@@ -35,20 +39,28 @@ namespace _Project.Scripts.UI
         //[SerializeField] private Animator animator;
         //private static readonly int IsBlinking = Animator.StringToHash("IsBlinking");
 
-        //Enemies Remaining & Pick up Info
-        [SerializeField] private TMP_Text enemiesRemaining;
+        [Header("Enemies Remaining & Pickup Info")] [SerializeField]
+        private TMP_Text enemiesRemaining;
+
         [SerializeField] public TMP_Text pickupText;
 
-        //Loadout Information
-        [SerializeField] public TMP_Text currAmmo;
+        [Header("Loadout Information")] [SerializeField]
+        public TMP_Text currAmmo;
+
         [SerializeField] public TMP_Text maxAmmo;
         [SerializeField] public Image primaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
         [SerializeField] public Image abilityIconSlot;
         [SerializeField] private GameObject overlay;
         [SerializeField] public GameObject reloadingText;
-
         [SerializeField] public GameObject reloadingIcon;
+
+        [Header("References")] [SerializeField]
+        private LocalPlayerController player;
+
+        [SerializeField] private RandomRoomGeneration randomRoomGeneration;
+
+        [SerializeField] private RectTransform pickupTextPrefab;
 
         // Updates the reloading text based on the player's current weapon state
         private Coroutine _reloadingCoroutine;
@@ -58,10 +70,10 @@ namespace _Project.Scripts.UI
         private AbilityData _abilityData;
         private AbilityCooldown _abilityCooldown;
 
-        // References to the player controller
-        [SerializeField] private LocalPlayerController player;
         private RoomWaveController _roomWaveController;
-        [SerializeField] private RandomRoomGeneration randomRoomGeneration;
+
+        private RectTransform _pickupTextInstance;
+        private IInteractable _currentInteractable;
 
         private void Start()
         {
@@ -80,6 +92,8 @@ namespace _Project.Scripts.UI
             {
                 Debug.LogError("RoomWaveController not found in the scene.");
             }
+
+            _pickupTextInstance = Instantiate(pickupTextPrefab);
         }
 
         private void OnEnable()
@@ -103,6 +117,7 @@ namespace _Project.Scripts.UI
             UpdateReloadingText();
             UpdateLoadoutInfo();
             UpdateEnemiesRemaining();
+            UpdateInteractable();
         }
 
         // Updates the number of enemies remaining in the room
@@ -137,7 +152,7 @@ namespace _Project.Scripts.UI
         {
             if (!player)
                 return;
-            
+
             var currentAbility = player.HandController.CurrentAbility;
             if (currentAbility)
             {
@@ -283,6 +298,32 @@ namespace _Project.Scripts.UI
             healthBar.maxValue = player.Stats.maxHealth;
             healthText.text = player.CurrentHealth + " / " + player.Stats.maxHealth;
             healthFill.color = healthGradient.Evaluate(healthBar.normalizedValue);
+        }
+
+        /// <summary>
+        /// Updates the pickup text.
+        /// </summary>
+        private void UpdateInteractable()
+        {
+            var currentInteractable = player.CurrentInteractable;
+            if (currentInteractable == null)
+            {
+                _pickupTextInstance.gameObject.SetActive(false);
+                return;
+            }
+
+            _pickupTextInstance.transform.SetParent(currentInteractable.transform);
+            try
+            {
+                _pickupTextInstance.GetComponentInChildren<TMP_Text>().SetText($"Press F to pick up {currentInteractable.DisplayName}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error setting pickup text:");
+                Debug.LogException(e);
+            }
+            _pickupTextInstance.transform.localPosition = Vector3.up;
+            _pickupTextInstance.gameObject.SetActive(true);
         }
     }
 }

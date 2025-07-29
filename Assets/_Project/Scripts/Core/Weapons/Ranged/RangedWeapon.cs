@@ -59,6 +59,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
+        public override string DisplayName => stats.WeaponName;
         public override string WeaponID => stats.WeaponID;
 
         /// <summary>
@@ -94,8 +95,10 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
             InitializeAmo();
@@ -141,9 +144,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
         public override void OnCollected(PlayerController playerController)
         {
-            if(playerController.HandController.Weapons[0])
+            if (playerController.HandController.Weapons[0])
                 return;
-            
+
             playerController.HandController.OnItemPicked(this);
         }
 
