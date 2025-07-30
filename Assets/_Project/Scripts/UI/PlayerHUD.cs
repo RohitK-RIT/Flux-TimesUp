@@ -140,15 +140,24 @@ namespace _Project.Scripts.UI
                 enemiesRemaining.gameObject.SetActive(false);
                 return;
             }
-
-            _roomWaveController ??= FindObjectOfType<RoomWaveController>();
-            var enemiesCount = _roomWaveController.EnemiesInRoom.Count(enemy => enemy && enemy.activeInHierarchy);
-            enemiesRemaining.text = enemiesCount switch
+            _roomWaveController = FindObjectOfType<RoomWaveController>();
+            if (_roomWaveController == null) return;
+            var enemiesCount = 0;
+            foreach (var enemy in _roomWaveController.EnemiesInRoom)
             {
-                > 0 => "Enemies Remaining: " + enemiesCount,
-                0 => "Portal is now open!",
-                _ => enemiesRemaining.text
-            };
+                if (enemy != null && enemy.activeInHierarchy)
+                {
+                    enemiesCount++;
+                }
+            }
+            if (enemiesCount > 0)
+            {
+                enemiesRemaining.text = "Enemies Remaining: " + enemiesCount.ToString();
+            }
+            else if(enemiesCount == 0)
+            {
+                enemiesRemaining.text = "Portal is now open!";
+            }
         }
 
         // Shows the ability HUD with the specified ability type
