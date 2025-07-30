@@ -62,6 +62,20 @@ namespace _Project.Scripts.UI
 
         [SerializeField] private RectTransform pickupTextPrefab;
 
+        private RectTransform PickupTextInstance
+        {
+            get
+            {
+                if(!_pickupTextInstance)
+                {
+                    _pickupTextInstance = Instantiate(pickupTextPrefab);
+                    _pickupTextInstance.gameObject.SetActive(false);
+                }
+                
+                return _pickupTextInstance;
+            }
+        }
+
         // Updates the reloading text based on the player's current weapon state
         private Coroutine _reloadingCoroutine;
         private GameObject _primaryOverlay;
@@ -92,8 +106,6 @@ namespace _Project.Scripts.UI
             {
                 Debug.LogError("RoomWaveController not found in the scene.");
             }
-
-            _pickupTextInstance = Instantiate(pickupTextPrefab);
         }
 
         private void OnEnable()
@@ -308,22 +320,23 @@ namespace _Project.Scripts.UI
             var currentInteractable = player.CurrentInteractable;
             if (currentInteractable == null)
             {
-                _pickupTextInstance.gameObject.SetActive(false);
+                PickupTextInstance.gameObject.SetActive(false);
                 return;
             }
 
-            _pickupTextInstance.transform.SetParent(currentInteractable.transform);
+            PickupTextInstance.transform.SetParent(currentInteractable.transform);
             try
             {
-                _pickupTextInstance.GetComponentInChildren<TMP_Text>().SetText($"Press F to pick up {currentInteractable.DisplayName}");
+                PickupTextInstance.GetComponentInChildren<TMP_Text>().SetText($"Press F to pick up {currentInteractable.DisplayName}");
             }
             catch (Exception e)
             {
                 Debug.LogError("Error setting pickup text:");
                 Debug.LogException(e);
             }
-            _pickupTextInstance.transform.localPosition = Vector3.up;
-            _pickupTextInstance.gameObject.SetActive(true);
+
+            PickupTextInstance.transform.localPosition = Vector3.up;
+            PickupTextInstance.gameObject.SetActive(true);
         }
     }
 }
