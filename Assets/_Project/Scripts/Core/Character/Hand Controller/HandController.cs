@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
@@ -290,18 +291,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
         public bool OnItemPicked(IPickable pickable)
         {
-            switch (pickable)
+            return pickable switch
             {
-                case AmmoPickup ammoPickup:
-                    OnAmmoCollected(ammoPickup.Ammo);
-                    return true;
-                case AbilityPickup abilityPickup:
-                    return OnAbilitySwitched(abilityPickup.Type);
-                case Weapon weapon:
-                    return OnWeaponSwitched(weapon);
-                default:
-                    return false;
-            }
+                AmmoPickup ammoPickup => OnAmmoCollected(ammoPickup.Ammo),
+                AbilityPickup abilityPickup => OnAbilitySwitched(abilityPickup.Type),
+                Weapon weapon => OnWeaponSwitched(weapon),
+                _ => false
+            };
         }
 
         private bool OnAbilitySwitched(AbilityType type)
@@ -364,9 +360,19 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             return true;
         }
 
-        private void OnAmmoCollected(int amount)
+        private bool OnAmmoCollected(int amount)
         {
-            OnAmmoPicked?.Invoke(amount);
+            foreach (var weapon in Weapons)
+            {
+                if (weapon is not RangedWeapon rangedWeapon)
+                    continue;
+
+                rangedWeapon.AddAmmo(amount);
+                OnAmmoPicked?.Invoke(amount);
+                return true;
+            }
+            
+            return false;
         }
 
         public void DropItem()

@@ -322,11 +322,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Function to Add ammo to the weapon when the ammo is picked up.
         /// </summary>
         /// <param name="ammo">the ammo to be added</param>
-        private void AddAmmo(int ammo)
+        public void AddAmmo(int ammo)
         {
-            if (stats.WeaponType != WeaponType.Primary && !Equipped)
-                return;
-
             MaxAmmo += ammo;
         }
 
