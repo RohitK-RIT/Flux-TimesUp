@@ -232,7 +232,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
             }
 
-            if (MaxAmmo == 0)
+            if (MaxAmmo == 0 && CurrentAmmo == 0)
             {
                 _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
             }
@@ -252,7 +252,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (CurrentAmmo == stats.MagazineSize)
                 return;
 
-            if (MaxAmmo == 0)
+            if (MaxAmmo == 0 && CurrentAmmo == 0)
             {
                 _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
                 return;
