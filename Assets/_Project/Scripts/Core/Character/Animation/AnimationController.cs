@@ -45,7 +45,7 @@ namespace _Project.Scripts.Core.Character.Animation
 
             if (_handController)
             {
-                _handController.OnWeaponSwitched += HandSwitched;
+                _handController.OnItemSwitched += HandSwitched;
             }
         }
 
@@ -64,7 +64,7 @@ namespace _Project.Scripts.Core.Character.Animation
 
             if (_handController)
             {
-                _handController.OnWeaponSwitched -= HandSwitched;
+                _handController.OnItemSwitched -= HandSwitched;
             }
         }
 

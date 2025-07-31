@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
@@ -12,6 +12,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
     public sealed class MeleeWeapon : Weapon
     {
         public override string WeaponID => stats.WeaponID;
+        public override string DisplayName => stats.WeaponName;
         public MeleeWeaponStats Stats => stats;
 
         /// <summary>
@@ -28,11 +29,21 @@ namespace _Project.Scripts.Core.Weapons.Melee
         private Coroutine _attackCoroutine;
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
-        
-        private void Awake()
+
+        protected override void Awake()
         {
+            base.Awake();
+            
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
+        }
+
+        public override void OnCollected(PlayerController playerController)
+        {
+            if(playerController.HandController.Weapons[1])
+                return;
+
+            playerController.HandController.OnItemPicked(this);
         }
 
         public override void BeginUse()
@@ -75,7 +86,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
             _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
-            var count = Physics.OverlapSphereNonAlloc(CurrentPlayerController.transform.position, stats.Range, collidersFound, ~CurrentPlayerController.FriendlyLayer,
+            var count = Physics.OverlapSphereNonAlloc(Owner.transform.position, stats.Range, collidersFound, ~Owner.FriendlyLayer,
                 QueryTriggerInteraction.Ignore);
 
             // Remove the enemies that are out of attack FOV
@@ -84,8 +95,8 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 if (!collidersFound[i])
                     continue;
 
-                var direction = collidersFound[i].transform.position - CurrentPlayerController.transform.position;
-                var angle = Vector3.Angle(CurrentPlayerController.MovementController.Body.forward, direction);
+                var direction = collidersFound[i].transform.position - Owner.transform.position;
+                var angle = Vector3.Angle(Owner.MovementController.Body.forward, direction);
 
                 // Deal damage to the enemies in the attack FOV
                 if (angle > stats.AttackFOV)
@@ -93,10 +104,10 @@ namespace _Project.Scripts.Core.Weapons.Melee
 
                 var colliderLayerMask = 1 << collidersFound[i].gameObject.layer;
 
-                if ((colliderLayerMask & CurrentPlayerController.OpponentLayer) == 0)
+                if ((colliderLayerMask & Owner.OpponentLayer) == 0)
                     continue;
 
-                if (Physics.Raycast(CurrentPlayerController.transform.position, direction, out var raycastHit, stats.Range, ~CurrentPlayerController.FriendlyLayer,
+                if (Physics.Raycast(Owner.transform.position, direction, out var raycastHit, stats.Range, ~Owner.FriendlyLayer,
                         QueryTriggerInteraction.Ignore) && raycastHit.collider != collidersFound[i])
                     continue;
 
@@ -111,5 +122,13 @@ namespace _Project.Scripts.Core.Weapons.Melee
             // TODO: Implement era specific damage calculation
             return new IDamageable.DamageInfo(stats.Damage, this);
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Copy Weapon ID")]
+        private void CopyWeaponID()
+        {
+            GUIUtility.systemCopyBuffer = stats.WeaponID;
+        }
+#endif
     }
 }

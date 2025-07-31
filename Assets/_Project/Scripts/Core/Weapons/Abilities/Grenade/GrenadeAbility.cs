@@ -47,8 +47,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
             
             grenadeInstance.ThrowGrenade(forceDirection, this);
             
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Cooldown));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.StartCoroutine(DeactivateAbility(stats.Cooldown));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

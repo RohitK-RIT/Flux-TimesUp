@@ -2,6 +2,7 @@ using System;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
 
@@ -49,7 +50,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The property that gets or sets the current pickable item.
         /// </summary>
-        private IInteractable CurrentInteractable
+        public IInteractable CurrentInteractable
         {
             get => _currentInteractable;
             set
@@ -100,13 +101,11 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputEnded += EndAttack;
 
             _localInputController.OnAbilityEquipped += AbilityEquipped;
-
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
             _localInputController.OnSwitchWeaponHotkey += SwitchWeaponHotKey;
-            
             _localInputController.OnReloadInput += Reload;
-
-            _localInputController.OnLootPickupInput += PickUpItem;
+            _localInputController.OnLootPickupInput += PickupItem;
+            _localInputController.OnDropInput += HandController.DropItem;
         }
 
         private void OnDisable()
@@ -118,11 +117,10 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputEnded -= EndAttack;
 
             _localInputController.OnAbilityEquipped -= AbilityEquipped;
-
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
-
-            _localInputController.OnLootPickupInput -= PickUpItem;
+            _localInputController.OnLootPickupInput -= PickupItem;
+            _localInputController.OnDropInput -= HandController.DropItem;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -136,9 +134,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <param name="other">collider of the object collided</param>
         private void CheckForCollectibles(Collider other)
         {
-            if (!other.TryGetComponent<ICollectible>(out var collectible)) 
+            if (!other.TryGetComponent<ICollectible>(out var collectible))
                 return;
-            
+
             if (HandController.OnItemPicked(collectible))
                 collectible.OnCollected(this);
         }
@@ -184,7 +182,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             }
         }
 
-        private void PickUpItem()
+        private void PickupItem()
         {
             if (CurrentInteractable == null)
                 return;

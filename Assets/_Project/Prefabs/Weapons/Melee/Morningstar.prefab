@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1210268584845851345}
   - component: {fileID: 4065967447855448361}
   - component: {fileID: 8805976889149023027}
+  - component: {fileID: 989732044615041654}
   m_Layer: 0
   m_Name: Morningstar
   m_TagString: Untagged
@@ -48,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 1f839ae024ba44ecf9b3951bfad0a46b, type: 2}
+  holdPositionOffset: {x: 0.1057, y: 0.0474, z: -0.0075}
+  holdRotationOffset: {x: 289.67264, y: 178.52711, z: 181.81308}
 --- !u!114 &4065967447855448361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +161,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &989732044615041654
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5658496891946868453}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.50140953, y: 1.0131027, z: 0.43369722}
+  m_Center: {x: -0.0000009536743, y: 0.34600383, z: -0.000000059604645}
 --- !u!1001 &2259471225104107773
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -171,34 +195,6 @@ PrefabInstance:
       value: SM_Wep_Hammer_Mace_Spikes_01
       objectReference: {fileID: 0}
     - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.1057
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.0474
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.0075
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.57596076
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.8174575
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.005531876
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.0013950762
-      objectReference: {fileID: 0}
-    - target: {fileID: 458030, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -109.673
       objectReference: {fileID: 0}
@@ -210,7 +206,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 1.8130035
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 64626318233199694, guid: 7921028fb0081074d9fb82bb7648f1c9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

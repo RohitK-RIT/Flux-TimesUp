@@ -39,9 +39,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Heal
             isAbilityActive = true;
             //Heal the player
             Debug.Log("Player is using the heal ability!!");
-            CurrentPlayerController.Heal(stats.HealValue);
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.Heal(stats.HealValue);
+            Owner.StartCoroutine(DeactivateAbility(0));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
 
         }
 
