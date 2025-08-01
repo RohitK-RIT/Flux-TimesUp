@@ -2,6 +2,7 @@
 using _Project.Scripts.Core.Backend.Helper;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 
 namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 {
@@ -26,6 +27,14 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// GameObject to represent the shield.
         /// </summary>
         private GameObject _shieldVisual;
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        private void Awake()
+        {
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
 
         public override void OnPickup(PlayerController owner)
         {
@@ -51,6 +60,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         public override void OnEquip()
         {
             base.OnEquip();
+            _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             Shield();
             Used = true;
         }
