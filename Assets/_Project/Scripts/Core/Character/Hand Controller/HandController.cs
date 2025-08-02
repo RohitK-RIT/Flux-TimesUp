@@ -276,7 +276,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void BeginAttack()
         {
-            CurrentItem.BeginUse();
+            CurrentItem?.BeginUse();
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void EndAttack()
         {
-            CurrentItem.EndUse();
+            CurrentItem?.EndUse();
         }
 
         public bool OnItemInteracted(IInteractable interactable)
