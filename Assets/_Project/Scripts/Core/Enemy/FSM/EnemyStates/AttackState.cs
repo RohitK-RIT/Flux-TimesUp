@@ -89,6 +89,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
             if (_enemyInputController.enemyType == EnemyType.Basic)
             {
                 if (_enemyInputController.RangedWeapon.IsReloading)

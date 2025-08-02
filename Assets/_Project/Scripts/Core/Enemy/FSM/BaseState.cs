@@ -13,15 +13,15 @@ namespace _Project.Scripts.Core.Enemy.FSM
         }
 
         // Called once when the state is entered
-        public abstract void EnterState();
+        public virtual void EnterState() {}
 
         // Called once when the state is exited
-        public abstract void ExitState();
+        public virtual void ExitState() {}
 
         // Called on each frame while the state is active
-        public abstract void UpdateState();
+        public virtual void UpdateState() {}
 
         // Determines the next state to transition to, based on conditions
-        public abstract EnemyState GetNextState();
+        public virtual EnemyState GetNextState() => StateKey;
     }
 }
