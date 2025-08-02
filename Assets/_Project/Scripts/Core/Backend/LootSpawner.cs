@@ -2,6 +2,7 @@ using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Character.Hand_Controller;
+using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Onboarding;
@@ -18,7 +19,7 @@ namespace _Project.Scripts.Core.Backend
         {
             PlayerController.OnDeath += OnPlayerDeath;
         }
-        
+
         private void OnDisable()
         {
             PlayerController.OnDeath -= OnPlayerDeath;
@@ -34,8 +35,8 @@ namespace _Project.Scripts.Core.Backend
         {
             if (killingplayer != LevelSceneController.Instance.Player)
                 return;
-            
-            //Debug.Log("Room: " + playerkilled.transform.parent.name);
+
+            Debug.Log("Room: " + playerkilled.transform.parent.name);
             DropLoot(playerkilled.transform.position, playerkilled.transform.parent);
         }
 
@@ -50,9 +51,10 @@ namespace _Project.Scripts.Core.Backend
             var onboarding = FindObjectOfType<OnboardingManager>();
             if (onboarding != null)
             {
-                onboarding.OnLootDroppedAfterTeleport(); 
+                onboarding.OnLootDroppedAfterTeleport();
             }
-            var dropType = Random.Range(0, 2);
+
+            var dropType = Random.Range(0, 3);
             switch (dropType)
             {
                 case 0:
@@ -70,14 +72,14 @@ namespace _Project.Scripts.Core.Backend
                         4 => AbilityType.TsmFreeze,
                         _ => throw new ArgumentOutOfRangeException()
                     };
-                    SpawnRandomAbilities(abilityType, lootDropPosition, currentRoom);
+                    SpawnAbility(abilityType, lootDropPosition, currentRoom);
                     break;
-                /*case 2:
+                case 2:
                     // Spawn Random Weapons
-                    var weaponType = Random.Range(0, 10);
-                    break;*/
+                    var randomWeaponID = WeaponDataSystem.Instance.GetRandomWeaponID();
+                    SpawnWeapon(randomWeaponID, lootDropPosition, currentRoom);
+                    break;
             }
-            
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace _Project.Scripts.Core.Backend
         /// <param name="abilityType">The type of ability to spawn.</param>
         /// <param name="lootDropPosition">The position to spawn the ability.</param>
         /// <param name="currentRoom">Room in which this item will be spawned.</param>
-        private void SpawnRandomAbilities(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
+        private void SpawnAbility(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
         {
             // Get the ability pickup prefab
             var abilityPrefab = AbilityDataSystem.Instance.GetAbilityPickupPrefab(abilityType);
@@ -97,6 +99,17 @@ namespace _Project.Scripts.Core.Backend
             // Instantiate the ability pickup prefab
             Instantiate(abilityPrefab, lootDropPosition, Quaternion.identity, currentRoom);
         }
+
+        private void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
+        {
+            // Get the weapon prefab
+            var weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
+            // If the prefab is null, return
+            if (!weaponPrefab)
+                return;
+
+            // Instantiate the weapon prefab
+            Instantiate(weaponPrefab, lootDropPosition, Quaternion.identity, currentRoom);
+        }
     }
 }
-

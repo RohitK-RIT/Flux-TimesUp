@@ -105,7 +105,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnSwitchWeaponHotkey += SwitchWeaponHotKey;
             _localInputController.OnReloadInput += Reload;
             _localInputController.OnLootPickupInput += PickupItem;
-            _localInputController.OnDropInput += HandController.DropItem;
+            _localInputController.OnDropInput += HandController.DropWeapon;
         }
 
         private void OnDisable()
@@ -120,7 +120,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
             _localInputController.OnLootPickupInput -= PickupItem;
-            _localInputController.OnDropInput -= HandController.DropItem;
+            _localInputController.OnDropInput -= HandController.DropWeapon;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -137,7 +137,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             if (!other.TryGetComponent<ICollectible>(out var collectible))
                 return;
 
-            if (HandController.OnItemPicked(collectible))
+            if (HandController.OnItemCollected(collectible))
                 collectible.OnCollected(this);
         }
 
@@ -187,7 +187,7 @@ namespace _Project.Scripts.Core.Player_Controllers
             if (CurrentInteractable == null)
                 return;
 
-            if (!HandController.OnItemPicked(CurrentInteractable))
+            if (!HandController.OnItemInteracted(CurrentInteractable))
                 return;
 
             CurrentInteractable.OnPickup(this);
