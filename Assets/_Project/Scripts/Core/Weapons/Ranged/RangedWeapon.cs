@@ -147,7 +147,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (playerController.HandController.Weapons[0])
                 return;
 
-            playerController.HandController.OnItemPicked(this);
+            Debug.Log("This is BT");
+            playerController.HandController.OnItemInteracted(this);
         }
 
         public override void OnPickup(PlayerController owner)

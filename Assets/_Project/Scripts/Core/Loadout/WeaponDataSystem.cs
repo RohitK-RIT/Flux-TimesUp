@@ -53,14 +53,7 @@ namespace _Project.Scripts.Core.Loadout
             _selectedWeapons = new List<string>(selectedWeapons);
         }
 
-        //Retrieves the list of selected weapons.
-        public List<string> GetSelectedWeapons()
-        {
-            return _selectedWeapons;
-        }
-        
         //Retrieves the info of a weapon based on its ID.
-        
         public WeaponData GetWeaponInfo(string weaponID)
         {
             foreach (var weaponData in weaponDatabase) // Iterate through weapon database
@@ -72,6 +65,15 @@ namespace _Project.Scripts.Core.Loadout
                 
             }
             Debug.LogWarning($"Weapon with ID {weaponID} not found in the database!");
+            return null;
+        }
+        
+        public string GetRandomWeaponID()
+        {
+            if (weaponDatabase.Length != 0) 
+                return weaponDatabase[Random.Range(0, weaponDatabase.Length)].weaponStats.WeaponID;
+            
+            Debug.LogWarning("Weapon database is empty!");
             return null;
         }
     }

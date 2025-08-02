@@ -43,7 +43,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
             if(playerController.HandController.Weapons[1])
                 return;
 
-            playerController.HandController.OnItemPicked(this);
+            playerController.HandController.OnItemInteracted(this);
         }
 
         public override void BeginUse()
