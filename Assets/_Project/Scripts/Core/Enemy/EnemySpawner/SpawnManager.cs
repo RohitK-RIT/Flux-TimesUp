@@ -71,6 +71,9 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             {
                 Vector3 spawnPosition = _roomWaveController.OriginalSpawnPoints[i];
 
+                AudioSource.PlayClipAtPoint(spawnSFX, Camera.main.transform.position);
+                Instantiate(spawnEffectPrefab, spawnPosition, Quaternion.identity);
+
                 // Instantiate a brand new enemy
                 GameObject newEnemy = Instantiate(basicEnemyPrefab, spawnPosition, Quaternion.identity, transform.parent);
                 
