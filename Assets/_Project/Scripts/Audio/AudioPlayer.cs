@@ -1,3 +1,4 @@
+using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Gameplay.Revamp_PCG;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,6 +9,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     {
         [SerializeField] private WeaponAudioConfig weaponAudioConfig;
         [SerializeField] private RoomAudioConfig roomAudioConfig;
+        [SerializeField] private AbilityAudioConfig abilityAudioConfig;
         
         internal void PlayAttackClip(AudioSource audioSource, bool isReloading = false)
         {
@@ -33,37 +35,12 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
-        internal void PlayRoomClip(AudioSource audioSource, RoomEra? roomEraType = null, bool isBossRoom = false)
+        internal void PlayRoomClip(AudioSource audioSource)
         {
-            AudioClip selectedClip = GetClipByRoomEra(roomEraType, isBossRoom);
-            if (selectedClip == null) return;
-
-            audioSource.clip = selectedClip;
+            audioSource.clip = roomAudioConfig.RoomClip;
             audioSource.loop = true;
             audioSource.volume = roomAudioConfig.Volume;
             audioSource.Play();
-        }
-
-        private AudioClip GetClipByRoomEra(RoomEra? roomEraType = null, bool isBossRoom = false)
-        {
-            if (isBossRoom == true && roomAudioConfig.BossRoomClip != null)
-            {
-                return roomAudioConfig.BossRoomClip;
-            }
-            
-            switch (roomEraType)
-            {
-                case RoomEra.Medieval when roomAudioConfig.MedievalClip != null:
-                    return roomAudioConfig.MedievalClip;
-                case RoomEra.WildWest when roomAudioConfig.WildWestClip != null:
-                    return roomAudioConfig.WildWestClip;
-                case RoomEra.WorldWar when roomAudioConfig.WorldWarClip != null:
-                    return roomAudioConfig.WorldWarClip;
-                case RoomEra.Futuristic when roomAudioConfig.FuturisticClip != null:
-                    return roomAudioConfig.FuturisticClip;
-            }
-
-            return null;
         }
 
         internal void PlayPlayerTeleportClip(AudioSource audioSource)
@@ -73,5 +50,15 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 audioSource.PlayOneShot(roomAudioConfig.TeleportClip, roomAudioConfig.Volume);
             }
         }
+
+        internal void PlayAbilityClip(AudioSource audioSource)
+        {
+            if (abilityAudioConfig.AbilityClip != null)
+            {
+                audioSource.PlayOneShot(abilityAudioConfig.AbilityClip, abilityAudioConfig.Volume);
+            }
+        }
+        
+        
     }
 }

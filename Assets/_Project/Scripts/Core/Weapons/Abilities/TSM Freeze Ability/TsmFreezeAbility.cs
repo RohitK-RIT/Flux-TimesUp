@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
@@ -16,12 +17,21 @@ namespace _Project.Scripts.Core.Weapons.Abilities.TSM_Freeze_Ability
         /// </summary>
         [SerializeField] private TsmFreezeAbilityStats stats;
         
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        private void Awake()
+        {
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
         public override void OnEquip()
         {
             base.OnEquip();
+            _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             FreezeTsm();
             Used = true;
         }
@@ -40,8 +50,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.TSM_Freeze_Ability
             //Freeze Tsm for the player
             Debug.Log("Player is using the TSM Freeze ability!!");
             TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.FreezeDuration));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.StartCoroutine(DeactivateAbility(stats.FreezeDuration));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
         /// <summary>
         /// Coroutine to deactivate the ability after a certain time.

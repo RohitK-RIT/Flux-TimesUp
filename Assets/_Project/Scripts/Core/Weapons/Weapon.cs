@@ -1,9 +1,7 @@
-using System;
 using _Project.Scripts.Core.Backend.Helper;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
-using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons
@@ -11,62 +9,96 @@ namespace _Project.Scripts.Core.Weapons
     /// <summary>
     /// Base class for all weapons.
     /// </summary>
-    public abstract class Weapon : MonoBehaviour, IHandItem
+    [RequireComponent(typeof(Collider))]
+    public abstract class Weapon : MonoBehaviour, IHandItem, IInteractable, ICollectible
     {
         /// <summary>
         /// Current player controller.
         /// </summary>
-        public PlayerController CurrentPlayerController { get; private set; }
-
+        public PlayerController Owner { get; private set; }
+        
+        public abstract string DisplayName { get; }
 
         public abstract string WeaponID { get; }
 
         protected bool Equipped { get; private set; }
 
-        /// <summary>
-        /// Function called when the weapon is picked up.
-        /// </summary>
-        /// <param name="controller">the player controller that will control the weapon</param>
-        public virtual void OnPickup(PlayerController controller)
+        [SerializeField] private Vector3 holdPositionOffset;
+        [SerializeField] private Vector3 holdRotationOffset;
+
+        private BoxCollider _interactableCollider;
+
+        #region Interactable functions
+
+        protected virtual void Awake()
         {
-            CurrentPlayerController = controller;
-            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
+            _interactableCollider = GetComponent<BoxCollider>();
+            if (_interactableCollider)
+                _interactableCollider.isTrigger = true;
         }
 
-        /// <summary>
-        /// Function called when the weapon is dropped.
-        /// </summary>
+        public void OnHoverEnter(PlayerController controller)
+        {
+            Debug.Log($"Hovering over weapon: {WeaponID}");
+        }
+
+        public void OnHoverExit()
+        {
+            Debug.Log($"Hover exited from weapon: {WeaponID}");
+        }
+
+        #endregion
+
+        #region Collectible functions
+
+        public abstract void OnCollected(PlayerController playerController);
+
+        #endregion
+
+        #region Pickable functions
+
+        public virtual void OnPickup(PlayerController owner)
+        {
+            Owner = owner;
+            gameObject.SetLayerRecursively(owner.FriendlyLayerName);
+
+            transform.localPosition = holdPositionOffset;
+            transform.localRotation = Quaternion.Euler(holdRotationOffset);
+
+            if (_interactableCollider)
+                _interactableCollider.enabled = false;
+        }
+
         public virtual void OnDrop()
         {
-            CurrentPlayerController = null;
+            Owner = null;
             gameObject.SetLayerRecursively("Pickup");
+
+            transform.localRotation = Quaternion.identity;
+
+            if (_interactableCollider)
+                _interactableCollider.enabled = true;
         }
 
-        /// <summary>
-        /// Function called when the weapon is equipped.
-        /// </summary>
+        #endregion
+
+        #region Hand Item functions
+
         public virtual void OnEquip()
         {
             Equipped = true;
         }
 
-        /// <summary>
-        /// Function called when the weapon is unequipped.
-        /// </summary>
         public virtual void OnUnequip()
         {
             Equipped = false;
         }
 
-        /// <summary>
-        /// Start attacking.
-        /// </summary>
         public abstract void BeginUse();
 
-        /// <summary>
-        /// End attacking.
-        /// </summary>
         public abstract void EndUse();
+
+        #endregion
 
         /// <summary>
         /// Get the damage of the weapon.

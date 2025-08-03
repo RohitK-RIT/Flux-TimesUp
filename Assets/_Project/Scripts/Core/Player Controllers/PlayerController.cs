@@ -17,7 +17,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         public delegate void PlayerDeath(PlayerController attacker, PlayerController deadPlayer, IHandItem itemKilledBy);
 
         /// <summary>
-        /// 
+        /// Event that is triggered when a player dies.
         /// </summary>
         public static event PlayerDeath OnDeath;
 

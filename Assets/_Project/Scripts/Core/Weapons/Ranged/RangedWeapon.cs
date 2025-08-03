@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,7 +13,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     /// <summary>
     /// Ranged weapon class.
     /// </summary>
-    public sealed class RangedWeapon : Weapon, IHandItem
+    public sealed class RangedWeapon : Weapon
     {
         /// <summary>
         /// Weapon stats.
@@ -60,6 +59,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             }
         }
 
+        public override string DisplayName => stats.WeaponName;
         public override string WeaponID => stats.WeaponID;
 
         /// <summary>
@@ -77,7 +77,6 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// </summary>
         private FireModes _currentFireMode;
 
-
         /// <summary>
         /// Object pool for projectiles.
         /// </summary>
@@ -92,16 +91,19 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Coroutine for firing.
         /// </summary>
         private Coroutine _fireCoroutine;
-        
+
         private AudioSource _shootingAudioSource;
         private AudioPlayer _audioPlayer;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
             InitializeAmo();
         }
+
         private void Start()
         {
             // Initialize the dictionary of fire mode strategies
@@ -140,36 +142,47 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             _projectilePool?.Dispose();
         }
 
-        public override void OnPickup(PlayerController controller)
+        public override void OnCollected(PlayerController playerController)
         {
-            base.OnPickup(controller);
+            if (playerController.HandController.Weapons[0])
+                return;
 
-            controller.HandController.OnAmmoPicked += AddAmmo;
+            Debug.Log("This is BT");
+            playerController.HandController.OnItemInteracted(this);
+        }
+
+        public override void OnPickup(PlayerController owner)
+        {
+            base.OnPickup(owner);
+            StartReloadCheck();
         }
 
         public override void OnDrop()
         {
+            StopReloadCheck();
             base.OnDrop();
-
-            if (IsReloading)
-                StopReloading();
-
-            CurrentPlayerController.HandController.OnAmmoPicked -= AddAmmo;
         }
 
         public override void OnEquip()
         {
             base.OnEquip();
+            StartReloadCheck();
+        }
 
+        public override void OnUnequip()
+        {
+            StopReloadCheck();
+            base.OnUnequip();
+        }
+
+        private void StartReloadCheck()
+        {
             if (CurrentAmmo == 0)
                 StartReloading();
         }
 
-
-        public override void OnUnequip()
+        private void StopReloadCheck()
         {
-            base.OnUnequip();
-
             if (IsReloading)
                 StopReloading();
         }
@@ -221,7 +234,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             {
                 _fireCoroutine = StartCoroutine(_currentFiringPin.Fire(stats, FireProjectile));
             }
-            if (MaxAmmo == 0)
+
+            if (MaxAmmo == 0 && CurrentAmmo == 0)
             {
                 _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
             }
@@ -241,7 +255,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (CurrentAmmo == stats.MagazineSize)
                 return;
 
-            if (MaxAmmo == 0)
+            if (MaxAmmo == 0 && CurrentAmmo == 0)
             {
                 _audioPlayer.PlayOutOfAmmoClip(_shootingAudioSource);
                 return;
@@ -311,12 +325,17 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         /// Function to Add ammo to the weapon when the ammo is picked up.
         /// </summary>
         /// <param name="ammo">the ammo to be added</param>
-        private void AddAmmo(int ammo)
+        public void AddAmmo(int ammo)
         {
-            if (stats.WeaponType != WeaponType.Primary && !Equipped)
-                return;
-
             MaxAmmo += ammo;
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Copy Weapon ID")]
+        private void CopyWeaponID()
+        {
+            GUIUtility.systemCopyBuffer = stats.WeaponID;
+        }
+#endif
     }
 }

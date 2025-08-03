@@ -45,7 +45,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private void Start()
         {
             HidePortal();
-            _audioPlayer.PlayRoomClip(_roomAudioSource, roomEra);
+            _audioPlayer.PlayRoomClip(_roomAudioSource);
         }
 
         private void Update()

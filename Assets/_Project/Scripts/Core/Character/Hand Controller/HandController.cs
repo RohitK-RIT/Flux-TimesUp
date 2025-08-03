@@ -7,6 +7,7 @@ using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
+using _Project.Scripts.Core.Weapons.Melee;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     /// </summary>
     public class HandController : CharacterComponent
     {
-        public event Action OnWeaponSwitched;
+        public event Action OnItemSwitched;
         public event Action<int> OnAmmoPicked;
         public event Action<AbilityType> OnAbilityPicked;
 
@@ -44,11 +45,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             get => _currentItem;
             private set
             {
-                if (value is null)
-                {
-                    Debug.LogError("Item not found");
+                if (Equals(value, _currentItem))
                     return;
-                }
 
                 if (_currentItem is not null)
                 {
@@ -61,9 +59,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
                 _currentItem = value;
 
-                _currentItem.gameObject.SetActive(true);
-                _currentItem.OnEquip();
-                OnWeaponSwitched?.Invoke();
+                if (_currentItem is not null)
+                {
+                    _currentItem.gameObject.SetActive(true);
+                    _currentItem.OnEquip();
+                }
+
+                OnItemSwitched?.Invoke();
             }
         }
 
@@ -95,7 +97,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// The index of the current weapon.
         /// </summary>
-        private int _currentWeaponIndex;
+        private int _currentWeaponIndex = 0;
 
         /// <summary>
         /// The currently equipped weapon.  
@@ -107,24 +109,23 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         private Ability _currentAbility;
 
+        private static readonly List<string> PlayerWeaponIDs = new()
+        {
+            "Pistol3",
+            "Sword1"
+        };
+
         public override void Initialize(PlayerController playerController)
         {
             base.Initialize(playerController);
 
-            // Fetch selected weapons from WeaponDataSystem
             if (!hasPreMadeLoadout)
-            {
-                var selectedLoadoutWeaponIDs = WeaponDataSystem.Instance.GetSelectedWeapons();
-                if (selectedLoadoutWeaponIDs is { Count: > 0 })
-                    LoadWeapon(selectedLoadoutWeaponIDs);
-                else
-                    Debug.LogError("No selected weapons found in WeaponDataSystem");
-            }
+                LoadWeapon(PlayerWeaponIDs);
+            else
+                foreach (var weapon in weapons)
+                    weapon.OnPickup(PlayerController);
 
-            // The player controller has picked up all the weapons
-            foreach (var weapon in weapons)
-                weapon?.OnPickup(PlayerController);
-
+            _currentWeaponIndex = 0;
             CurrentItem = weapons[_currentWeaponIndex];
         }
 
@@ -145,8 +146,6 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             {
                 // Instantiate the ability prefab
                 CurrentAbility = Instantiate(abilityPrefab, weaponParent);
-                //CurrentAbility.gameObject.SetActive(false);
-                CurrentAbility.OnPickup(PlayerController);
             }
             else
             {
@@ -157,7 +156,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// Loads a weapon by its ID.
         /// </summary>
-        /// <param name="weaponID">The ID of the weapon to load.</param>
+        /// <param name="weaponIDs">The ID of the weapon to load.</param>
         private void LoadWeapon(List<string> weaponIDs)
         {
             // Validate input
@@ -176,10 +175,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 var weapon = InstantiateWeapon(weaponIDs[i]);
                 weapon.gameObject.SetActive(false);
 
-                weapons[i] = weapon; // Add weapon to the array
+                PickupWeapon(i, weapon);
             }
-
-            _currentWeaponIndex = 0; // Set the initial index to 0
         }
 
         // Method to instantiate a weapon prefab based on weapon ID
@@ -210,7 +207,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
             CurrentItem = weapons[_currentWeaponIndex];
         }
-        
+
         /// <summary>
         /// Switches the weapon by a delta value.
         /// </summary>
@@ -279,7 +276,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void BeginAttack()
         {
-            CurrentItem.BeginUse();
+            CurrentItem?.BeginUse();
         }
 
         /// <summary>
@@ -287,24 +284,60 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// </summary>
         public void EndAttack()
         {
-            CurrentItem.EndUse();
+            CurrentItem?.EndUse();
         }
 
-        public bool OnItemPicked(IPickable pickable)
+        public bool OnItemInteracted(IInteractable interactable)
         {
-            switch (pickable)
+            switch (interactable)
             {
-                case AmmoPickup ammoPickup:
-                    OnAmmoCollected(ammoPickup.Ammo);
-                    return true;
                 case AbilityPickup abilityPickup:
-                    return TrySwitchAbility(abilityPickup.Type);
+                    return OnAbilitySwitched(abilityPickup.Type);
+                case Weapon weapon:
+                    return OnWeaponSwitched(weapon);
                 default:
+                    Debug.LogWarning("Unknown interactable type");
                     return false;
             }
         }
 
-        private bool TrySwitchAbility(AbilityType type)
+        public bool OnItemCollected(ICollectible collectible)
+        {
+            switch (collectible)
+            {
+                case AmmoPickup ammoPickup:
+                    return OnAmmoCollected(ammoPickup.Ammo);
+                case RangedWeapon rangedWeapon:
+                    var currentRangedWeapon = weapons[0] as RangedWeapon;
+                    if (currentRangedWeapon)
+                    {
+                        if (currentRangedWeapon.WeaponID != rangedWeapon.WeaponID)
+                            return false;
+
+                        currentRangedWeapon.AddAmmo(rangedWeapon.MaxAmmo);
+                        return true;
+                    }
+
+                    PickupWeapon(0, rangedWeapon);
+                    if(_currentWeaponIndex != 0)
+                        rangedWeapon.gameObject.SetActive(false);
+                    return true;
+                case MeleeWeapon meleeWeapon:
+                    if (weapons[1])
+                        return false;
+
+                    PickupWeapon(1, meleeWeapon);
+                    if (_currentWeaponIndex != 1)
+                        meleeWeapon.gameObject.SetActive(false);
+                    return true;
+
+                default:
+                    Debug.LogWarning("Unknown collectible type");
+                    return false;
+            }
+        }
+
+        private bool OnAbilitySwitched(AbilityType type)
         {
             if (type == AbilityType.None)
             {
@@ -325,9 +358,96 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             return true;
         }
 
-        private void OnAmmoCollected(int amount)
+        private bool OnWeaponSwitched(Weapon newWeapon)
         {
-            OnAmmoPicked?.Invoke(amount);
+            if (!newWeapon)
+            {
+                Debug.LogError("New weapon is null");
+                return false;
+            }
+
+            var weaponIndex = newWeapon switch
+            {
+                RangedWeapon => 0,
+                MeleeWeapon => 1
+            };
+
+            var oldWeapon = weapons[weaponIndex];
+
+            if (weaponIndex == 0 && oldWeapon.WeaponID == newWeapon.WeaponID)
+            {
+                var oldRangedWeapon = oldWeapon as RangedWeapon;
+                var newRangedWeapon = newWeapon as RangedWeapon;
+                
+                if (oldRangedWeapon && newRangedWeapon)
+                {
+                    oldRangedWeapon.AddAmmo(newRangedWeapon.MaxAmmo);
+                    return true;
+                }
+            }
+
+            if (oldWeapon)
+                DropWeapon(weaponIndex);
+
+            PickupWeapon(weaponIndex, newWeapon);
+            CurrentItem = weapons[_currentWeaponIndex];
+            oldWeapon.gameObject.SetActive(true);
+            if (weaponIndex != _currentWeaponIndex)
+                weapons[weaponIndex].gameObject.SetActive(false);
+
+            return true;
+        }
+
+        private bool OnAmmoCollected(int amount)
+        {
+            var currentRangedWeapon = weapons[0] as RangedWeapon;
+            if (!currentRangedWeapon)
+            {
+                Debug.LogWarning("No ranged weapon found to collect ammo for.");
+                return false;
+            }
+
+            currentRangedWeapon.AddAmmo(amount);
+            return true;
+        }
+
+        public void PickupWeapon(int weaponIndex, Weapon newWeapon)
+        {
+            if (!newWeapon)
+            {
+                Debug.LogError("Weapon is null");
+                return;
+            }
+
+            weapons[weaponIndex] = newWeapon;
+            newWeapon.transform.SetParent(weaponParent);
+            newWeapon.OnPickup(PlayerController);
+        }
+
+        public void DropWeapon()
+        {
+            // Check if the current item is a weapon
+            if (CurrentItem is not Weapon weaponToDrop)
+                return;
+
+            // Drop the current item
+            DropWeapon(_currentWeaponIndex);
+
+            SwitchWeapon(1);
+            weaponToDrop.gameObject.SetActive(true);
+        }
+
+        private void DropWeapon(int index)
+        {
+            var weaponToDrop = weapons[index];
+
+            weapons[index] = null;
+            weaponToDrop.transform.SetParent(null);
+            var body = PlayerController.MovementController.Body;
+            weaponToDrop.transform.position = body.position + body.forward;
+            weaponToDrop.transform.rotation = body.rotation;
+            weaponToDrop.OnDrop();
+            weaponToDrop.gameObject.SetActive(true);
         }
     }
 }

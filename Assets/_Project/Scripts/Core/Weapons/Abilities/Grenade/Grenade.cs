@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
@@ -17,6 +17,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         /// </summary>
         private Rigidbody grenadeRb;
 
+        public event Action OnExploded;
         private void Awake()
         {
             grenadeRb = GetComponent<Rigidbody>();
@@ -32,9 +33,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
         {
             //Throw Grenade Functionality
             grenadeRb.isKinematic = false;
-
             grenadeRb.AddForce(forceDirection * grenadeAbility.Stats.Range, ForceMode.Impulse);
-
             // Start grenade explosion timer
             StartCoroutine(GrenadeExplosion(grenadeAbility));
         }
@@ -48,6 +47,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
 
             // Instantiate explosion VFX
             var explosionVFX = Instantiate(explosionVFXPrefab, transform.position, transform.rotation);
+            OnExploded?.Invoke();
             Destroy(explosionVFX, 1f); // Destroy explosion VFX after 1 seconds
 
             // Check for enemies in the attack range

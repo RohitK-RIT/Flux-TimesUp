@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
@@ -14,13 +15,22 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
         /// The stats for the Teleport ability.
         /// </summary>
         [SerializeField] private TeleportAbilityStats stats;
+        
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
 
+        private void Awake()
+        {
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
         /// <summary>
         /// Called when the ability is equipped.
         /// </summary>
         public override void OnEquip()
         {
             base.OnEquip();
+            _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             Teleport();
             Used = true;
         }
@@ -38,18 +48,18 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Teleport
 
             isAbilityActive = true;
             // Teleport the player to the target position
-            Vector3 targetPosition = CurrentPlayerController.transform.position + (-CurrentPlayerController.MovementController.Body.forward) * stats.Distance;
+            Vector3 targetPosition = Owner.transform.position + (-Owner.MovementController.Body.forward) * stats.Distance;
 
             // Perform a raycast to check that teleport does not happen through room walls. 
             RaycastHit hit;
-            if (Physics.Raycast(CurrentPlayerController.transform.position, -CurrentPlayerController.MovementController.Body.forward, out hit, stats.Distance))
+            if (Physics.Raycast(Owner.transform.position, -Owner.MovementController.Body.forward, out hit, stats.Distance))
             {
                 return; // Prevent teleportation
             }
 
-            CurrentPlayerController.transform.position = targetPosition;
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(0));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.transform.position = targetPosition;
+            Owner.StartCoroutine(DeactivateAbility(0));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>
