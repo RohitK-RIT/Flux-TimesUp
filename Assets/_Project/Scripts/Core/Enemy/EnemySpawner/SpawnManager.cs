@@ -7,6 +7,9 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
     {
         [SerializeField] private GameObject chargerEnemyPrefab; // Reference to charger enemy prefab
         [SerializeField] private GameObject basicEnemyPrefab; // Reference to basic enemy prefab
+        [SerializeField] private AudioClip spawnSFX;
+        [SerializeField] private GameObject spawnEffectPrefab;
+
         private readonly float _spawnDistanceFromEnemy = 4f; // Distance from an enemy
         private RoomWaveController _roomWaveController;
 
@@ -35,15 +38,24 @@ namespace _Project.Scripts.Core.Enemy.EnemySpawner
             // Instantiate Chargers
             if (type == EnemyType.Basic)
             {
+                AudioSource.PlayClipAtPoint(spawnSFX, Camera.main.transform.position);
+
+                Instantiate(spawnEffectPrefab, spawnPos1, Quaternion.identity);
                 Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity, transform.parent);
+                Instantiate(spawnEffectPrefab, spawnPos2, Quaternion.identity);
                 Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity, transform.parent);
                 
             }
 
             if (type == EnemyType.Boss)
             {
+                AudioSource.PlayClipAtPoint(spawnSFX, Camera.main.transform.position);
+
+                Instantiate(spawnEffectPrefab, spawnPos1, Quaternion.identity);
                 Instantiate(chargerEnemyPrefab, spawnPos1, Quaternion.identity, transform.parent);
+                Instantiate(spawnEffectPrefab, spawnPos2, Quaternion.identity);
                 Instantiate(chargerEnemyPrefab, spawnPos2, Quaternion.identity, transform.parent);
+                Instantiate(spawnEffectPrefab, spawnPos3, Quaternion.identity);
                 Instantiate(chargerEnemyPrefab, spawnPos3, Quaternion.identity, transform.parent);
             }
         }

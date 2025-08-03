@@ -82,6 +82,8 @@ namespace _Project.Scripts.Core.Enemy
         
         [SerializeField] internal GameObject slowPlayerVFX;
         [SerializeField] internal GameObject reduceTSMVFX;
+        [SerializeField] private AudioClip deathSFX;
+        [SerializeField] private GameObject deathEffectPrefab;
 
 
         private void Awake()
@@ -473,7 +475,21 @@ namespace _Project.Scripts.Core.Enemy
         {
             OnMoveInputUpdated?.Invoke(new Vector2(moveDirection.x, moveDirection.z));
         }
-        
+
+        public void DeathEffects()
+        {
+            // Spawn particle effect at the enemy's position and rotation
+            if (deathEffectPrefab != null)
+            {
+                Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            }
+            if (deathSFX != null)
+            {
+                AudioSource.PlayClipAtPoint(deathSFX, Camera.main.transform.position);
+            }
+
+        }
+
         private void LateUpdate()
         {
             Vector3 movementDir = Enemy.velocity;
