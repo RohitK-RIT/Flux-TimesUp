@@ -244,17 +244,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f623737f-4845-41f7-b51e-3a01ac65b76d"",
-                    ""path"": ""<Keyboard>/3"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch Weapon Hotkey"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""4fed0ae2-3826-430f-ba13-edda53bf9256"",
                     ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",

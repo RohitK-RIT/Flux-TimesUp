@@ -25,7 +25,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities
                 return;
             
             //Get Ability
-            if (controller.HandController.OnItemPicked(this))
+            if (controller.HandController.OnItemInteracted(this))
                 OnPickup(controller);
         }
 

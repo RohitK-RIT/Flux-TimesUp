@@ -98,7 +98,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
         protected override void Awake()
         {
             base.Awake();
-            
+
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
             InitializeAmo();
@@ -147,39 +147,42 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             if (playerController.HandController.Weapons[0])
                 return;
 
-            playerController.HandController.OnItemPicked(this);
+            Debug.Log("This is BT");
+            playerController.HandController.OnItemInteracted(this);
         }
 
         public override void OnPickup(PlayerController owner)
         {
             base.OnPickup(owner);
-
-            Owner.HandController.OnAmmoPicked += AddAmmo;
+            StartReloadCheck();
         }
 
         public override void OnDrop()
         {
-            if (IsReloading)
-                StopReloading();
-
-            Owner.HandController.OnAmmoPicked -= AddAmmo;
-
+            StopReloadCheck();
             base.OnDrop();
         }
 
         public override void OnEquip()
         {
             base.OnEquip();
+            StartReloadCheck();
+        }
 
+        public override void OnUnequip()
+        {
+            StopReloadCheck();
+            base.OnUnequip();
+        }
+
+        private void StartReloadCheck()
+        {
             if (CurrentAmmo == 0)
                 StartReloading();
         }
 
-
-        public override void OnUnequip()
+        private void StopReloadCheck()
         {
-            base.OnUnequip();
-
             if (IsReloading)
                 StopReloading();
         }
