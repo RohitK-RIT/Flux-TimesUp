@@ -422,6 +422,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             weapons[weaponIndex] = newWeapon;
             newWeapon.transform.SetParent(weaponParent);
             newWeapon.OnPickup(PlayerController);
+            
+            // Auto-equip if player currently has no item in hand
+            if (CurrentItem == null)
+            {
+                _currentWeaponIndex = weaponIndex;
+                CurrentItem = newWeapon;
+            }
         }
 
         public void DropWeapon()

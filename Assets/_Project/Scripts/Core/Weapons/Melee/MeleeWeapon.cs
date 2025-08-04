@@ -86,9 +86,19 @@ namespace _Project.Scripts.Core.Weapons.Melee
             _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
-            var count = Physics.OverlapSphereNonAlloc(Owner.transform.position, stats.Range, collidersFound, ~Owner.FriendlyLayer,
-                QueryTriggerInteraction.Ignore);
-
+            
+            /*var count = Physics.OverlapSphereNonAlloc(Owner.transform.position, stats.Range, collidersFound, ~Owner.FriendlyLayer,
+                QueryTriggerInteraction.Ignore);*/
+            
+            int opponentMask = 1 << LayerMask.NameToLayer(Owner.OpponentLayerName);
+            var count = Physics.OverlapSphereNonAlloc(
+                Owner.transform.position,
+                stats.Range,
+                collidersFound,
+                opponentMask,
+                QueryTriggerInteraction.Collide 
+            );
+            
             // Remove the enemies that are out of attack FOV
             for (var i = 0; i < count; i++)
             {
@@ -102,18 +112,22 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 if (angle > stats.AttackFOV)
                     continue;
 
-                var colliderLayerMask = 1 << collidersFound[i].gameObject.layer;
+                
+                /*var colliderLayerMask = 1 << collidersFound[i].gameObject.layer;
 
                 if ((colliderLayerMask & Owner.OpponentLayer) == 0)
                     continue;
 
                 if (Physics.Raycast(Owner.transform.position, direction, out var raycastHit, stats.Range, ~Owner.FriendlyLayer,
                         QueryTriggerInteraction.Ignore) && raycastHit.collider != collidersFound[i])
-                    continue;
+                    continue;*/
+                
+                
 
                 // Check if the enemy is a player and deal damage
                 var playerController = collidersFound[i].gameObject.GetComponent<IDamageable>();
                 playerController?.TakeDamage(GetDamageInfo());
+                
             }
         }
 

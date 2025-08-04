@@ -6,6 +6,7 @@ using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
+using _Project.Scripts.Core.Weapons.Melee;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Revamp_PCG;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
@@ -48,6 +49,7 @@ namespace _Project.Scripts.UI
         public TMP_Text currAmmo;
 
         [SerializeField] public TMP_Text maxAmmo;
+        [SerializeField] private GameObject ammo;
         [SerializeField] public Image primaryIconSlot;
         [SerializeField] public Image meleeIconSlot;
         [SerializeField] public Image abilityIconSlot;
@@ -123,6 +125,11 @@ namespace _Project.Scripts.UI
         private void Update()
         {
             if (!player) return;
+            if (player.HandController.CurrentItem is Ability or MeleeWeapon)
+            {
+                ammo.SetActive(false);
+                reloadingText.SetActive(false);
+            }
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
@@ -202,6 +209,7 @@ namespace _Project.Scripts.UI
         {
             var currentRangedWeapon = player.HandController.CurrentItem as RangedWeapon;
             if (!currentRangedWeapon) return;
+            ammo.SetActive(true);
             currAmmo.text = currentRangedWeapon.CurrentAmmo.ToString();
             maxAmmo.text = currentRangedWeapon.MaxAmmo.ToString();
         }

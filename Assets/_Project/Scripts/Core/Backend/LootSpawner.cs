@@ -48,12 +48,6 @@ namespace _Project.Scripts.Core.Backend
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void DropLoot(Vector3 lootDropPosition, Transform currentRoom)
         {
-            var onboarding = FindObjectOfType<OnboardingManager>();
-            if (onboarding != null)
-            {
-                onboarding.OnLootDroppedAfterTeleport();
-            }
-
             var dropType = Random.Range(0, 3);
             switch (dropType)
             {
@@ -88,7 +82,7 @@ namespace _Project.Scripts.Core.Backend
         /// <param name="abilityType">The type of ability to spawn.</param>
         /// <param name="lootDropPosition">The position to spawn the ability.</param>
         /// <param name="currentRoom">Room in which this item will be spawned.</param>
-        private void SpawnAbility(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
+        public void SpawnAbility(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
         {
             // Get the ability pickup prefab
             var abilityPrefab = AbilityDataSystem.Instance.GetAbilityPickupPrefab(abilityType);
@@ -100,7 +94,7 @@ namespace _Project.Scripts.Core.Backend
             Instantiate(abilityPrefab, lootDropPosition, Quaternion.identity, currentRoom);
         }
 
-        private void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
+        public void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
         {
             // Get the weapon prefab
             var weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
