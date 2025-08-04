@@ -12,6 +12,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override void EnterState()
         {
+            _enemyInputController.DeathEffects();
             _enemyInputController.RoamingPosition = Vector3.zero;
             _enemyInputController.StopChasing();
             _enemyInputController.StopAttack();
