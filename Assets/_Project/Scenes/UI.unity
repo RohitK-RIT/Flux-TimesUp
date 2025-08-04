@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSceneName: PCG-Level
-  tutorialSceneName: Onboarding Scene
+  tutorialSceneName: Final Onboarding Scene
 --- !u!1 &121527607
 GameObject:
   m_ObjectHideFlags: 0
@@ -8679,24 +8679,6 @@ PrefabInstance:
 --- !u!224 &944037929 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5284375075575488168, guid: adebaac084a94b94787f50006d15e9f0,
-    type: 3}
-  m_PrefabInstance: {fileID: 944037928}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &944037930 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4033729545239977203, guid: adebaac084a94b94787f50006d15e9f0,
-    type: 3}
-  m_PrefabInstance: {fileID: 944037928}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944037931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8661b2cba940545f89215728a4e33009, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &944037931 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5393981363687102172, guid: adebaac084a94b94787f50006d15e9f0,
     type: 3}
   m_PrefabInstance: {fileID: 944037928}
   m_PrefabAsset: {fileID: 0}
@@ -19957,34 +19939,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 944037930}
-        m_TargetAssemblyTypeName: _Project.Scripts.Core.Loadout.LoadOutManager, Assembly-CSharp
-        m_MethodName: SetSceneName
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: New Onboarding Scene
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 944037931}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 117980633}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 117980637}
+        m_TargetAssemblyTypeName: _Project.Scripts.UI.MainMenu, Assembly-CSharp
+        m_MethodName: OnTutorialButtonClicked
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

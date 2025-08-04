@@ -11,6 +11,14 @@ namespace _Project.Scripts.Onboarding
         private void Awake()
         {
             currentHealth = maxHealth;
+            if (onboardingSequenceManager == null)
+            {
+                onboardingSequenceManager = FindObjectOfType<OnboardingSequenceManager>();
+                if (onboardingSequenceManager == null)
+                {
+                    Debug.LogError("OnboardingSequenceManager not found in scene!");
+                }
+            }
         }
 
         public void TakeDamage(IDamageable.DamageInfo damageInfo)
@@ -23,9 +31,9 @@ namespace _Project.Scripts.Onboarding
         }
 
         private void Die()
-        {
-            onboardingSequenceManager?.NotifyDummyDestroyedOnShooting();
+        {            
             Destroy(gameObject);
+            onboardingSequenceManager?.NotifyDummyDestroyedOnShooting();
         }
     }
 }

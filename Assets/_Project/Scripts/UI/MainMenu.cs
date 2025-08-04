@@ -9,7 +9,7 @@ namespace _Project.Scripts.UI
         public override PageID ID => PageID.MainMenu;
 
         [SerializeField] private string gameSceneName;
-        [SerializeField] private string tutorialSceneName = "Onboarding Scene";
+        [SerializeField] private string tutorialSceneName = "Final Onboarding Scene";
 
         public void OnStartButtonClicked()
         {

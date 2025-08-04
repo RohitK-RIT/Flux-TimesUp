@@ -1,5 +1,11 @@
+using _Project.Scripts.Core.Backend;
+using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
+using _Project.Scripts.Core.Weapons;
+using _Project.Scripts.Core.Weapons.Abilities;
+using _Project.Scripts.Core.Weapons.Melee;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Onboarding
@@ -25,31 +31,55 @@ namespace _Project.Scripts.Onboarding
         private OnboardingStep _currentStep = OnboardingStep.Room1MoveLook;
         private bool _hasMoved = false;
         private bool _hasLooked = false;
-        private int _shotsFired = 0;
-        private bool _hasReloaded = false;
-        private bool _hasPickedUp = false;
         
         private LocalPlayerController _playerController;
         private LocalInputController _inputController;
         
+        [SerializeField] private LootSpawner lootSpawner;
+        
+        [SerializeField] private GameObject rangedWeaponPickup;
+        [SerializeField] private GameObject meleeWeaponPickup;
+        [SerializeField] private GameObject abilityPickup;
+        
         [SerializeField] private GameObject[] doors;
         [SerializeField] private int targetsPerRoom = 3;
         private int destroyedTargets = 0;
+
+        private Weapon weaponDrop1;
+        private Weapon weaponDrop2;
         
         private void Awake()
         {
             _inputController = FindObjectOfType<LocalInputController>();
             _playerController = FindObjectOfType<LocalPlayerController>();
+
+            if (!lootSpawner)
+            {
+                lootSpawner = FindObjectOfType<LootSpawner>();
+            }
+            
+            lootSpawner.SpawnWeapon(WeaponDataSystem.Instance.weaponDatabase[0].weaponStats.WeaponID, rangedWeaponPickup.transform.position, rangedWeaponPickup.transform);
+            lootSpawner.SpawnWeapon(WeaponDataSystem.Instance.weaponDatabase[19].weaponStats.WeaponID, meleeWeaponPickup.transform.position, meleeWeaponPickup.transform);
+            lootSpawner.SpawnAbility(AbilityType.Grenades, abilityPickup.transform.position, abilityPickup.transform);
+            
             if(!_playerController) return;
         }
+
+        private void Start()
+        {
+            _playerController.HandController.DropWeapon();
+            weaponDrop1 = FindObjectOfType<RangedWeapon>();
+            Destroy(weaponDrop1.gameObject);
+            _playerController.HandController.DropWeapon();
+            weaponDrop2 = FindObjectOfType<MeleeWeapon>();
+            Destroy(weaponDrop2.gameObject);
+        }
+        
         private void OnEnable()
         {
             if (!_inputController) return;
             _inputController.OnLookInputUpdated += OnLookDetected;
             _inputController.OnMoveInputUpdated += OnMoveDetected;
-            /*_inputController.OnSwitchWeaponInput += OnWeaponSwitchDetected;
-            _inputController.OnLootPickupInput += OnLootPickupDetected;
-            _inputController.OnAbilityEquipped += OnAbilityEquipped;*/
         }
 
         private void OnDisable()
@@ -57,9 +87,6 @@ namespace _Project.Scripts.Onboarding
             if (!_inputController) return;
             _inputController.OnLookInputUpdated -= OnLookDetected;
             _inputController.OnMoveInputUpdated -= OnMoveDetected;
-            /*_inputController.OnSwitchWeaponInput -= OnWeaponSwitchDetected;
-            _inputController.OnLootPickupInput -= OnLootPickupDetected;
-            _inputController.OnAbilityEquipped -= OnAbilityEquipped;*/
         }
         private void OnLookDetected(Vector2 input)
         {
@@ -94,6 +121,7 @@ namespace _Project.Scripts.Onboarding
         }
         public void NotifyDummyDestroyedOnShooting()
         {
+            Debug.Log($"Dummy destroyed during step: {_currentStep}");
             destroyedTargets++;
 
             if (destroyedTargets >= targetsPerRoom)
@@ -101,10 +129,12 @@ namespace _Project.Scripts.Onboarding
                 switch (_currentStep)
                 {
                     case OnboardingStep.Room3Combat:
+                    {
                         destroyedTargets = 0;
                         PlayAnimation(doors[2]);
                         _currentStep = OnboardingStep.Room4Combat;
                         break;
+                    }
                     case OnboardingStep.Room4Combat:
                         destroyedTargets = 0;
                         _currentStep = OnboardingStep.Room5Combat;

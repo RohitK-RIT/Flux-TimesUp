@@ -1,8 +1,6 @@
-using System;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
-using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
 
@@ -65,9 +63,9 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// The current pickable item the player is interacting with.
         /// </summary>
         private IInteractable _currentInteractable;
-
         protected override void Awake()
         {
+            _camera = Camera.main;
             base.Awake();
 
             // Get the required components
@@ -82,9 +80,6 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Initialize the input controller and camera controller
             _localInputController.Initialize(this);
             _playerAimController.Initialize(this);
-
-            // Set the camera to the main camera
-            _camera = LevelSceneController.Instance.Camera;
         }
 
         private void Update()
@@ -171,6 +166,10 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void UpdatePickable()
         {
+            if(_camera == null)
+            {
+                return;
+            }
             if (Physics.Raycast(_camera.ViewportPointToRay(ViewportCenter), out var hit, 8f))
             {
                 if (hit.collider.TryGetComponent<IInteractable>(out var interactable))
