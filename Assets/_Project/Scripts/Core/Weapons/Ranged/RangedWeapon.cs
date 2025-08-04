@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
 using Unity.Mathematics;
 using UnityEngine;
@@ -295,6 +296,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             projectile.transform.rotation = muzzle.rotation;
             projectile.Initialize(this);
             projectile.gameObject.SetActive(true);
+            DataCollectionEvents.PlayerAttacked();
             _audioPlayer.PlayAttackClip(_shootingAudioSource, IsReloading);
             projectile.OnHit += theProjectile => { _projectilePool.Release(theProjectile); };
 
