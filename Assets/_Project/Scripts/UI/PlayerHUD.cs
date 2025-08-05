@@ -271,6 +271,7 @@ namespace _Project.Scripts.UI
         /// <param name="msg">Message to display on loot pickup.</param>
         private void ShowPickupFeedback(string msg)
         {
+            if(!pickupText) return;
             pickupText.text = msg;
             pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);

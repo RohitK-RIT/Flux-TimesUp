@@ -14,6 +14,8 @@ namespace _Project.Scripts.Core.Weapons
         public void OnPickup(PlayerController controller)
         {
             Destroy(gameObject);
+            if(!LevelSceneController.Instance)
+                return;
             LevelSceneController.Instance.playerHUD.OnAmmoPickup(Ammo);
         }
 

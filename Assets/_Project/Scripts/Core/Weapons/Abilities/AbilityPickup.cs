@@ -16,6 +16,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         public void OnPickup(PlayerController controller)
         {
             gameObject.SetActive(false);
+            if (!LevelSceneController.Instance)
+                return;
             LevelSceneController.Instance.playerHUD.OnAbilityPicked(abilityType);
         }
 
