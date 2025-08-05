@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
@@ -31,6 +32,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.TSM_Freeze_Ability
         public override void OnEquip()
         {
             base.OnEquip();
+            DataCollectionEvents.AbilityUsed();
             _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             FreezeTsm();
             Used = true;

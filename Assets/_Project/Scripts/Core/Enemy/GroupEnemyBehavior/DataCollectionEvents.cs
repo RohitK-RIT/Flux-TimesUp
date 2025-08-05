@@ -11,5 +11,7 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
         public static void RoomEntered() => OnRoomEntered?.Invoke();
         public static void PlayerAttacked() => OnPlayerAttacked?.Invoke();
         public static void PortalExited() => OnPortalExited?.Invoke();
+        public static event Action OnAbilityUsed;
+        public static void AbilityUsed() => OnAbilityUsed?.Invoke();
     }
 }
