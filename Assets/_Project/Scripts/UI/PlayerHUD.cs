@@ -109,19 +109,6 @@ namespace _Project.Scripts.UI
                 Debug.LogError("RoomWaveController not found in the scene.");
             }
         }
-
-        private void OnEnable()
-        {
-            player.HandController.OnAmmoPicked += OnAmmoPickup;
-            player.HandController.OnAbilityPicked += OnAbilityPicked;
-        }
-
-        private void OnDisable()
-        {
-            player.HandController.OnAmmoPicked -= OnAmmoPickup;
-            player.HandController.OnAbilityPicked -= OnAbilityPicked;
-        }
-
         private void Update()
         {
             if (!player) return;
@@ -263,7 +250,7 @@ namespace _Project.Scripts.UI
         /// Function for event when ammo is picked up.
         /// </summary>
         /// <param name="amount">the amount of ammo that is picked up</param>
-        private void OnAmmoPickup(int amount)
+        public void OnAmmoPickup(int amount)
         {
             ShowPickupFeedback($"You picked up {amount} ammo.");
         }
@@ -272,7 +259,7 @@ namespace _Project.Scripts.UI
         /// Function for event when an ability is picked up by the player.
         /// </summary>
         /// <param name="type">type of the ability that is picked up</param>
-        private void OnAbilityPicked(AbilityType type)
+        public void OnAbilityPicked(AbilityType type)
         {
             ShowPickupFeedback($"You picked up {type}");
             ShowAbilityHUD(type);
