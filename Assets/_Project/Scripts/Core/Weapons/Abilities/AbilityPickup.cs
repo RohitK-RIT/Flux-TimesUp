@@ -1,4 +1,5 @@
 ﻿using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         public void OnPickup(PlayerController controller)
         {
             gameObject.SetActive(false);
+            if (!LevelSceneController.Instance)
+                return;
+            LevelSceneController.Instance.playerHUD.OnAbilityPicked(abilityType);
         }
 
         public void OnDrop() { }
