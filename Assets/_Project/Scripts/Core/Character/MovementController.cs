@@ -90,19 +90,22 @@ namespace _Project.Scripts.Core.Character
         /// </summary>
         private void HandleMovement()
         {
-            // If movement input is zero then return.
             if (MoveInput == Vector2.zero && _characterController.isGrounded) return;
 
-            // Assign horizontal and vertical inputs to the movement vector
-            _moveDirection = (_camera.transform.right * MoveInput.x + _camera.transform.forward * MoveInput.y) * PlayerController.Stats.movementSpeed;
+            // Project camera forward onto the horizontal plane
+            var cameraForward = _camera.transform.forward;
+            cameraForward.y = 0;
+            cameraForward.Normalize();
 
-            // Applying gravity for the y value
+            var cameraRight = _camera.transform.right;
+            cameraRight.y = 0;
+            cameraRight.Normalize();
+
+            _moveDirection = (cameraRight * MoveInput.x + cameraForward * MoveInput.y);
+
             HandleGravity();
 
-            // Can add jump here if needed by modifying the y component of the movement vector. 
-
-            // Move the character via the character controller.
-            _characterController.Move(_moveDirection * (PlayerController.Stats.movementSpeed * Time.deltaTime));
+            _characterController.Move(_moveDirection * (PlayerController.Stats.movementSpeed * PlayerController.Stats.movementSpeed * Time.deltaTime));
         }
 
         /// <summary>
