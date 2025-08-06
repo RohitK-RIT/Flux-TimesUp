@@ -1,3 +1,4 @@
+using System.Collections;
 using _Project.Scripts.Core.Backend;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
@@ -64,15 +65,22 @@ namespace _Project.Scripts.Onboarding
             
             if(!_playerController) return;
         }
-
-        private void Start()
+        
+        private IEnumerator Start()
         {
+            yield return new WaitUntil(() => _playerController.HandController.CurrentItem != null);
+
             _playerController.HandController.DropWeapon();
+
             weaponDrop1 = FindObjectOfType<RangedWeapon>();
-            Destroy(weaponDrop1.gameObject);
+            if (weaponDrop1 != null)
+                Destroy(weaponDrop1.gameObject);
+
             _playerController.HandController.DropWeapon();
+
             weaponDrop2 = FindObjectOfType<MeleeWeapon>();
-            Destroy(weaponDrop2.gameObject);
+            if (weaponDrop2 != null)
+                Destroy(weaponDrop2.gameObject);
         }
         
         private void OnEnable()
