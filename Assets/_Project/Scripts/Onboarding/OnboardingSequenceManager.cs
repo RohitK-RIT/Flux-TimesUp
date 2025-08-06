@@ -110,10 +110,17 @@ namespace _Project.Scripts.Onboarding
             {
                 Debug.Log("Room 1 Complete");
                 _currentStep = OnboardingStep.Room1Completed;
-                Invoke(PlayAnimation(doors[0]), 3f);
+                //Invoke(PlayAnimation(doors[0]), 3f);
+                Invoke(nameof(PlayRoom1DoorAnimation), 1f);
                 _currentStep = OnboardingStep.Room2Lore;
             }
         }
+        
+        private void PlayRoom1DoorAnimation()
+        {
+            PlayAnimation(doors[0]);
+        }
+        
         public void CheckRoom2Progress()
         {
             PlayAnimation(doors[1]);
