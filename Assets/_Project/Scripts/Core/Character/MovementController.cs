@@ -105,7 +105,7 @@ namespace _Project.Scripts.Core.Character
 
             HandleGravity();
 
-            _characterController.Move(_moveDirection * (PlayerController.Stats.movementSpeed * PlayerController.Stats.movementSpeed * Time.deltaTime));
+            _characterController.Move(_moveDirection * (PlayerController.Stats.movementSpeed * Time.deltaTime));
         }
 
         /// <summary>
