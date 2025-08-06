@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -173,6 +174,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// <param name="context">struct that hold the action context</param>
         private void OnUseStarted(InputAction.CallbackContext context)
         {
+            DataCollectionEvents.PlayerAttacked();
             // Invoke the OnAttackInputBegan event.
             OnAttackInputBegan?.Invoke();
         }

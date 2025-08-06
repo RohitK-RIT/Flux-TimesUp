@@ -11,6 +11,7 @@ using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Enemy
 {
@@ -84,6 +85,8 @@ namespace _Project.Scripts.Core.Enemy
         [SerializeField] internal GameObject reduceTSMVFX;
         [SerializeField] private AudioClip deathSFX;
         [SerializeField] private GameObject deathEffectPrefab;
+        internal string enemyID;
+        internal float spawnTime;
 
 
         private void Awake()
@@ -93,6 +96,9 @@ namespace _Project.Scripts.Core.Enemy
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
             _handController = GetComponent<HandController>();
+            enemyID = "Enemy_" + Random.Range(1000, 9999);
+            spawnTime = Time.time;
+            DataCollectionEvents.EnemySpawned(enemyID, spawnTime);
         }
 
         private void Start()
