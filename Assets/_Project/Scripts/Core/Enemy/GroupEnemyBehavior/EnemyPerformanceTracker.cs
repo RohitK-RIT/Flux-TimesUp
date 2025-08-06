@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Project.Scripts.Core.Backend.Scene_Control;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
@@ -69,6 +70,8 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
             if (activeEnemies.Count == 0 && isRoomTracking)
             {
                 roomEndTime = Time.time;
+                float currentPlayerHealth = LevelSceneController.Instance.Player.CurrentHealth;
+                DataCollectionEvents.LastEnemyKilled_PlayerHealthSnapshot(currentPlayerHealth);
             }
         }
 

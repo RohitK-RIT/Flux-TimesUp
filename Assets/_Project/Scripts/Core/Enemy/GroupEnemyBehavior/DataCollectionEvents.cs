@@ -9,6 +9,10 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
         public static event Action OnPortalExited;
         public static event Action<string, float> OnEnemySpawned; // enemyID, timestamp
         public static event Action<string, float> OnEnemyDied;    // enemyID, lifespan
+        public static event Action<float> OnLastEnemyKilled_PlayerHealthSnapshot;
+
+        public static void LastEnemyKilled_PlayerHealthSnapshot(float health) =>
+            OnLastEnemyKilled_PlayerHealthSnapshot?.Invoke(health);
 
         public static void RoomEntered() => OnRoomEntered?.Invoke();
         public static void PlayerAttacked() => OnPlayerAttacked?.Invoke();

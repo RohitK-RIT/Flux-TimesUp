@@ -16,7 +16,7 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
                 logPath = Path.Combine(Application.persistentDataPath, $"session_{System.DateTime.Now:yyyyMMdd_HHmmss}.csv");
-                File.WriteAllText(logPath, "Timestamp,Category,Event,Value,Extra\n"); // CSV header
+                File.WriteAllText(logPath, "Category,Event,Value,Extra\n"); // CSV header
                 Debug.Log(Application.persistentDataPath);
             }
             else
@@ -27,8 +27,7 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
 
         public void Log(string category, string eventName, float value = 0f, string extra = "")
         {
-            string time = Time.time.ToString("F2");
-            string line = $"{time},{category},{eventName},{value},{extra}";
+            string line = $"{category},{eventName},{value},{extra}";
             File.AppendAllText(logPath, line + "\n");
         }
     }
