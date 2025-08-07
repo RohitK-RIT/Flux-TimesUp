@@ -3,13 +3,14 @@ using UnityEngine;
 
 namespace _Project.Scripts.Core.Character
 {
+    [RequireComponent(typeof(PlayerController))]
     public class CharacterComponent : MonoBehaviour
     {
-        public PlayerController PlayerController { get; private set; }
+        protected PlayerController PlayerController { get; private set; }
 
-        public virtual void Initialize(PlayerController playerController)
+        protected virtual void Awake()
         {
-            PlayerController = playerController;
+            PlayerController = GetComponent<PlayerController>();
         }
     }
 }

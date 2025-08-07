@@ -5,7 +5,6 @@ using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
-using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.UI;
@@ -89,10 +88,12 @@ namespace _Project.Scripts.Core.Enemy
         internal float spawnTime;
 
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Enemy = GetComponent<NavMeshAgent>();
             StateManager = GetComponent<StateManager>();
+            _playerDetection = GetComponent<PlayerDetection>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
             _handController = GetComponent<HandController>();
@@ -104,6 +105,7 @@ namespace _Project.Scripts.Core.Enemy
         private void Start()
         {
             EnemyManager.Instance.RegisterEnemy(this);
+            Enemy.speed = PlayerController.Stats.movementSpeed;
         }
 
         private void InitializeState()
@@ -143,17 +145,6 @@ namespace _Project.Scripts.Core.Enemy
                     Debug.LogError($"Unhandled enemy type: {enemyType}");
                     break;
             }
-        }
-
-        public override void Initialize(PlayerController playerController)
-        {
-            base.Initialize(playerController);
-
-            _playerDetection = GetComponent<PlayerDetection>();
-
-            _playerDetection.Initialize(playerController);
-
-            Enemy.speed = playerController.Stats.movementSpeed;
         }
 
         public void Disable()

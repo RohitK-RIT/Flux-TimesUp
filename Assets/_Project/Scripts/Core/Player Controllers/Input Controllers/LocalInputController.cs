@@ -42,11 +42,11 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
 
         [SerializeField] private float scrollCooldown = 0.25f; // Cooldown for weapon switching
         private float _lastScrollTime;
-        public virtual event Action<int> OnSwitchWeaponHotkey;
+        public event Action<int> OnSwitchWeaponHotkey;
 
         public override event Action OnReloadInput;
 
-        public virtual event Action OnLootPickupInput;
+        public event Action OnLootPickupInput;
 
         public event Action OnDropInput;
 
@@ -55,8 +55,10 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// </summary>
         private PlayerInput _playerInput;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             _playerInput = new PlayerInput();
         }
 

@@ -17,8 +17,10 @@ namespace _Project.Scripts.Core.Enemy
         internal readonly List<Transform> _playersInRange = new List<Transform>();  // List of players currently in range
 
         private EnemyInputController _enemyInputController;
-        private void Awake()
+
+        protected override void Awake()
         {
+            base.Awake();
             _enemyInputController = GetComponent<EnemyInputController>();
         }
 

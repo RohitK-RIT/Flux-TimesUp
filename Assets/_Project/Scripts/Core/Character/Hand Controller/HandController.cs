@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Loadout;
-using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -19,8 +18,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
     public class HandController : CharacterComponent
     {
         public event Action OnItemSwitched;
-        public event Action<int> OnAmmoPicked;
-        public event Action<AbilityType> OnAbilityPicked;
+        public event Action<IHandItem> OnItemPicked;
+        public event Action<IHandItem> OnItemDropped;
 
         /// <summary>
         /// The parent transform for the weapons.
@@ -88,7 +87,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
 
                 _currentAbility = value;
                 _currentAbility.OnPickup(PlayerController);
-                OnAbilityPicked?.Invoke(value.Type);
+                OnItemPicked?.Invoke(value);
             }
         }
 
@@ -97,7 +96,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// <summary>
         /// The index of the current weapon.
         /// </summary>
-        private int _currentWeaponIndex = 0;
+        private int _currentWeaponIndex;
 
         /// <summary>
         /// The currently equipped weapon.  
@@ -115,15 +114,16 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             "Sword1"
         };
 
-        public override void Initialize(PlayerController playerController)
+        private void Start()
         {
-            base.Initialize(playerController);
-
             if (!hasPreMadeLoadout)
                 LoadWeapon(PlayerWeaponIDs);
             else
                 foreach (var weapon in weapons)
+                {
                     weapon.OnPickup(PlayerController);
+                    OnItemPicked?.Invoke(weapon);
+                }
 
             _currentWeaponIndex = 0;
             CurrentItem = weapons[_currentWeaponIndex];
@@ -319,7 +319,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                     }
 
                     PickupWeapon(0, rangedWeapon);
-                    if(_currentWeaponIndex != 0)
+                    if (_currentWeaponIndex != 0)
                         rangedWeapon.gameObject.SetActive(false);
                     return true;
                 case MeleeWeapon meleeWeapon:
@@ -378,7 +378,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             {
                 var oldRangedWeapon = oldWeapon as RangedWeapon;
                 var newRangedWeapon = newWeapon as RangedWeapon;
-                
+
                 if (oldRangedWeapon && newRangedWeapon)
                 {
                     oldRangedWeapon.AddAmmo(newRangedWeapon.MaxAmmo);
@@ -411,7 +411,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             return true;
         }
 
-        public void PickupWeapon(int weaponIndex, Weapon newWeapon)
+        private void PickupWeapon(int weaponIndex, Weapon newWeapon)
         {
             if (!newWeapon)
             {
@@ -422,13 +422,15 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             weapons[weaponIndex] = newWeapon;
             newWeapon.transform.SetParent(weaponParent);
             newWeapon.OnPickup(PlayerController);
-            
+
             // Auto-equip if player currently has no item in hand
             if (CurrentItem == null)
             {
                 _currentWeaponIndex = weaponIndex;
                 CurrentItem = newWeapon;
             }
+
+            OnItemPicked?.Invoke(newWeapon);
         }
 
         public void DropWeapon()
@@ -455,6 +457,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             weaponToDrop.transform.rotation = body.rotation;
             weaponToDrop.OnDrop();
             weaponToDrop.gameObject.SetActive(true);
+
+            OnItemDropped?.Invoke(weaponToDrop);
         }
     }
 }
