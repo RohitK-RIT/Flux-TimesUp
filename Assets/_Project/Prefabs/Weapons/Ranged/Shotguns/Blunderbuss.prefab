@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 7052611767422597503}
   - component: {fileID: 1632700216981615122}
   - component: {fileID: 7574315806128529955}
+  - component: {fileID: 1480846294340931686}
   m_Layer: 0
   m_Name: Blunderbuss
   m_TagString: Untagged
@@ -160,6 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponAudioConfig: {fileID: 11400000, guid: 5cc2c24708f39401f8a76a669d0d0ec3, type: 2}
   roomAudioConfig: {fileID: 0}
+  abilityAudioConfig: {fileID: 0}
 --- !u!82 &7574315806128529955
 AudioSource:
   m_ObjectHideFlags: 0
@@ -256,6 +258,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &1480846294340931686
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2201032449165890969}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12295279, y: 0.31593055, z: 1.1603174}
+  m_Center: {x: 0.034999564, y: 0.055680066, z: 0.5285827}
 --- !u!1 &2256342861417065142
 GameObject:
   m_ObjectHideFlags: 0
