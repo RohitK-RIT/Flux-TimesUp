@@ -101,7 +101,7 @@ namespace _Project.Scripts.Core.Character
             cameraRight.y = 0;
             cameraRight.Normalize();
 
-            _moveDirection = (cameraRight * MoveInput.x + cameraForward * MoveInput.y);
+            _moveDirection = cameraRight * MoveInput.x + cameraForward * MoveInput.y;
 
             HandleGravity();
 
