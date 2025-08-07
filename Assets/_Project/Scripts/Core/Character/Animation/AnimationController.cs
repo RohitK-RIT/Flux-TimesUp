@@ -1,3 +1,4 @@
+using System;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
@@ -10,7 +11,7 @@ namespace _Project.Scripts.Core.Character.Animation
     {
         private static readonly int Horizontal = Animator.StringToHash("DirectionX");
         private static readonly int Vertical = Animator.StringToHash("DirectionZ");
-        private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int Speed = Animator.StringToHash("Move Speed");
         private static readonly int MeleeAttack = Animator.StringToHash("Melee Attack");
         private static readonly int MeleeAttackSpeed = Animator.StringToHash("Melee Attack Speed");
 
@@ -19,6 +20,11 @@ namespace _Project.Scripts.Core.Character.Animation
         private InputController _inputController;
         private HandController _handController;
         private bool _hasMeleeWeapon;
+
+        private Vector2 _targetMoveInput;
+        private Vector2 _animatorMoveInput;
+
+        private int _meleeLayerIndex;
 
         private void Awake()
         {
@@ -70,9 +76,7 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private void OnMoveDetected(Vector2 moveInput)
         {
-            //Set Movement Blend Tree Parameters
-            animator.SetFloat(Horizontal, moveInput.x);
-            animator.SetFloat(Vertical, moveInput.y);
+            _targetMoveInput = moveInput;
         }
 
         private void OnAttackBegin()
@@ -96,6 +100,17 @@ namespace _Project.Scripts.Core.Character.Animation
             {
                 _hasMeleeWeapon = false;
             }
+        }
+
+        private void Update()
+        {
+            _animatorMoveInput = Vector2.Lerp(_animatorMoveInput, _targetMoveInput, Time.deltaTime * 12f);
+            if (Vector2.Distance(_animatorMoveInput, _targetMoveInput) < 0.01f)
+                _animatorMoveInput = _targetMoveInput;
+            
+            //Set Movement Blend Tree Parameters
+            animator.SetFloat(Horizontal, _animatorMoveInput.x);
+            animator.SetFloat(Vertical, _animatorMoveInput.y);
         }
     }
 }
