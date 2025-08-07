@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
@@ -12,6 +13,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
     /// </summary>
     public sealed class MeleeWeapon : Weapon
     {
+        public event Action OnAttackBegin;
         public override string WeaponID => stats.WeaponID;
         public override string DisplayName => stats.WeaponName;
         public MeleeWeaponStats Stats => stats;
@@ -34,14 +36,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
         protected override void Awake()
         {
             base.Awake();
-            
+
             _shootingAudioSource = GetComponent<AudioSource>();
             _audioPlayer = GetComponent<AudioPlayer>();
         }
 
         public override void OnCollected(PlayerController playerController)
         {
-            if(playerController.HandController.Weapons[1])
+            if (playerController.HandController.Weapons[1])
                 return;
 
             playerController.HandController.OnItemInteracted(this);
@@ -73,8 +75,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
             while (true)
             {
                 // Wait for the attack speed and then fire the bullet.
-                yield return new WaitWhile(() => Time.time - _lastAttackTime < 1 / stats.AttackSpeed);
-                Slash();
+                yield return new WaitUntil(() => Time.time - _lastAttackTime >= 1 / stats.AttackSpeed);
+
+                if (Owner is LocalPlayerController)
+                    Debug.Log($"Melee Check {Time.time} - {_lastAttackTime} = {Time.time - _lastAttackTime} >= {1 / stats.AttackSpeed}");
+
+                OnAttackBegin?.Invoke();
+                Invoke(nameof(Slash), 2.2f / (stats.AttackSpeed * 2f)); // Halfway through the animation
+                // Slash();
                 _lastAttackTime = Time.time;
             }
         }
@@ -88,19 +96,16 @@ namespace _Project.Scripts.Core.Weapons.Melee
             _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
-            
-            /*var count = Physics.OverlapSphereNonAlloc(Owner.transform.position, stats.Range, collidersFound, ~Owner.FriendlyLayer,
-                QueryTriggerInteraction.Ignore);*/
-            
+
             int opponentMask = 1 << LayerMask.NameToLayer(Owner.OpponentLayerName);
             var count = Physics.OverlapSphereNonAlloc(
                 Owner.transform.position,
                 stats.Range,
                 collidersFound,
                 opponentMask,
-                QueryTriggerInteraction.Collide 
+                QueryTriggerInteraction.Collide
             );
-            
+
             // Remove the enemies that are out of attack FOV
             for (var i = 0; i < count; i++)
             {
@@ -114,22 +119,9 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 if (angle > stats.AttackFOV)
                     continue;
 
-                
-                /*var colliderLayerMask = 1 << collidersFound[i].gameObject.layer;
-
-                if ((colliderLayerMask & Owner.OpponentLayer) == 0)
-                    continue;
-
-                if (Physics.Raycast(Owner.transform.position, direction, out var raycastHit, stats.Range, ~Owner.FriendlyLayer,
-                        QueryTriggerInteraction.Ignore) && raycastHit.collider != collidersFound[i])
-                    continue;*/
-                
-                
-
                 // Check if the enemy is a player and deal damage
                 var playerController = collidersFound[i].gameObject.GetComponent<IDamageable>();
                 playerController?.TakeDamage(GetDamageInfo());
-                
             }
         }
 

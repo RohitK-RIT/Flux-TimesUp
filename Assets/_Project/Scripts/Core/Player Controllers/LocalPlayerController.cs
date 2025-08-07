@@ -1,5 +1,4 @@
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
@@ -71,15 +70,6 @@ namespace _Project.Scripts.Core.Player_Controllers
             // Get the required components
             _localInputController = GetComponent<LocalInputController>();
             _playerAimController = GetComponent<PlayerAimController>();
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            // Initialize the input controller and camera controller
-            _localInputController.Initialize(this);
-            _playerAimController.Initialize(this);
         }
 
         private void Update()

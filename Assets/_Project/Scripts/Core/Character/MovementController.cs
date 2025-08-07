@@ -67,8 +67,10 @@ namespace _Project.Scripts.Core.Character
 
         private Camera _camera;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             // Get and store the CharacterController component attached to the player
             _characterController = GetComponent<CharacterController>();
         }

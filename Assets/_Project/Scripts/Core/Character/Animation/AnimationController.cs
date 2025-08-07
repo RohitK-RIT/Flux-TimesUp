@@ -1,9 +1,10 @@
-using System;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Melee;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Character.Animation
 {
@@ -14,6 +15,7 @@ namespace _Project.Scripts.Core.Character.Animation
         private static readonly int Speed = Animator.StringToHash("Move Speed");
         private static readonly int MeleeAttack = Animator.StringToHash("Melee Attack");
         private static readonly int MeleeAttackSpeed = Animator.StringToHash("Melee Attack Speed");
+        private static readonly int MeleeAttackCombo = Animator.StringToHash("Melee Attack Combo");
 
         private const string MeleeLayer = "Melee Layer";
 
@@ -28,8 +30,10 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private int _meleeLayerIndex;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             _inputController = GetComponent<InputController>();
             _handController = GetComponent<HandController>();
 
@@ -40,11 +44,9 @@ namespace _Project.Scripts.Core.Character.Animation
             }
         }
 
-        public override void Initialize(PlayerController playerController)
+        private void Start()
         {
-            base.Initialize(playerController);
-
-            animator.SetFloat(Speed, playerController.Stats.movementSpeed);
+            animator.SetFloat(Speed, PlayerController.Stats.movementSpeed);
         }
 
         private void OnEnable()
@@ -53,13 +55,13 @@ namespace _Project.Scripts.Core.Character.Animation
             if (_inputController)
             {
                 _inputController.OnMoveInputUpdated += OnMoveDetected;
-                _inputController.OnAttackInputBegan += OnAttackBegin;
-                _inputController.OnAttackInputEnded += OnAttackEnd;
             }
 
             if (_handController)
             {
-                _handController.OnItemSwitched += HandSwitched;
+                _handController.OnItemSwitched += OnItemSwitched;
+                _handController.OnItemPicked += OnItemPicked;
+                _handController.OnItemDropped += OnItemDropped;
             }
         }
 
@@ -72,13 +74,56 @@ namespace _Project.Scripts.Core.Character.Animation
             if (_inputController)
             {
                 _inputController.OnMoveInputUpdated -= OnMoveDetected;
-                _inputController.OnAttackInputBegan -= OnAttackBegin;
-                _inputController.OnAttackInputEnded -= OnAttackEnd;
             }
 
             if (_handController)
             {
-                _handController.OnItemSwitched -= HandSwitched;
+                _handController.OnItemSwitched -= OnItemSwitched;
+                _handController.OnItemPicked -= OnItemPicked;
+                _handController.OnItemDropped -= OnItemDropped;
+            }
+        }
+
+        private void OnMeleeAttackBegin()
+        {
+            animator.SetFloat(MeleeAttackCombo, Random.Range(0, 3));
+            animator.SetTrigger(MeleeAttack);
+        }
+
+        private void OnItemSwitched()
+        {
+            if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
+            {
+                animator.SetLayerWeight(_meleeLayerIndex, 1f);
+            }
+            else
+            {
+                animator.SetLayerWeight(_meleeLayerIndex, 0f);
+            }
+        }
+
+        private void OnItemPicked(IHandItem item)
+        {
+            switch (item)
+            {
+                case MeleeWeapon meleeWeapon:
+                    animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed * 2.2f);
+                    meleeWeapon.OnAttackBegin += OnMeleeAttackBegin;
+                    break;
+                case RangedWeapon rangedWeapon:
+                    break;
+            }
+        }
+
+        private void OnItemDropped(IHandItem item)
+        {
+            switch (item)
+            {
+                case MeleeWeapon meleeWeapon:
+                    meleeWeapon.OnAttackBegin -= OnMeleeAttackBegin;
+                    break;
+                case RangedWeapon rangedWeapon:
+                    break;
             }
         }
 
@@ -87,36 +132,12 @@ namespace _Project.Scripts.Core.Character.Animation
             _targetMoveInput = moveInput;
         }
 
-        private void OnAttackBegin()
-        {
-            animator.SetBool(MeleeAttack, _hasMeleeWeapon);
-        }
-
-        private void OnAttackEnd()
-        {
-            animator.SetBool(MeleeAttack, false);
-        }
-
-        private void HandSwitched()
-        {
-            if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
-            {
-                _hasMeleeWeapon = true;
-                animator.SetLayerWeight(_meleeLayerIndex, 1f);
-                animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed);
-            }
-            else
-            {
-                _hasMeleeWeapon = false;
-            }
-        }
-
         private void Update()
         {
             _animatorMoveInput = Vector2.Lerp(_animatorMoveInput, _targetMoveInput, Time.deltaTime * 12f);
             if (Vector2.Distance(_animatorMoveInput, _targetMoveInput) < 0.01f)
                 _animatorMoveInput = _targetMoveInput;
-            
+
             //Set Movement Blend Tree Parameters
             animator.SetFloat(Horizontal, _animatorMoveInput.x);
             animator.SetFloat(Vertical, _animatorMoveInput.y);

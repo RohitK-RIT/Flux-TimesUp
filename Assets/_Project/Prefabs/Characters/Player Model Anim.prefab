@@ -3133,7 +3133,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponParent: {fileID: 8260859958247834440}
-  currentWeapon: {fileID: 0}
   weapons: []
   hasPreMadeLoadout: 0
 --- !u!114 &4558394454608730327
@@ -3162,6 +3161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a80c9fb188b46f5ba958569337f52e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scrollCooldown: 0.25
 --- !u!114 &7013915823912738777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3208,6 +3208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3f055ab0b5f4df19ef1d30fe4f712c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bodyIKRig: {fileID: 7006612385647704285}
   gunIKRig: {fileID: 2527452254745049575}
   gunAimingIKRig: {fileID: 4830727813781160060}
   meleeIKRig: {fileID: 2422923292859562182}
