@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using _Project.Scripts.Core.Backend.Helper;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
@@ -60,6 +61,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         public override void OnEquip()
         {
             base.OnEquip();
+            DataCollectionEvents.AbilityUsed();
             _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             Shield();
             Used = true;

@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
@@ -33,6 +34,7 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Grenade
 
         public override void BeginUse()
         {
+            DataCollectionEvents.AbilityUsed();
             UseGrenadeAbility();
             Used = true;
         }

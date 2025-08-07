@@ -1,5 +1,6 @@
 using System.Collections;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
@@ -39,6 +40,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
 
                 if (_currentRoom.CheckIfPlayerEntersPortal())
                 {
+                    DataCollectionEvents.PortalExited();
                     _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
                     Destroy(_currentRoom.gameObject);
                     //spawn boss room
@@ -50,6 +52,7 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
             //if the player enters the portal, generate a new room
             if (!hasInstantiatedBossRoom && _currentRoom.CheckIfRoomIsCleared() && _currentRoom.CheckIfPlayerEntersPortal())
             {
+                DataCollectionEvents.PortalExited();
                 _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
                 InitializeRoomGeneration();
             }

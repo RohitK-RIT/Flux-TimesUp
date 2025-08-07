@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
@@ -83,6 +84,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
         /// </summary>
         private void Slash()
         {
+            DataCollectionEvents.PlayerAttacked();
             _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
