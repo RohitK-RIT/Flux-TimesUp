@@ -1,3 +1,4 @@
+using System.Collections;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
@@ -16,19 +17,24 @@ namespace _Project.Scripts.Core.Character.Animation
         private static readonly int MeleeAttack = Animator.StringToHash("Melee Attack");
         private static readonly int MeleeAttackSpeed = Animator.StringToHash("Melee Attack Speed");
         private static readonly int MeleeAttackCombo = Animator.StringToHash("Melee Attack Combo");
+        private static readonly int ReloadSpeed = Animator.StringToHash("Reload Speed");
+        private static readonly int Reloading = Animator.StringToHash("Reloading");
 
         private const string MeleeLayer = "Melee Layer";
+        private const string GunLayer = "Gun Layer";
 
         [SerializeField] private Animator animator;
 
         private InputController _inputController;
         private HandController _handController;
-        private bool _hasMeleeWeapon;
+
+        private int _meleeLayerIndex;
+        private int _gunLayerIndex;
 
         private Vector2 _targetMoveInput;
         private Vector2 _animatorMoveInput;
 
-        private int _meleeLayerIndex;
+        private float _gunReloadTime;
 
         protected override void Awake()
         {
@@ -40,7 +46,9 @@ namespace _Project.Scripts.Core.Character.Animation
             if (animator)
             {
                 _meleeLayerIndex = animator.GetLayerIndex(MeleeLayer);
+                _gunLayerIndex = animator.GetLayerIndex(GunLayer);
                 animator.SetLayerWeight(_meleeLayerIndex, 0f);
+                animator.SetLayerWeight(_gunLayerIndex, 0f);
             }
         }
 
@@ -95,10 +103,12 @@ namespace _Project.Scripts.Core.Character.Animation
             if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
             {
                 animator.SetLayerWeight(_meleeLayerIndex, 1f);
+                animator.SetLayerWeight(_gunLayerIndex, 0f);
             }
             else
             {
                 animator.SetLayerWeight(_meleeLayerIndex, 0f);
+                animator.SetLayerWeight(_gunLayerIndex, 1f);
             }
         }
 
@@ -111,6 +121,9 @@ namespace _Project.Scripts.Core.Character.Animation
                     meleeWeapon.OnAttackBegin += OnMeleeAttackBegin;
                     break;
                 case RangedWeapon rangedWeapon:
+                    _gunReloadTime = rangedWeapon.Stats.ReloadTime;
+                    rangedWeapon.OnReloadBegin += OnReloadBegin;
+                    rangedWeapon.OnReloadEnd += OnReloadEnd;
                     break;
             }
         }
@@ -123,8 +136,31 @@ namespace _Project.Scripts.Core.Character.Animation
                     meleeWeapon.OnAttackBegin -= OnMeleeAttackBegin;
                     break;
                 case RangedWeapon rangedWeapon:
+                    rangedWeapon.OnReloadBegin -= OnReloadBegin;
+                    rangedWeapon.OnReloadEnd -= OnReloadEnd;
                     break;
             }
+        }
+
+        private void OnReloadBegin()
+        {
+            animator.SetBool(Reloading, true);
+            StartCoroutine(WaitForReloadBegin());
+        }
+
+        private IEnumerator WaitForReloadBegin()
+        {
+            // Wait for the reload animation to start
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(_gunLayerIndex).IsName("Reloading"));
+
+            var currentAnimState = animator.GetCurrentAnimatorStateInfo(_gunLayerIndex);
+            Debug.Log($"Reloading animation started: {currentAnimState.IsName("Reloading")} {currentAnimState.length}");
+            animator.SetFloat(ReloadSpeed, currentAnimState.length / _gunReloadTime);
+        }
+
+        private void OnReloadEnd()
+        {
+            animator.SetBool(Reloading, false);
         }
 
         private void OnMoveDetected(Vector2 moveInput)

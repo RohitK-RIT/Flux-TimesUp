@@ -16,6 +16,9 @@ namespace _Project.Scripts.Core.Weapons.Ranged
     /// </summary>
     public sealed class RangedWeapon : Weapon
     {
+        public event Action OnReloadBegin;
+        public event Action OnReloadEnd;
+
         /// <summary>
         /// Weapon stats.
         /// </summary>
@@ -266,6 +269,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
                 return;
 
             _audioPlayer.PlayReloadClip(_shootingAudioSource);
+            OnReloadBegin?.Invoke();
             _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
 
@@ -276,6 +280,7 @@ namespace _Project.Scripts.Core.Weapons.Ranged
 
             StopCoroutine(_reloadCoroutine);
             _reloadCoroutine = null;
+            OnReloadEnd?.Invoke();
         }
 
         public override IDamageable.DamageInfo GetDamageInfo()
@@ -318,6 +323,8 @@ namespace _Project.Scripts.Core.Weapons.Ranged
             MaxAmmo -= CurrentAmmo;
 
             _reloadCoroutine = null;
+            OnReloadEnd?.Invoke();
+            
             if (IsTriggerPulled)
                 StartFiring();
         }
