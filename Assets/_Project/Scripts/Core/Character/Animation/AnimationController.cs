@@ -15,6 +15,8 @@ namespace _Project.Scripts.Core.Character.Animation
         private static readonly int MeleeAttack = Animator.StringToHash("Melee Attack");
         private static readonly int MeleeAttackSpeed = Animator.StringToHash("Melee Attack Speed");
 
+        private const string MeleeLayer = "Melee Layer";
+
         [SerializeField] private Animator animator;
 
         private InputController _inputController;
@@ -30,6 +32,12 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             _inputController = GetComponent<InputController>();
             _handController = GetComponent<HandController>();
+
+            if (animator)
+            {
+                _meleeLayerIndex = animator.GetLayerIndex(MeleeLayer);
+                animator.SetLayerWeight(_meleeLayerIndex, 0f);
+            }
         }
 
         public override void Initialize(PlayerController playerController)
@@ -94,6 +102,7 @@ namespace _Project.Scripts.Core.Character.Animation
             if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
             {
                 _hasMeleeWeapon = true;
+                animator.SetLayerWeight(_meleeLayerIndex, 1f);
                 animator.SetFloat(MeleeAttackSpeed, meleeWeapon.Stats.AttackSpeed);
             }
             else
