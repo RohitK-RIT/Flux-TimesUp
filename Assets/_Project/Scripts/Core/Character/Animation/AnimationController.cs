@@ -100,15 +100,20 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private void OnItemSwitched()
         {
-            if (_handController.CurrentItem is MeleeWeapon meleeWeapon)
+            switch (_handController.CurrentItem)
             {
-                animator.SetLayerWeight(_meleeLayerIndex, 1f);
-                animator.SetLayerWeight(_gunLayerIndex, 0f);
-            }
-            else
-            {
-                animator.SetLayerWeight(_meleeLayerIndex, 0f);
-                animator.SetLayerWeight(_gunLayerIndex, 1f);
+                case MeleeWeapon:
+                    animator.SetLayerWeight(_meleeLayerIndex, 1f);
+                    animator.SetLayerWeight(_gunLayerIndex, 0f);
+                    break;
+                case RangedWeapon:
+                    animator.SetLayerWeight(_meleeLayerIndex, 0f);
+                    animator.SetLayerWeight(_gunLayerIndex, 1f);
+                    break;
+                default:
+                    animator.SetLayerWeight(_meleeLayerIndex, 0f);
+                    animator.SetLayerWeight(_gunLayerIndex, 0f);
+                    break;
             }
         }
 
