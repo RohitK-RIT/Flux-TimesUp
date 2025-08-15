@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace _Project.Scripts.Core.Backend.Scene_Control
@@ -13,10 +14,16 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         /// </summary>
         [SerializeField] private string mainMenuSceneName;
 
-        private void Start()
+        private IEnumerator Start()
         {
-            // Load the main menu scene after 2.5 seconds.
-            Invoke(nameof(LoadMainMenuScene), 2.5f);
+            // Wait for 2.5 seconds.
+            yield return new WaitForSeconds(2.5f);
+
+            // Wait till asset bundles are initialized.
+            yield return new WaitUntil(() => AssetBundleSystem.Instance.Initialized);
+
+            // Load the main menu scene
+            LoadMainMenuScene();
         }
 
         /// <summary>
