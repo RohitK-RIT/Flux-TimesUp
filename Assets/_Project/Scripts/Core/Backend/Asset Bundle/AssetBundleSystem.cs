@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-#if UNITY_EDITOR
-using System.IO;
+﻿#if UNITY_EDITOR
 using UnityEditor;
 #endif
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
-namespace _Project.Scripts.Core.Backend
+namespace _Project.Scripts.Core.Backend.Asset_Bundle
 {
     public class AssetBundleSystem : BaseSystem<AssetBundleSystem>
     {
@@ -15,30 +15,12 @@ namespace _Project.Scripts.Core.Backend
 #endif
         protected override bool IsPersistent => true;
 
-        public bool Initialized { get; private set; }
-
-        [SerializeField] private string[] assetBundleNames;
-
         private Dictionary<string, AssetBundle> _assetBundles;
 
-        private IEnumerator Start()
+        protected override void Awake()
         {
+            base.Awake();
             _assetBundles = new Dictionary<string, AssetBundle>();
-            yield return LoadAssetBundles();
-            Initialized = true;
-        }
-
-        private IEnumerator LoadAssetBundles()
-        {
-            // Load asset bundles from the StreamingAssets folder if they are not already loaded.
-            if (assetBundleNames == null || assetBundleNames.Length == 0)
-            {
-                Debug.LogError("AssetBundle names are not populated. Please populate them in the editor or use the PopulateAssetBundleNames method.");
-                yield break;
-            }
-
-            foreach (var bundleName in assetBundleNames)
-                yield return LoadAssetBundle(bundleName);
         }
 
         public IEnumerator LoadAssetBundle(string bundleName)
@@ -78,26 +60,26 @@ namespace _Project.Scripts.Core.Backend
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Populate Asset Bundles Names")]
-        private void PopulateAssetBundleNames()
+        [ContextMenu("Configure Asset Bundles")]
+        private void ConfigureAssetBundles()
         {
-            var bundleNames = AssetDatabase.GetAllAssetBundleNames();
-            assetBundleNames = new string[bundleNames.Length];
-            bundleNames.CopyTo(assetBundleNames, 0);
-            EditorUtility.SetDirty(this);
+            var bundleDataAssets = AssetDatabase.FindAssets("t:BundleData", new[] { "Assets" });
+            foreach (var assetGuid in bundleDataAssets)
+            {
+                var assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
+                var bundleData = AssetDatabase.LoadAssetAtPath<BundleData>(assetPath);
 
-            Debug.Log("Populated Asset Bundle Names: " + string.Join(", ", assetBundleNames));
+                if (bundleData)
+                    bundleData.ConfigureBundle();
+                else
+                    Debug.LogWarning($"No BundleData found at path: {assetPath}");
+            }
         }
 
         [ContextMenu("Build Asset Bundles")]
         private void BuildAssetBundles()
         {
-            PopulateAssetBundleNames();
-            if (assetBundleNames.Length == 0)
-            {
-                Debug.LogWarning("No asset bundles found to build. Please ensure you have assigned asset bundles to your assets.");
-                return;
-            }
+            ConfigureAssetBundles();
 
             // Build the asset bundles and save them to the specified path.
             var outputPath = Application.streamingAssetsPath;
