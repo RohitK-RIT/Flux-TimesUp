@@ -7,24 +7,28 @@ namespace _Project.Scripts.Core.Backend.Weapon
     [Serializable]
     public class WeaponData
     {
+        public Sprite Icon => icon;
+        public WeaponStats Stats => weaponStats;
         public string PrefabPath => prefabPath;
 
 #if UNITY_EDITOR
+        public Weapons.Weapon WeaponPrefab => weaponPrefab;
+
         /// <summary>
         /// The weapon prefab that will be instantiated in the game.
         /// </summary>
-        [SerializeField] internal Weapons.Weapon weaponPrefab;
+        [SerializeField] private Weapons.Weapon weaponPrefab;
 #endif
 
         /// <summary>
         /// The icon representing the weapon, used for UI purposes.
         /// </summary>
-        [SerializeField] internal Sprite icon;
+        [SerializeField] private Sprite icon;
 
         /// <summary>
         /// The stats associated with the weapon, including damage, range, and other attributes.
         /// </summary>
-        [SerializeField] internal WeaponStats weaponStats;
+        [SerializeField] private WeaponStats weaponStats;
 
         /// <summary>
         /// The path to the prefab in the project, used for loading the prefab at runtime.

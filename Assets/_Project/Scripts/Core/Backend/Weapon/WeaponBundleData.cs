@@ -13,7 +13,7 @@ namespace _Project.Scripts.Core.Backend.Weapon
         {
             foreach (var data in weaponData)
             {
-                AddToAssetBundle(BundleName, data.weaponPrefab);
+                AddToAssetBundle(BundleName, data.WeaponPrefab);
             }
         }
 
@@ -29,13 +29,9 @@ namespace _Project.Scripts.Core.Backend.Weapon
 
         public WeaponData GetWeaponData(string weaponID)
         {
-            foreach (var data in weaponData)
-            {
-                if (data.weaponStats.WeaponID == weaponID)
-                {
-                    return data;
-                }
-            }
+            foreach (var data in weaponData)            
+                if (data.Stats.WeaponID == weaponID)                
+                    return data;                
 
             Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
             return null;
@@ -43,15 +39,16 @@ namespace _Project.Scripts.Core.Backend.Weapon
 
         public async Task<Weapons.Weapon> LoadWeapon(string weaponID)
         {
-            foreach (var data in weaponData)
+            var data = GetWeaponData(weaponID);
+            if (data == null)
             {
-                if (data.weaponStats.WeaponID != weaponID)
-                    continue;
-
-                var prefab = await AssetBundleSystem.Instance.LoadAssetAsync<GameObject>(BundleName, data.PrefabPath);
-                if (prefab && prefab.TryGetComponent<Weapons.Weapon>(out var weapon))
-                    return weapon;
+                Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
+                return null;
             }
+
+            var prefab = await AssetBundleSystem.Instance.LoadAssetAsync<GameObject>(BundleName, data.PrefabPath);
+            if (prefab && prefab.TryGetComponent<Weapons.Weapon>(out var weapon))
+                return weapon;
 
             return null;
         }
@@ -59,7 +56,7 @@ namespace _Project.Scripts.Core.Backend.Weapon
         public string GetRandomWeaponID()
         {
             if (weaponData.Length != 0)
-                return weaponData[Random.Range(0, weaponData.Length)].weaponStats.WeaponID;
+                return weaponData[Random.Range(0, weaponData.Length)].Stats.WeaponID;
 
             Debug.LogWarning("Weapon database is empty!");
             return null;

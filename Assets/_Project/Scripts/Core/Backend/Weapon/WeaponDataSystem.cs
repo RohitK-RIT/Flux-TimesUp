@@ -39,7 +39,7 @@ namespace _Project.Scripts.Core.Backend.Weapon
         public Sprite GetWeaponIcon(string weaponID)
         {
             var weaponData = weaponBundleData.GetWeaponData(weaponID);
-            return weaponData?.icon; // Return the icon from the weapon data
+            return weaponData?.Icon; // Return the icon from the weapon data
         }
 
         //Sets the selected weapons by copying the provided list of weapon IDs.

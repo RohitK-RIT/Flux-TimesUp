@@ -68,20 +68,20 @@ namespace _Project.Scripts.Core.Loadout
             // Assign weapon info to the UI elements
             
             //weapon name
-            weaponName.text = "Name: " + weaponData.weaponStats.WeaponName;
+            weaponName.text = "Name: " + weaponData.Stats.WeaponName;
             //weapon era
-            weaponEra.text = "Era: " + weaponData.weaponStats.WeaponEra.ToString();
+            weaponEra.text = "Era: " + weaponData.Stats.WeaponEra.ToString();
             //damage per hit
-            weaponDps.text = "Damage: " +weaponData.weaponStats.Damage.ToString();
+            weaponDps.text = "Damage: " +weaponData.Stats.Damage.ToString();
             
             //firing mode
-            if (weaponData.weaponStats is RangedWeaponStats rangedWeaponStats)
+            if (weaponData.Stats is RangedWeaponStats rangedWeaponStats)
             {
                 weaponAttackMode.text += "Firing Mode: " + string.Join(", ", rangedWeaponStats.FireModes.Select(f => f.ToString()));
                 weaponAmmo.text += "Ammo: " + rangedWeaponStats.MaxBulletCount.ToString();
             }
             
-            else if (weaponData.weaponStats is MeleeWeaponStats meleeWeaponStats)
+            else if (weaponData.Stats is MeleeWeaponStats meleeWeaponStats)
             {
                 weaponAttackMode.text += "Attack Speed: " + meleeWeaponStats.AttackSpeed.ToString();
                 attackRange.text += "Attack Range: " + meleeWeaponStats.Range.ToString();
