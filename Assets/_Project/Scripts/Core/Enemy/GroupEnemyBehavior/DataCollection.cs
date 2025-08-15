@@ -16,8 +16,8 @@ namespace _Project.Scripts.Core.Enemy.GroupEnemyBehavior
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
                 string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-                logPath = Path.Combine(desktopPath, $"game_analytics_log_{System.DateTime.Now:yyyyMMdd_HHmmss}.csv");
-                //logPath = Path.Combine(Application.persistentDataPath, $"session_{System.DateTime.Now:yyyyMMdd_HHmmss}.csv");
+                // logPath = Path.Combine(desktopPath, $"game_analytics_log_{System.DateTime.Now:yyyyMMdd_HHmmss}.csv");
+                logPath = Path.Combine(Application.persistentDataPath, $"session_{System.DateTime.Now:yyyyMMdd_HHmmss}.csv");
                 File.WriteAllText(logPath, "Category,Event,Value,Extra\n"); // CSV header
             }
             else
