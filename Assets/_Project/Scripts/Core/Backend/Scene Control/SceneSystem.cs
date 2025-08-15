@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using UnityEditor;
+using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,25 +12,24 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
     {
         protected override bool IsPersistent => true;
 
+        public bool Initialized { get; private set; }
+
         /// <summary>
         /// Name of the loading scene.
         /// </summary>
         [SerializeField] private string loadingSceneName = "Loading Scene";
 
-        [SerializeField] private SceneData[] scenes;
+        [SerializeField] private SceneBundleData sceneBundleData;
 
         /// <summary>
         /// Coroutine for loading a scene.
         /// </summary>
         private Coroutine _loadSceneCoroutine;
 
-        protected override void Awake()
+        private IEnumerator Start()
         {
-            base.Awake();
-
-            // Create a new gameobject for the network scene manager.
-            var sceneManagerGameobject = new GameObject("Network Scene Manager");
-            sceneManagerGameobject.transform.SetParent(transform);
+            yield return AssetBundleSystem.Instance.LoadAssetBundle(sceneBundleData.BundleName);
+            Initialized = true;
         }
 
         /// <summary>
@@ -70,23 +69,5 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             // Else, wait until the requested scene is loaded.
             yield return sceneOp;
         }
-
-#if UNITY_EDITOR
-        [ContextMenu("Configure Asset Bundle")]
-        private void ConfigureAssetBundle()
-        {
-            foreach (var sceneData in scenes)
-            {
-                if (sceneData == null)
-                {
-                    Debug.LogWarning("SceneData is null, skipping configuration.");
-                    continue;
-                }
-
-                sceneData.AddToAssetBundle("scenes");
-            }
-            Debug.Log("Asset bundle configured for scenes.");
-        }
-#endif
     }
 }

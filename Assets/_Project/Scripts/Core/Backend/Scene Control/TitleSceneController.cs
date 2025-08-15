@@ -20,7 +20,7 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             yield return new WaitForSeconds(2.5f);
 
             // Wait till asset bundles are initialized.
-            yield return new WaitUntil(() => AssetBundleSystem.Instance.Initialized);
+            yield return new WaitUntil(() => SceneSystem.Instance.Initialized);
 
             // Load the main menu scene
             LoadMainMenuScene();
