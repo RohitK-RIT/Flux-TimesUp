@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using System.IO;
@@ -18,8 +19,11 @@ namespace _Project.Scripts.Core.Backend
 
         [SerializeField] private string[] assetBundleNames;
 
+        private Dictionary<string, AssetBundle> _assetBundles;
+
         private IEnumerator Start()
         {
+            _assetBundles = new Dictionary<string, AssetBundle>();
             yield return LoadAssetBundles();
             Initialized = true;
         }
@@ -34,26 +38,43 @@ namespace _Project.Scripts.Core.Backend
             }
 
             foreach (var bundleName in assetBundleNames)
+                yield return LoadAssetBundle(bundleName);
+        }
+
+        public IEnumerator LoadAssetBundle(string bundleName)
+        {
+            var bundlePath = Path.Combine(Application.streamingAssetsPath, bundleName);
+            if (!File.Exists(bundlePath))
             {
-                var bundlePath = Path.Combine(Application.streamingAssetsPath, bundleName);
-                if (!File.Exists(bundlePath))
-                {
-                    Debug.LogError($"Asset Bundle {bundleName} does not exist at path: {bundlePath}");
-                    continue;
-                }
-
-                var bundleLoadRequest = AssetBundle.LoadFromFileAsync(bundlePath);
-                yield return bundleLoadRequest;
-
-                if (!bundleLoadRequest.assetBundle)
-                {
-                    Debug.LogError($"Failed to load Asset Bundle: {bundleName}");
-                }
-                else
-                {
-                    Debug.Log($"Successfully loaded Asset Bundle: {bundleName}");
-                }
+                Debug.LogError($"Asset Bundle {bundleName} does not exist at path: {bundlePath}");
+                yield break;
             }
+
+            if (_assetBundles.ContainsKey(bundleName))
+            {
+                Debug.LogWarning($"Asset Bundle {bundleName} is already loaded.");
+                yield break;
+            }
+
+            var bundleLoadRequest = AssetBundle.LoadFromFileAsync(bundlePath);
+            yield return bundleLoadRequest;
+
+            if (bundleLoadRequest.assetBundle)
+                _assetBundles.Add(bundleName, bundleLoadRequest.assetBundle);
+            else
+                Debug.LogError($"Failed to load Asset Bundle: {bundleName}");
+        }
+
+        public IEnumerator UnloadAssetBundle(string bundleName)
+        {
+            if (!_assetBundles.TryGetValue(bundleName, out var bundle))
+            {
+                Debug.LogError($"Asset Bundle {bundleName} is not loaded.");
+                yield break;
+            }
+
+            bundle.Unload(true);
+            _assetBundles.Remove(bundleName);
         }
 
 #if UNITY_EDITOR
