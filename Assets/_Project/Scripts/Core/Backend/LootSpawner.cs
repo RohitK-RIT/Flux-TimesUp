@@ -1,6 +1,7 @@
 using System;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;

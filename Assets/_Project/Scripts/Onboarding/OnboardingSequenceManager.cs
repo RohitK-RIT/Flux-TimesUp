@@ -1,5 +1,6 @@
 using System.Collections;
 using _Project.Scripts.Core.Backend;
+using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;

@@ -17,6 +17,8 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         /// </summary>
         [SerializeField] private string loadingSceneName = "Loading Scene";
 
+        [SerializeField] private SceneData[] scenes;
+
         /// <summary>
         /// Coroutine for loading a scene.
         /// </summary>
@@ -68,5 +70,23 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
             // Else, wait until the requested scene is loaded.
             yield return sceneOp;
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Configure Asset Bundle")]
+        private void ConfigureAssetBundle()
+        {
+            foreach (var sceneData in scenes)
+            {
+                if (sceneData == null)
+                {
+                    Debug.LogWarning("SceneData is null, skipping configuration.");
+                    continue;
+                }
+
+                sceneData.AddToAssetBundle("scenes");
+            }
+            Debug.Log("Asset bundle configured for scenes.");
+        }
+#endif
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Weapons;
 using TMPro;
 using UnityEngine;

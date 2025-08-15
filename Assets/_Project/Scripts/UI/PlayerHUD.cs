@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
 using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;

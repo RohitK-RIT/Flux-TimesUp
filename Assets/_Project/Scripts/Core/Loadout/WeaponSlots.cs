@@ -1,4 +1,5 @@
 using System.Linq;
+using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Melee;
 using _Project.Scripts.Core.Weapons.Ranged;
