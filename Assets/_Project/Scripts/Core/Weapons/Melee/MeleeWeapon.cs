@@ -77,9 +77,6 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 // Wait for the attack speed and then fire the bullet.
                 yield return new WaitUntil(() => Time.time - _lastAttackTime >= 1 / stats.AttackSpeed);
 
-                if (Owner is LocalPlayerController)
-                    Debug.Log($"Melee Check {Time.time} - {_lastAttackTime} = {Time.time - _lastAttackTime} >= {1 / stats.AttackSpeed}");
-
                 OnAttackBegin?.Invoke();
                 Invoke(nameof(Slash), 2.2f / (stats.AttackSpeed * 2f)); // Halfway through the animation
                 // Slash();
