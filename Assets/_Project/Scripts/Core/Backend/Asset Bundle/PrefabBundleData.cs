@@ -1,17 +1,26 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Backend.Asset_Bundle
 {
     public abstract class PrefabBundleData : BundleData
     {
-        public async Task<T> LoadPrefabAsync<T>(string assetPath) where T : MonoBehaviour
+        protected IEnumerator LoadPrefabAsync<T>(string assetPath, Action<T> onComplete) where T : MonoBehaviour
         {
-            var prefab = await AssetBundleSystem.Instance.LoadAssetAsync<GameObject>(BundleName, assetPath);
-            if (prefab && prefab.TryGetComponent<T>(out var componentPrefab))
-                return componentPrefab;
+            GameObject prefab = null;
 
-            return null;
+            yield return AssetBundleSystem.Instance.LoadAssetAsync<GameObject>(BundleName, assetPath, go => prefab = go);
+
+            if (prefab && prefab.TryGetComponent<T>(out var componentPrefab))
+            {
+                onComplete?.Invoke(componentPrefab);
+            }
+            else
+            {
+                Debug.LogError($"Failed to load prefab of type {typeof(T)} from asset path: {assetPath}");
+                onComplete?.Invoke(null);
+            }
         }
     }
 }

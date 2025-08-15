@@ -1,4 +1,5 @@
-using System.Threading.Tasks;
+using System;
+using System.Collections;
 using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
 
@@ -17,22 +18,15 @@ namespace _Project.Scripts.Core.Backend.Weapon
         /// </summary>
         [SerializeField] private WeaponBundleData weaponBundleData;
 
-        private async void Start()
+        private IEnumerator Start()
         {
-            try
-            {
-                // Load the weapon bundle data asynchronously.
-                Initialized = await AssetBundleSystem.Instance.LoadBundleAsync(weaponBundleData.BundleName);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogException(e);
-            }
+            // Load the weapon bundle asynchronously.
+            yield return AssetBundleSystem.Instance.LoadBundleAsync(weaponBundleData.BundleName, success => Initialized = success);
         }
 
-        public async Task<Weapons.Weapon> GetWeaponAsync(string weaponID)
+        public IEnumerator GetWeaponAsync(string weaponID, Action<Weapons.Weapon> onComplete)
         {
-            return await weaponBundleData.LoadWeapon(weaponID); // Load the weapon prefab from the bundle
+            yield return weaponBundleData.LoadWeapon(weaponID, onComplete); // Load the weapon prefab from the bundle
         }
 
         // Fetches the weapon icon based on the provided WeaponID

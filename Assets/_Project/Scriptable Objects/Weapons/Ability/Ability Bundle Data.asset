@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2653a10fa2344e85a19f2f19ec6d8eee, type: 3}
+  m_Name: Ability Bundle Data
+  m_EditorClassIdentifier: 
+  bundleName: abilities
+  includeInBuild: 1
+  abilityData:
+  - name: Knight's Shield
+    type: 1
+    description: Press E to equip an unbreakable shield for short duration
+    icon: {fileID: 21300000, guid: 9bc1fd2aea5a1994381a393801e76bec, type: 3}
+    abilityPrefab: {fileID: 6273341532945828471, guid: f974981273515154fa599c4e936c8d71,
+      type: 3}
+    abilityPickup: {fileID: 6759900882341720125, guid: c9846a72fff1cc44280bcd81e6022382,
+      type: 3}
+    prefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Shield/Shield Ability.prefab
+    pickupPrefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Shield/Shield Ability
+      Pickup.prefab
+  - name: Nurse's Heal
+    type: 3
+    description: Heal yourself!!!
+    icon: {fileID: 21300000, guid: 1be77b271f6459d46bf59990a0d897aa, type: 3}
+    abilityPrefab: {fileID: -2087349204070215225, guid: 8a84414d93377824ea1d591a3b534da8,
+      type: 3}
+    abilityPickup: {fileID: 8921149991656406397, guid: aeba706447c272a4bbe010cdd10be08e,
+      type: 3}
+    prefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Heal/Heal Ability.prefab
+    pickupPrefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Heal/Heal Ability
+      Pickup.prefab
+  - name: Scavenger's Teleport
+    type: 4
+    description: Press E to instantly teleport yourself backwards a short distance
+    icon: {fileID: 21300000, guid: 18a9c1149a792804eaaec2eb94d251b8, type: 3}
+    abilityPrefab: {fileID: 3051959243296799858, guid: d3744ea28eeab1c4f88e9b274a7626fe,
+      type: 3}
+    abilityPickup: {fileID: 4204904438162509034, guid: 204f044a042abf346b9b6d3b109ac209,
+      type: 3}
+    prefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Teleport/Teleport Ability.prefab
+    pickupPrefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Teleport/Teleport
+      Pickup.prefab
+  - name: Soldier's Grenade
+    type: 2
+    description: Press E + Left Click to throw grenade
+    icon: {fileID: 21300000, guid: a2dee09b92112d747827031f9a5fbd14, type: 3}
+    abilityPrefab: {fileID: 1012429611630165845, guid: cf9650ed9bf9f624a98a986c5aac465c,
+      type: 3}
+    abilityPickup: {fileID: 1661529775837032567, guid: 4269ed5b2612ae142a58515785686edb,
+      type: 3}
+    prefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Grenade/Grenade Ability.prefab
+    pickupPrefabPath: Assets/_Project/Prefabs/Weapons/Abilities/Grenade/Grenade Pickup.prefab
+  - name: TSM Freeze
+    type: 5
+    description: Press E to Freeze TSM
+    icon: {fileID: 21300000, guid: 63bf6eaa693134c4b816d1a980d9808d, type: 3}
+    abilityPrefab: {fileID: 2668023127614872586, guid: 4be3dc07282cf134db77abf72670c48c,
+      type: 3}
+    abilityPickup: {fileID: 5871387201473665931, guid: 34e2b7c5a9254d24eb66acdd64457a34,
+      type: 3}
+    prefabPath: Assets/_Project/Prefabs/Weapons/Abilities/TSM Freeze Ability/TSM
+      Ability.prefab
+    pickupPrefabPath: Assets/_Project/Prefabs/Weapons/Abilities/TSM Freeze Ability/TSM
+      Freeze Ability Pickup.prefab

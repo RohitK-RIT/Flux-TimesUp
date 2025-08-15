@@ -27,16 +27,9 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         /// </summary>
         private Coroutine _loadSceneCoroutine;
 
-        private async void Start()
+        private IEnumerator Start()
         {
-            try
-            {
-                Initialized = await AssetBundleSystem.Instance.LoadBundleAsync(sceneBundleData.BundleName);
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
+            yield return AssetBundleSystem.Instance.LoadBundleAsync(sceneBundleData.BundleName, success => Initialized = success);
         }
 
         /// <summary>

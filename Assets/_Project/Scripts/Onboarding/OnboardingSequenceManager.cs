@@ -60,9 +60,9 @@ namespace _Project.Scripts.Onboarding
                 lootSpawner = FindObjectOfType<LootSpawner>();
             }
             
-            lootSpawner.SpawnWeapon("Rifle1", rangedWeaponPickup.transform.position, rangedWeaponPickup.transform);
-            lootSpawner.SpawnWeapon("Sword5", meleeWeaponPickup.transform.position, meleeWeaponPickup.transform);
-            lootSpawner.SpawnAbility(AbilityType.Grenades, abilityPickup.transform.position, abilityPickup.transform);
+            LootSpawner.SpawnWeapon("Rifle1", rangedWeaponPickup.transform.position, rangedWeaponPickup.transform);
+            LootSpawner.SpawnWeapon("Sword5", meleeWeaponPickup.transform.position, meleeWeaponPickup.transform);
+            LootSpawner.SpawnAbility(AbilityType.Grenades, abilityPickup.transform.position, abilityPickup.transform);
             
             if(!_playerController) return;
         }

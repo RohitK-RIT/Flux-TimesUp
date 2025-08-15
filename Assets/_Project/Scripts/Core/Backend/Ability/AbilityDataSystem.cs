@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
 using _Project.Scripts.Core.Weapons.Abilities;
 
@@ -12,51 +14,37 @@ namespace _Project.Scripts.Core.Backend.Ability
         protected override bool IsPersistent => true;
 
         /// <summary>
-        /// The ability data.
+        /// The ability bundle data.
+        /// This is used to load the ability data from an asset bundle.
         /// </summary>
-        [SerializeField] private AbilityData[] abilityData;
+        [SerializeField] private AbilityBundleData abilityBundleData;
+
+        private IEnumerator Start()
+        {
+            // Load the ability bundle data asynchronously.
+            yield return AssetBundleSystem.Instance.LoadBundleAsync(abilityBundleData.BundleName);
+        }
 
         /// <summary>
         /// Gets the ability prefab.
         /// </summary>
         /// <param name="type">type of ability</param>
+        /// <param name="onComplete">callback for the loaded prefab</param>
         /// <returns>player ability prefab</returns>
-        public Weapons.Abilities.Ability GetAbilityPrefab(AbilityType type)
+        public IEnumerator GetAbilityPrefab(AbilityType type, Action<Weapons.Abilities.Ability> onComplete)
         {
-            // Get the ability data
-            var data = GetAbilityData(type);
-            // If the data is null, return null
-            if (data.Equals(null))
-                return null;
-
-            // Get the ability prefab
-            var prefab = data.AbilityPrefab;
-            // If the prefab is not null, return the prefab
-            if (prefab)
-                return prefab;
-
-            // Log an error if the prefab is not found
-            Debug.LogError($"Ability prefab for {type} not found.");
-            return null;
+            yield return abilityBundleData.GetAbilityPrefab(type, onComplete);
         }
 
-        public AbilityPickup GetAbilityPickupPrefab(AbilityType type)
+        /// <summary>
+        /// Gets the ability pickup prefab.
+        /// </summary>
+        /// <param name="type">type of ability</param>
+        /// <param name="onComplete">callback for the loaded prefab</param>
+        /// <returns>ability pickup prefab</returns>
+        public IEnumerator GetAbilityPickupPrefab(AbilityType type, Action<AbilityPickup> onComplete)
         {
-            // Get the ability data
-            var data = GetAbilityData(type);
-            // If the data is null, return null
-            if (data.Equals(null))
-                return null;
-
-            // Get the ability pickup
-            var pickup = data.AbilityPickup;
-            // If the pickup is not null, return the pickup
-            if (pickup)
-                return pickup;
-
-            // Log an error if the pickup is not found
-            Debug.LogError($"Ability pickup for {type} not found.");
-            return null;
+            yield return abilityBundleData.GetAbilityPickupPrefab(type, onComplete);
         }
 
         /// <summary>
@@ -66,15 +54,7 @@ namespace _Project.Scripts.Core.Backend.Ability
         /// <returns>ability data of the specified type</returns>
         public AbilityData GetAbilityData(AbilityType type)
         {
-            // Get the ability data
-            var data = abilityData.FirstOrDefault(data => data.Type == type);
-            // If the data is not null, return the data
-            if (data != null)
-                return data;
-
-            // Log an error if the data is not found
-            Debug.LogError($"AbilityData object for {type} not found.");
-            return null;
+            return abilityBundleData.GetAbilityData(type);
         }
     }
 }

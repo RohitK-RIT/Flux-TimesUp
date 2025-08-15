@@ -1,12 +1,11 @@
 using System;
+using System.Collections;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Backend.Weapon;
 using _Project.Scripts.Core.Character.Hand_Controller;
-using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities;
-using _Project.Scripts.Onboarding;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,7 +48,8 @@ namespace _Project.Scripts.Core.Backend
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         private void DropLoot(Vector3 lootDropPosition, Transform currentRoom)
         {
-            var dropType = Random.Range(0, 3);
+            // var dropType = Random.Range(0, 3);
+            var dropType = 1;
             switch (dropType)
             {
                 case 0:
@@ -67,12 +67,12 @@ namespace _Project.Scripts.Core.Backend
                         4 => AbilityType.TsmFreeze,
                         _ => throw new ArgumentOutOfRangeException()
                     };
-                    SpawnAbility(abilityType, lootDropPosition, currentRoom);
+                    StartCoroutine(SpawnAbility(abilityType, lootDropPosition, currentRoom));
                     break;
                 case 2:
                     // Spawn Random Weapons
                     var randomWeaponID = WeaponDataSystem.Instance.GetRandomWeaponID();
-                    SpawnWeapon(randomWeaponID, lootDropPosition, currentRoom);
+                    StartCoroutine(SpawnWeapon(randomWeaponID, lootDropPosition, currentRoom));
                     break;
             }
         }
@@ -83,35 +83,32 @@ namespace _Project.Scripts.Core.Backend
         /// <param name="abilityType">The type of ability to spawn.</param>
         /// <param name="lootDropPosition">The position to spawn the ability.</param>
         /// <param name="currentRoom">Room in which this item will be spawned.</param>
-        public void SpawnAbility(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
+        public static IEnumerator SpawnAbility(AbilityType abilityType, Vector3 lootDropPosition, Transform currentRoom)
         {
             // Get the ability pickup prefab
-            var abilityPrefab = AbilityDataSystem.Instance.GetAbilityPickupPrefab(abilityType);
+            AbilityPickup abilityPrefab = null;
+            yield return AbilityDataSystem.Instance.GetAbilityPickupPrefab(abilityType, prefab => abilityPrefab = prefab);
+
             // If the prefab is null, return
             if (!abilityPrefab)
-                return;
+                yield break;
 
             // Instantiate the ability pickup prefab
             Instantiate(abilityPrefab, lootDropPosition, Quaternion.identity, currentRoom);
         }
 
-        public async void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
+        public static IEnumerator SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
         {
-            try
-            {
-                // Get the weapon prefab
-                var weaponPrefab = await WeaponDataSystem.Instance.GetWeaponAsync(weaponID);
-                // If the prefab is null, return
-                if (!weaponPrefab)
-                    return;
+            // Get the weapon prefab
+            Weapons.Weapon weaponPrefab = null;
+            yield return WeaponDataSystem.Instance.GetWeaponAsync(weaponID, prefab => weaponPrefab = prefab);
 
-                // Instantiate the weapon prefab
-                Instantiate(weaponPrefab, lootDropPosition, Quaternion.identity, currentRoom);
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
+            // If the prefab is null, return
+            if (!weaponPrefab)
+                yield break;
+
+            // Instantiate the weapon prefab
+            Instantiate(weaponPrefab, lootDropPosition, Quaternion.identity, currentRoom);
         }
     }
 }

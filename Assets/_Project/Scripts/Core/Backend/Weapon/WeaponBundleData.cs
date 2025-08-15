@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
 using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Backend.Weapon
 {
@@ -9,6 +11,14 @@ namespace _Project.Scripts.Core.Backend.Weapon
     {
         [SerializeField] private WeaponData[] weaponData;
 #if UNITY_EDITOR
+        /// <summary>
+        /// Configures the weapon bundle.
+        /// This method is used in the Unity Editor to set up the asset bundle for each weapon data.
+        /// It iterates through each weapon data, calls its Configure method to set the prefab path,
+        /// and adds the weapon prefab to the asset bundle with the specified bundle name.
+        /// This is essential for ensuring that the weapon prefabs are correctly included in the asset bundle
+        /// when building the game.
+        /// </summary>
         protected override void InternalConfigureBundle()
         {
             foreach (var data in weaponData)
@@ -18,6 +28,11 @@ namespace _Project.Scripts.Core.Backend.Weapon
             }
         }
 
+        /// <summary>
+        /// Configures the weapon bundle data.
+        /// This method is used in the Unity Editor to set up the prefab paths for each weapon data.
+        /// It iterates through each weapon data and calls its Configure method to set the prefab path.
+        /// </summary>
         [ContextMenu("Configure Weapon Bundle Data")]
         private void ConfigureWeaponBundleData()
         {
@@ -38,14 +53,17 @@ namespace _Project.Scripts.Core.Backend.Weapon
             return null;
         }
 
-        public async Task<Weapons.Weapon> LoadWeapon(string weaponID)
+        public IEnumerator LoadWeapon(string weaponID, Action<Weapons.Weapon> onComplete)
         {
             var data = GetWeaponData(weaponID);
-            if (data != null)
-                return await LoadPrefabAsync<Weapons.Weapon>(data.PrefabPath);
+            if (data.Equals(null))
+            {
+                Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
+                onComplete?.Invoke(null);
+                yield break;
+            }
 
-            Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
-            return null;
+            yield return LoadPrefabAsync(data.PrefabPath, onComplete);
         }
 
         public string GetRandomWeaponID()

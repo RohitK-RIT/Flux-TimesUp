@@ -69,12 +69,12 @@ namespace _Project.Scripts.UI
         {
             get
             {
-                if(!_pickupTextInstance)
+                if (!_pickupTextInstance)
                 {
                     _pickupTextInstance = Instantiate(pickupTextPrefab);
                     _pickupTextInstance.gameObject.SetActive(false);
                 }
-                
+
                 return _pickupTextInstance;
             }
         }
@@ -110,14 +110,16 @@ namespace _Project.Scripts.UI
                 Debug.LogError("RoomWaveController not found in the scene.");
             }
         }
+
         private void Update()
         {
-            if (!player) return;
+            if (!player || !player.HandController.Initialized) return;
             if (player.HandController.CurrentItem is Ability or MeleeWeapon)
             {
                 ammo.SetActive(false);
                 reloadingText.SetActive(false);
             }
+
             UpdateHealthBar();
             UpdateTimeStabilityBar();
             UpdateAmmoDisplay();
@@ -135,6 +137,7 @@ namespace _Project.Scripts.UI
                 enemiesRemaining.gameObject.SetActive(false);
                 return;
             }
+
             _roomWaveController = FindObjectOfType<RoomWaveController>();
             if (_roomWaveController == null) return;
             var enemiesCount = 0;
@@ -145,11 +148,12 @@ namespace _Project.Scripts.UI
                     enemiesCount++;
                 }
             }
+
             if (enemiesCount > 0)
             {
                 enemiesRemaining.text = "Enemies Remaining: " + enemiesCount.ToString();
             }
-            else if(enemiesCount == 0)
+            else if (enemiesCount == 0)
             {
                 enemiesRemaining.text = "Portal is now open!";
             }
@@ -272,7 +276,7 @@ namespace _Project.Scripts.UI
         /// <param name="msg">Message to display on loot pickup.</param>
         private void ShowPickupFeedback(string msg)
         {
-            if(!pickupText) return;
+            if (!pickupText) return;
             pickupText.text = msg;
             pickupText.gameObject.SetActive(true);
             Invoke(nameof(HidePickupFeedback), 2f);

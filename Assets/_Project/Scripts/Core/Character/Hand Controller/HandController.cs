@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Weapon;
-using _Project.Scripts.Core.Loadout;
 using _Project.Scripts.Core.Weapons;
 using _Project.Scripts.Core.Weapons.Abilities;
 using _Project.Scripts.Core.Weapons.Melee;
@@ -37,6 +35,8 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// Array of all available weapons.
         /// </summary>
         [SerializeField] private Weapon[] weapons;
+
+        public bool Initialized { get; private set; }
 
         /// <summary>
         /// Gets or sets the current weapon. Deactivates the previous weapon and activates the new one.
@@ -81,10 +81,10 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 if (value is null)
                     return;
 
-                if (_currentAbility is not null)
+                if (_currentAbility)
                 {
                     _currentAbility.OnDrop();
-                    Destroy(_currentAbility.gameObject);
+                    Destroy(_currentAbility.gameObject, 2f);
                 }
 
                 _currentAbility = value;
@@ -116,40 +116,42 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             "Sword1"
         };
 
-        private async void Start()
+        private IEnumerator Start()
         {
-            try
+            if (!hasPreMadeLoadout)
             {
-                if (!hasPreMadeLoadout)
-                    await LoadWeapon(PlayerWeaponIDs);
-                else
-                    foreach (var weapon in weapons)
-                    {
-                        weapon.OnPickup(PlayerController);
-                        OnItemPicked?.Invoke(weapon);
-                    }
+                yield return new WaitUntil(() => WeaponDataSystem.Instance.Initialized);
+                yield return LoadWeapon(PlayerWeaponIDs);
+            }
+            else
+            {
+                foreach (var weapon in weapons)
+                {
+                    weapon.OnPickup(PlayerController);
+                    OnItemPicked?.Invoke(weapon);
+                }
+            }
 
-                _currentWeaponIndex = 0;
-                CurrentItem = weapons[_currentWeaponIndex];
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
+            _currentWeaponIndex = 0;
+            CurrentItem = weapons[_currentWeaponIndex];
+
+            Initialized = true;
         }
 
         /// <summary>
         /// Loads an ability by its type.
         /// </summary>
         /// <param name="abilityType">type of the ability</param>
-        private void LoadAbility(AbilityType abilityType)
+        private IEnumerator LoadAbility(AbilityType abilityType)
         {
             // Check if the player has no ability
             if (abilityType == AbilityType.None)
-                return;
+                yield break;
 
             // Get the ability prefab
-            var abilityPrefab = AbilityDataSystem.Instance.GetAbilityPrefab(abilityType);
+            Ability abilityPrefab = null;
+            yield return AbilityDataSystem.Instance.GetAbilityPrefab(abilityType, prefab => abilityPrefab = prefab);
+
             // Check if the ability prefab is not null
             if (abilityPrefab)
             {
@@ -166,18 +168,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// Loads a weapon by its ID.
         /// </summary>
         /// <param name="weaponIDs">The ID of the weapon to load.</param>
-        private async Task LoadWeapon(List<string> weaponIDs)
+        private IEnumerator LoadWeapon(List<string> weaponIDs)
         {
-            while (!WeaponDataSystem.Instance.Initialized)
-            {
-                await Task.Yield();
-            }
-
             // Validate input
             if (weaponIDs == null || weaponIDs.Count == 0)
             {
                 Debug.LogError("No weapon IDs provided!");
-                return;
+                yield break;
             }
 
             // Initialize the weapons array
@@ -187,7 +184,9 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             for (var i = 0; i < weaponIDs.Count; i++)
             {
                 // Wait for the weapon prefab to be loaded
-                var weaponPrefab = await WeaponDataSystem.Instance.GetWeaponAsync(weaponIDs[i]);
+                Weapon weaponPrefab = null;
+                yield return WeaponDataSystem.Instance.GetWeaponAsync(weaponIDs[i], prefab => weaponPrefab = prefab);
+
                 if (!weaponPrefab)
                     continue;
 
@@ -360,7 +359,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
                 Destroy(CurrentAbility.gameObject);
 
             // Load the new ability
-            LoadAbility(type);
+            StartCoroutine(LoadAbility(type));
 
             return true;
         }
