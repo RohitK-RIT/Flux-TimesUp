@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using _Project.Scripts.Core.Backend;
-using _Project.Scripts.Core.Weapons;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.Loadout
+namespace _Project.Scripts.Core.Backend.Weapon
 {
     // It fetches weapon prefabs based on weapon IDs and stores the selected weapons for gameplay.
     public class WeaponDataSystem : BaseSystem<WeaponDataSystem>
@@ -15,7 +13,7 @@ namespace _Project.Scripts.Core.Loadout
         private List<string> _selectedWeapons;
         
         // Fetches the weapon prefab based on the provided WeaponID
-        public Weapon GetWeaponPrefab(string weaponID)
+        public Weapons.Weapon GetWeaponPrefab(string weaponID)
         {
             foreach (var weaponData in weaponDatabase) // Iterate through weapon database
             {
