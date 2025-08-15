@@ -14,13 +14,14 @@ namespace _Project.Scripts.Core.Backend
 #endif
         protected override bool IsPersistent => true;
 
+        public bool Initialized { get; private set; }
+
         [SerializeField] private string[] assetBundleNames;
 
-        protected override void Awake()
+        private IEnumerator Start()
         {
-            base.Awake();
-
-            StartCoroutine(LoadAssetBundles());
+            yield return LoadAssetBundles();
+            Initialized = true;
         }
 
         private IEnumerator LoadAssetBundles()
