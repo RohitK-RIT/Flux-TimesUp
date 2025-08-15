@@ -4,7 +4,9 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace _Project.Scripts.Core.Backend.Asset_Bundle
 {
@@ -23,46 +25,90 @@ namespace _Project.Scripts.Core.Backend.Asset_Bundle
             _assetBundles = new Dictionary<string, AssetBundle>();
         }
 
-        public IEnumerator LoadAssetBundle(string bundleName)
+        public async Task<bool> LoadBundleAsync(string bundleName)
         {
             var bundlePath = Path.Combine(Application.streamingAssetsPath, bundleName);
             if (!File.Exists(bundlePath))
             {
                 Debug.LogError($"Asset Bundle {bundleName} does not exist at path: {bundlePath}");
-                yield break;
+                return false;
             }
 
             if (_assetBundles.ContainsKey(bundleName))
             {
                 Debug.LogWarning($"Asset Bundle {bundleName} is already loaded.");
-                yield break;
+                return true;
             }
 
             var bundleLoadRequest = AssetBundle.LoadFromFileAsync(bundlePath);
-            yield return bundleLoadRequest;
+
+            while (!bundleLoadRequest.isDone)
+            {
+                await Task.Yield(); // Yield until the bundle is loaded
+            }
 
             if (bundleLoadRequest.assetBundle)
+            {
                 _assetBundles.Add(bundleName, bundleLoadRequest.assetBundle);
-            else
-                Debug.LogError($"Failed to load Asset Bundle: {bundleName}");
+                return true;
+            }
+
+            Debug.LogError($"Failed to load Asset Bundle: {bundleName}");
+            return false;
         }
 
-        public IEnumerator UnloadAssetBundle(string bundleName)
+        public async Task<bool> UnloadBundleAsync(string bundleName, bool unloadAllLoadedObjects = true)
         {
             if (!_assetBundles.TryGetValue(bundleName, out var bundle))
             {
                 Debug.LogError($"Asset Bundle {bundleName} is not loaded.");
-                yield break;
+                return false;
             }
 
-            bundle.Unload(true);
+            var unloadOperation = bundle.UnloadAsync(unloadAllLoadedObjects);
+            while (!unloadOperation.isDone)
+                await Task.Yield(); // Yield until the bundle is unloaded
+
             _assetBundles.Remove(bundleName);
+            return true;
+        }
+
+        public async Task<T> LoadAssetAsync<T>(string bundleName, string assetPath) where T : Object
+        {
+            if (!_assetBundles.TryGetValue(bundleName, out var bundle))
+                return null;
+
+            if (!bundle.Contains(assetPath))
+            {
+                Debug.LogError($"{assetPath} not found in Asset Bundle {bundleName}.");
+                return null;
+            }
+
+            var assetLoadRequest = bundle.LoadAssetAsync<T>(assetPath);
+            while (!assetLoadRequest.isDone)
+                await Task.Yield(); // Yield until the asset is loaded
+
+            if (assetLoadRequest.asset)
+                return assetLoadRequest.asset as T;
+
+            Debug.LogError($"{bundleName} bundle contains {assetPath}, but didn't load.");
+            return null;
         }
 
 #if UNITY_EDITOR
+        [ContextMenu("Remove All Asset Bundle Names")]
+        private void RemoveAllAssetBundleNames()
+        {
+            var allBundleNames = AssetDatabase.GetAllAssetBundleNames();
+            foreach (var bundleName in allBundleNames)
+                AssetDatabase.RemoveAssetBundleName(bundleName, true);
+        }
+
         [ContextMenu("Configure Asset Bundles")]
         private void ConfigureAssetBundles()
         {
+            RemoveAllAssetBundleNames();
+
             var bundleDataAssets = AssetDatabase.FindAssets("t:BundleData", new[] { "Assets" });
             foreach (var assetGuid in bundleDataAssets)
             {

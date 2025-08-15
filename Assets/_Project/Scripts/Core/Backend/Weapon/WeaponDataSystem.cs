@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
+using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Backend.Weapon
@@ -6,70 +7,53 @@ namespace _Project.Scripts.Core.Backend.Weapon
     // It fetches weapon prefabs based on weapon IDs and stores the selected weapons for gameplay.
     public class WeaponDataSystem : BaseSystem<WeaponDataSystem>
     {
-        // Array that holds the weapon database, which contains all available weapon data.
-        [SerializeField] internal WeaponData[] weaponDatabase;
+        protected override bool IsPersistent => true;
 
-        // Fetches the weapon prefab based on the provided WeaponID
-        public Weapons.Weapon GetWeaponPrefab(string weaponID)
+        public bool Initialized { get; private set; }
+
+        /// <summary>
+        /// The weapon bundle data that contains all the weapon data and configurations.
+        /// This is used to load and manage the weapon data in the game.
+        /// </summary>
+        [SerializeField] private WeaponBundleData weaponBundleData;
+
+        private async void Start()
         {
-            foreach (var weaponData in weaponDatabase) // Iterate through weapon database
+            try
             {
-                if (weaponData.weaponStats.WeaponID == weaponID) // Check the WeaponID property
-                {
-                    return weaponData.weaponPrefab; // Return the prefab from the current weapon data
-                }
-                
+                // Load the weapon bundle data asynchronously.
+                Initialized = await AssetBundleSystem.Instance.LoadBundleAsync(weaponBundleData.BundleName);
             }
-
-            Debug.LogWarning($"Weapon with ID {weaponID} not found in the database!");
-            return null;
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
-        
+
+        public async Task<Weapons.Weapon> LoadWeapon(string weaponID)
+        {
+            return await weaponBundleData.LoadWeapon(weaponID); // Load the weapon prefab from the bundle
+        }
+
         // Fetches the weapon icon based on the provided WeaponID
         public Sprite GetWeaponIcon(string weaponID)
         {
-            foreach (var weaponData in weaponDatabase) // Iterate through weapon database
-            {
-                if (weaponData.weaponStats.WeaponID == weaponID) // Check the WeaponID property
-                {
-                    return weaponData.icon; // Return the icon from the current weapon data
-                }
-                
-            }
-            Debug.LogWarning($"Weapon with ID {weaponID} not found in the database!");
-            return null;
+            var weaponData = weaponBundleData.GetWeaponData(weaponID);
+            return weaponData?.icon; // Return the icon from the weapon data
         }
 
-        protected override bool IsPersistent => true;
-        
         //Sets the selected weapons by copying the provided list of weapon IDs.
-        public void SetSelectedWeapons(string[] selectedWeapons)
-        {
-            _selectedWeapons = new List<string>(selectedWeapons);
-        }
+        public void SetSelectedWeapons(string[] selectedWeapons) { }
 
         //Retrieves the info of a weapon based on its ID.
         public WeaponData GetWeaponInfo(string weaponID)
         {
-            foreach (var weaponData in weaponDatabase) // Iterate through weapon database
-            {
-                if (weaponData.weaponStats.WeaponID == weaponID) // Check the WeaponID property
-                {
-                    return weaponData; // Return the weapon stats from the current weapon data
-                }
-                
-            }
-            Debug.LogWarning($"Weapon with ID {weaponID} not found in the database!");
-            return null;
+            return weaponBundleData.GetWeaponData(weaponID);
         }
-        
+
         public string GetRandomWeaponID()
         {
-            if (weaponDatabase.Length != 0) 
-                return weaponDatabase[Random.Range(0, weaponDatabase.Length)].weaponStats.WeaponID;
-            
-            Debug.LogWarning("Weapon database is empty!");
-            return null;
+            return weaponBundleData.GetRandomWeaponID();
         }
     }
 }

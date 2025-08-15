@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using _Project.Scripts.Core.Backend.Ability;
 using _Project.Scripts.Core.Backend.Interfaces;
 using _Project.Scripts.Core.Backend.Weapon;
@@ -115,19 +116,26 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             "Sword1"
         };
 
-        private void Start()
+        private async void Start()
         {
-            if (!hasPreMadeLoadout)
-                LoadWeapon(PlayerWeaponIDs);
-            else
-                foreach (var weapon in weapons)
-                {
-                    weapon.OnPickup(PlayerController);
-                    OnItemPicked?.Invoke(weapon);
-                }
+            try
+            {
+                if (!hasPreMadeLoadout)
+                    await LoadWeapon(PlayerWeaponIDs);
+                else
+                    foreach (var weapon in weapons)
+                    {
+                        weapon.OnPickup(PlayerController);
+                        OnItemPicked?.Invoke(weapon);
+                    }
 
-            _currentWeaponIndex = 0;
-            CurrentItem = weapons[_currentWeaponIndex];
+                _currentWeaponIndex = 0;
+                CurrentItem = weapons[_currentWeaponIndex];
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         /// <summary>
@@ -158,8 +166,13 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
         /// Loads a weapon by its ID.
         /// </summary>
         /// <param name="weaponIDs">The ID of the weapon to load.</param>
-        private void LoadWeapon(List<string> weaponIDs)
+        private async Task LoadWeapon(List<string> weaponIDs)
         {
+            while (!WeaponDataSystem.Instance.Initialized)
+            {
+                await Task.Yield();
+            }
+
             // Validate input
             if (weaponIDs == null || weaponIDs.Count == 0)
             {
@@ -173,24 +186,17 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             // Instantiate all weapons but only activate the first one
             for (var i = 0; i < weaponIDs.Count; i++)
             {
-                var weapon = InstantiateWeapon(weaponIDs[i]);
+                // Wait for the weapon prefab to be loaded
+                var weaponPrefab = await WeaponDataSystem.Instance.LoadWeapon(weaponIDs[i]);
+                if (!weaponPrefab)
+                    continue;
+
+                // Instantiate the weapon prefab
+                var weapon = Instantiate(weaponPrefab, weaponParent);
                 weapon.gameObject.SetActive(false);
 
                 PickupWeapon(i, weapon);
             }
-        }
-
-        // Method to instantiate a weapon prefab based on weapon ID
-        private Weapon InstantiateWeapon(string weaponID)
-        {
-            var weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
-            if (weaponPrefab)
-            {
-                return Instantiate(weaponPrefab, weaponParent);
-            }
-
-            Debug.LogError($"Weapon with ID {weaponID} not found in the database!");
-            return null;
         }
 
         /// <summary>

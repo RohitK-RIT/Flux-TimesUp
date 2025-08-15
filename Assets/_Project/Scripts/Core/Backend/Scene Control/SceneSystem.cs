@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using _Project.Scripts.Core.Backend.Asset_Bundle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,10 +27,16 @@ namespace _Project.Scripts.Core.Backend.Scene_Control
         /// </summary>
         private Coroutine _loadSceneCoroutine;
 
-        private IEnumerator Start()
+        private async void Start()
         {
-            yield return AssetBundleSystem.Instance.LoadAssetBundle(sceneBundleData.BundleName);
-            Initialized = true;
+            try
+            {
+                Initialized = await AssetBundleSystem.Instance.LoadBundleAsync(sceneBundleData.BundleName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         /// <summary>

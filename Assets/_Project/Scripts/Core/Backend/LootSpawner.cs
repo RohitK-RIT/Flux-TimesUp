@@ -95,16 +95,23 @@ namespace _Project.Scripts.Core.Backend
             Instantiate(abilityPrefab, lootDropPosition, Quaternion.identity, currentRoom);
         }
 
-        public void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
+        public async void SpawnWeapon(string weaponID, Vector3 lootDropPosition, Transform currentRoom)
         {
-            // Get the weapon prefab
-            var weaponPrefab = WeaponDataSystem.Instance.GetWeaponPrefab(weaponID);
-            // If the prefab is null, return
-            if (!weaponPrefab)
-                return;
+            try
+            {
+                // Get the weapon prefab
+                var weaponPrefab = await WeaponDataSystem.Instance.LoadWeapon(weaponID);
+                // If the prefab is null, return
+                if (!weaponPrefab)
+                    return;
 
-            // Instantiate the weapon prefab
-            Instantiate(weaponPrefab, lootDropPosition, Quaternion.identity, currentRoom);
+                // Instantiate the weapon prefab
+                Instantiate(weaponPrefab, lootDropPosition, Quaternion.identity, currentRoom);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }
