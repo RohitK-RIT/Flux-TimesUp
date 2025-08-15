@@ -100,7 +100,7 @@ namespace _Project.Scripts.Core.Backend
             try
             {
                 // Get the weapon prefab
-                var weaponPrefab = await WeaponDataSystem.Instance.LoadWeapon(weaponID);
+                var weaponPrefab = await WeaponDataSystem.Instance.GetWeaponAsync(weaponID);
                 // If the prefab is null, return
                 if (!weaponPrefab)
                     return;

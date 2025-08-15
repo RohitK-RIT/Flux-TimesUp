@@ -187,7 +187,7 @@ namespace _Project.Scripts.Core.Character.Hand_Controller
             for (var i = 0; i < weaponIDs.Count; i++)
             {
                 // Wait for the weapon prefab to be loaded
-                var weaponPrefab = await WeaponDataSystem.Instance.LoadWeapon(weaponIDs[i]);
+                var weaponPrefab = await WeaponDataSystem.Instance.GetWeaponAsync(weaponIDs[i]);
                 if (!weaponPrefab)
                     continue;
 

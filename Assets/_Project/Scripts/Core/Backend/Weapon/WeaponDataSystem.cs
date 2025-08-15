@@ -30,7 +30,7 @@ namespace _Project.Scripts.Core.Backend.Weapon
             }
         }
 
-        public async Task<Weapons.Weapon> LoadWeapon(string weaponID)
+        public async Task<Weapons.Weapon> GetWeaponAsync(string weaponID)
         {
             return await weaponBundleData.LoadWeapon(weaponID); // Load the weapon prefab from the bundle
         }

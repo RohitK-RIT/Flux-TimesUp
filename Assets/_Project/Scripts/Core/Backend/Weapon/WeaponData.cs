@@ -7,8 +7,19 @@ namespace _Project.Scripts.Core.Backend.Weapon
     [Serializable]
     public class WeaponData
     {
+        /// <summary>
+        /// The icon representing the weapon, used for UI purposes.
+        /// </summary>
         public Sprite Icon => icon;
+
+        /// <summary>
+        /// The stats associated with the weapon, including damage, range, and other attributes.
+        /// </summary>
         public WeaponStats Stats => weaponStats;
+
+        /// <summary>
+        /// The path to the prefab in the project, used for loading the prefab at runtime.
+        /// </summary>
         public string PrefabPath => prefabPath;
 
 #if UNITY_EDITOR

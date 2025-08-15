@@ -5,7 +5,7 @@ using UnityEngine;
 namespace _Project.Scripts.Core.Backend.Weapon
 {
     [CreateAssetMenu(fileName = "Weapon Bundle Data", menuName = "Bundle Data/ Weapon")]
-    public class WeaponBundleData : BundleData
+    public class WeaponBundleData : PrefabBundleData
     {
         [SerializeField] private WeaponData[] weaponData;
 #if UNITY_EDITOR
@@ -13,12 +13,13 @@ namespace _Project.Scripts.Core.Backend.Weapon
         {
             foreach (var data in weaponData)
             {
+                data.Configure();
                 AddToAssetBundle(BundleName, data.WeaponPrefab);
             }
         }
 
-        [ContextMenu("Configure Weapon Data System")]
-        private void ConfigureWeaponDataSystem()
+        [ContextMenu("Configure Weapon Bundle Data")]
+        private void ConfigureWeaponBundleData()
         {
             foreach (var data in weaponData)
             {
@@ -29,9 +30,9 @@ namespace _Project.Scripts.Core.Backend.Weapon
 
         public WeaponData GetWeaponData(string weaponID)
         {
-            foreach (var data in weaponData)            
-                if (data.Stats.WeaponID == weaponID)                
-                    return data;                
+            foreach (var data in weaponData)
+                if (data.Stats.WeaponID == weaponID)
+                    return data;
 
             Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
             return null;
@@ -40,16 +41,10 @@ namespace _Project.Scripts.Core.Backend.Weapon
         public async Task<Weapons.Weapon> LoadWeapon(string weaponID)
         {
             var data = GetWeaponData(weaponID);
-            if (data == null)
-            {
-                Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
-                return null;
-            }
+            if (data != null)
+                return await LoadPrefabAsync<Weapons.Weapon>(data.PrefabPath);
 
-            var prefab = await AssetBundleSystem.Instance.LoadAssetAsync<GameObject>(BundleName, data.PrefabPath);
-            if (prefab && prefab.TryGetComponent<Weapons.Weapon>(out var weapon))
-                return weapon;
-
+            Debug.LogWarning($"Weapon with ID {weaponID} not found in the bundle data!");
             return null;
         }
 
