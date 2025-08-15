@@ -8,10 +8,7 @@ namespace _Project.Scripts.Core.Backend.Weapon
     {
         // Array that holds the weapon database, which contains all available weapon data.
         [SerializeField] internal WeaponData[] weaponDatabase;
-        
-        // List to store the IDs of the selected weapons for the player.
-        private List<string> _selectedWeapons;
-        
+
         // Fetches the weapon prefab based on the provided WeaponID
         public Weapons.Weapon GetWeaponPrefab(string weaponID)
         {
