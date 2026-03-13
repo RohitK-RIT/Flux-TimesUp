@@ -1,5 +1,6 @@
 using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Weapons.Melee;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -7,6 +8,11 @@ namespace _Project.Scripts.Core.Character.Animation
 {
     public class IKController : CharacterComponent
     {
+        /// <summary>
+        /// Reference to the body IK rig
+        /// </summary>
+        [SerializeField] private Rig bodyIKRig;
+
         /// <summary>
         /// Reference to the gun hand rig
         /// </summary>
@@ -23,6 +29,11 @@ namespace _Project.Scripts.Core.Character.Animation
         [SerializeField] private Rig meleeIKRig;
 
         /// <summary>
+        /// Reference to the left hand IK constraint.
+        /// </summary>
+        [SerializeField] private TwoBoneIKConstraint leftHandIKConstraint;
+
+        /// <summary>
         /// Reference to the RigBuilder component
         /// </summary>
         private RigBuilder _rigBuilder;
@@ -34,8 +45,10 @@ namespace _Project.Scripts.Core.Character.Animation
 
         private HandController _handController;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             _rigBuilder = GetComponentInChildren<RigBuilder>();
             _handIKConstraints = gunIKRig.GetComponentsInChildren<TwoBoneIKConstraint>();
 
@@ -46,9 +59,11 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             if (_handController)
             {
-                _handController.OnWeaponSwitched += UpdateIKPoints;
+                _handController.OnItemSwitched += UpdateIKPoints;
+                _handController.OnItemPicked += OnItemPicked;
+                _handController.OnItemDropped += OnItemDropped;
             }
-            
+
             RefreshRig();
         }
 
@@ -56,8 +71,40 @@ namespace _Project.Scripts.Core.Character.Animation
         {
             if (_handController)
             {
-                _handController.OnWeaponSwitched -= UpdateIKPoints;
+                _handController.OnItemSwitched -= UpdateIKPoints;
+                _handController.OnItemPicked -= OnItemPicked;
+                _handController.OnItemDropped -= OnItemDropped;
             }
+        }
+
+        private void OnItemPicked(IHandItem item)
+        {
+            if (item is RangedWeapon rangedWeapon)
+            {
+                rangedWeapon.OnReloadBegin += OnReloadBegin;
+                rangedWeapon.OnReloadEnd += OnReloadEnd;
+            }
+        }
+
+        private void OnItemDropped(IHandItem item)
+        {
+            if (item is RangedWeapon rangedWeapon)
+            {
+                rangedWeapon.OnReloadBegin -= OnReloadBegin;
+                rangedWeapon.OnReloadEnd -= OnReloadEnd;
+            }
+        }
+
+        private void OnReloadBegin()
+        {
+            leftHandIKConstraint.weight = 0f;
+            RefreshRig();
+        }
+
+        private void OnReloadEnd()
+        {
+            leftHandIKConstraint.weight = 1f;
+            RefreshRig();
         }
 
         /// <summary>
@@ -66,53 +113,56 @@ namespace _Project.Scripts.Core.Character.Animation
         private void UpdateIKPoints()
         {
             var item = _handController.CurrentItem;
-            if (!gunIKRig || item == null)
+            if (!gunIKRig || !gunAimingIKRig || !meleeIKRig || _handIKConstraints.Length == 0)
             {
-                Debug.LogError("Rig root or prefab is not assigned!");
+                Debug.LogError("IK Rigs or Constraints are not assigned in the inspector!");
                 return;
             }
 
-            // Fetch all Two Bone IK Constraints under the rig root
-            if (_handIKConstraints.Length == 0)
+            switch (item)
             {
-                Debug.LogError("No Two Bone IK Constraints found under the rig root!");
-                return;
-            }
+                case MeleeWeapon:
+                    bodyIKRig.weight = 0f;
+                    gunIKRig.weight = 0f;
+                    gunAimingIKRig.weight = 0f;
+                    meleeIKRig.weight = 1f;
+                    break;
+                case RangedWeapon:
+                    bodyIKRig.weight = 1f;
+                    gunIKRig.weight = 1f;
+                    gunAimingIKRig.weight = 1f;
+                    meleeIKRig.weight = 0f;
 
-            if (item is MeleeWeapon)
-            {
-                gunIKRig.weight = 0f;
-                gunAimingIKRig.weight = 0f;
-                meleeIKRig.weight = 1f;
-            }
-            else
-            {
-                gunIKRig.weight = 1f;
-                gunAimingIKRig.weight = 1f;
-                meleeIKRig.weight = 0f;
-                
-                item.transform.parent.rotation = Quaternion.identity;
-                
-                // Assign transforms to each Two Bone IK Constraint
-                foreach (var constraint in _handIKConstraints)
-                {
-                    // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
-                    var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
+                    item.transform.parent.rotation = Quaternion.identity;
 
-                    // Fetch source, target, and hint transforms based on the prefab structure
-                    var targetObject = item.transform.Find($"IK Points/{constraintName}_target");
-                    var hintObject = item.transform.Find($"IK Points/{constraintName}_hint");
-
-                    if (!hintObject || !targetObject)
+                    // Assign transforms to each Two Bone IK Constraint
+                    foreach (var constraint in _handIKConstraints)
                     {
-                        Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
-                        continue;
+                        // Example: Dynamically fetch transforms based on naming conventions or hierarchy paths
+                        var constraintName = constraint.gameObject.name; // Name of the GameObject with the constraint
+
+                        // Fetch source, target, and hint transforms based on the prefab structure
+                        var targetObject = item.transform.Find($"IK Points/{constraintName}_target");
+                        var hintObject = item.transform.Find($"IK Points/{constraintName}_hint");
+
+                        if (!hintObject || !targetObject)
+                        {
+                            Debug.LogWarning($"Transforms for constraint {constraintName} could not be found in the prefab!");
+                            continue;
+                        }
+
+                        // Assign the transforms to the constraint
+                        constraint.data.target = targetObject;
+                        constraint.data.hint = hintObject;
                     }
 
-                    // Assign the transforms to the constraint
-                    constraint.data.target = targetObject;
-                    constraint.data.hint = hintObject;
-                }
+                    break;
+                default:
+                    bodyIKRig.weight = 0f;
+                    gunIKRig.weight = 0f;
+                    gunAimingIKRig.weight = 0f;
+                    meleeIKRig.weight = 0f;
+                    break;
             }
 
             RefreshRig();

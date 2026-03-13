@@ -12,12 +12,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             _enemyInputController = enemyInputController;
         }
 
-        // Called when the enemy enters the ChaseState
-        public override void EnterState()
-        {
-            Debug.Log("Entering Chase State");
-        }
-
         // Called when the enemy exits the ChaseState
         public override void ExitState()
         {
@@ -36,6 +30,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
             // If the player is out of chase range, transition to Detect state
             if (!_enemyInputController.CanChasePlayer())
             {

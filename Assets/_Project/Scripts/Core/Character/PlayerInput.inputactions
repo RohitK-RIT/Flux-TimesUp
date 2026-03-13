@@ -2,7 +2,7 @@
     "name": "PlayerInput",
     "maps": [
         {
-            "name": "PlayerControl",
+            "name": "Character",
             "id": "ab140a0f-0436-4cb3-a05a-f0b0d03f790e",
             "actions": [
                 {
@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Attack",
+                    "name": "Use",
                     "type": "Button",
                     "id": "7582dec2-15ab-452d-b06a-becdff655db9",
                     "expectedControlType": "Button",
@@ -33,9 +33,36 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "EquipAbility",
+                    "name": "Equip Ability",
                     "type": "Button",
                     "id": "65709bd6-921b-42fe-b98e-c6f5d1b58f7d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "b5df890d-46b5-4b60-ac03-1f98fc12f8d5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pick",
+                    "type": "Button",
+                    "id": "d304de04-5e98-4879-b703-dbcf8f6657f1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Drop",
+                    "type": "Button",
+                    "id": "06d4815e-8f35-4487-a403-a7bd773e3545",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -49,24 +76,6 @@
                     "processors": "Clamp(min=-1,max=1)",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Reload",
-                    "type": "Button",
-                    "id": "b5df890d-46b5-4b60-ac03-1f98fc12f8d5",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Loot Pick Up",
-                    "type": "Button",
-                    "id": "d304de04-5e98-4879-b703-dbcf8f6657f1",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 },
                 {
                     "name": "Switch Weapon Hotkey",
@@ -141,7 +150,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboad",
-                    "action": "Attack",
+                    "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -163,18 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboad",
-                    "action": "EquipAbility",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e7e93e19-f61b-42b1-a3b8-a45ed5a875d2",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Switch Weapon",
+                    "action": "Equip Ability",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -196,7 +194,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Loot Pick Up",
+                    "action": "Pick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -224,12 +222,23 @@
                 },
                 {
                     "name": "",
-                    "id": "f623737f-4845-41f7-b51e-3a01ac65b76d",
-                    "path": "<Keyboard>/3",
+                    "id": "4fed0ae2-3826-430f-ba13-edda53bf9256",
+                    "path": "<Keyboard>/g",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Switch Weapon Hotkey",
+                    "action": "Drop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e7e93e19-f61b-42b1-a3b8-a45ed5a875d2",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Weapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

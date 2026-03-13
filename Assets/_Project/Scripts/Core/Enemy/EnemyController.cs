@@ -26,7 +26,6 @@ namespace _Project.Scripts.Core.Enemy
         {
             base.Start();
 
-            _enemyInputController.Initialize(this);
             Reset();
         }
 
@@ -56,10 +55,10 @@ namespace _Project.Scripts.Core.Enemy
             Debug.Log("Enemy reset to initial state.");
         }
 
-        protected override void Die(PlayerController enemyPlayer, IHandItem itemKilledBy)
-        {
-            gameObject.SetActive(false);
-            base.Die(enemyPlayer, itemKilledBy);
-        }
+        // protected override void Die(PlayerController enemyPlayer, IHandItem itemKilledBy)
+        // {
+        //     //_enemyInputController.gameObject.SetActive(false);
+        //     base.Die(enemyPlayer, itemKilledBy);
+        // }
     }
 }

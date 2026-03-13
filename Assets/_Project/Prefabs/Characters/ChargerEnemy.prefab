@@ -983,6 +983,9 @@ MonoBehaviour:
   enemyType: 2
   slowPlayerVFX: {fileID: 0}
   reduceTSMVFX: {fileID: 0}
+  deathSFX: {fileID: 8300000, guid: 9812bd20882b744d194d8ac90f3ee1f2, type: 3}
+  deathEffectPrefab: {fileID: 4535006216103734310, guid: 98c4704d0fd7211449bcf5c451095a60,
+    type: 3}
 --- !u!114 &779967032003919024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1076,9 +1079,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3f055ab0b5f4df19ef1d30fe4f712c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bodyIKRig: {fileID: 332605516614588209}
   gunIKRig: {fileID: 9125171435841429032}
   gunAimingIKRig: {fileID: 8957775756023713051}
   meleeIKRig: {fileID: 1185158279192096462}
+  leftHandIKConstraint: {fileID: 2651991531390934474}
 --- !u!1 &4854036463589462079
 GameObject:
   m_ObjectHideFlags: 0
@@ -3262,6 +3267,15 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 13789140, guid: 2ea27af6ead886c4d93bb53d28c6c25b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7641589657172646982, guid: c06bc1db227b4f740b7c9d4ae1cc8bfb,
+        type: 3}
+    - target: {fileID: 13789140, guid: 2ea27af6ead886c4d93bb53d28c6c25b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ccae2dc6cf6f0c4479b782fedd0c8172, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

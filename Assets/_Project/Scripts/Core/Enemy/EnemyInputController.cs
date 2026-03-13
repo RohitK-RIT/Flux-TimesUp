@@ -5,12 +5,12 @@ using _Project.Scripts.Core.Character.Hand_Controller;
 using _Project.Scripts.Core.Enemy.FSM;
 using _Project.Scripts.Core.Enemy.FSM.EnemyStates;
 using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
-using _Project.Scripts.Core.Player_Controllers;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.UI;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Core.Enemy
 {
@@ -25,8 +25,10 @@ namespace _Project.Scripts.Core.Enemy
 
         private Transform _currentTarget; // current target to assign
 
-        private readonly float _attackRange = 15f; // Attack range
-
+        private readonly float _enemyAttackRange = 15f; // Attack range
+        
+        private readonly float _chargerAttackRange = 5f; // Attack range
+        
         [SerializeField] private float attackCooldown = 3f; // Cooldown time between attacks
 
         private bool _isAttacking; // Tracks if an attack is in progress
@@ -80,20 +82,30 @@ namespace _Project.Scripts.Core.Enemy
         
         [SerializeField] internal GameObject slowPlayerVFX;
         [SerializeField] internal GameObject reduceTSMVFX;
+        [SerializeField] private AudioClip deathSFX;
+        [SerializeField] private GameObject deathEffectPrefab;
+        internal string enemyID;
+        internal float spawnTime;
 
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Enemy = GetComponent<NavMeshAgent>();
             StateManager = GetComponent<StateManager>();
+            _playerDetection = GetComponent<PlayerDetection>();
             InitializeState();
             EnemyHUD = GetComponentInChildren<EnemyHUD>();
             _handController = GetComponent<HandController>();
+            enemyID = "Enemy_" + Random.Range(1000, 9999);
+            spawnTime = Time.time;
+            DataCollectionEvents.EnemySpawned(enemyID, spawnTime);
         }
 
         private void Start()
         {
             EnemyManager.Instance.RegisterEnemy(this);
+            Enemy.speed = PlayerController.Stats.movementSpeed;
         }
 
         private void InitializeState()
@@ -108,6 +120,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
                     states[EnemyState.Flee] = new FleeState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Patrol);
                     break;
 
@@ -115,6 +128,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.BossAttack] = new BossAttackState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 
@@ -122,6 +136,7 @@ namespace _Project.Scripts.Core.Enemy
                     states[EnemyState.Detect] = new DetectState(this);
                     states[EnemyState.Chase] = new ChaseState(this);
                     states[EnemyState.Attack] = new AttackState(this);
+                    states[EnemyState.Death] = new DeathState(this);
                     StateManager.InitializeStates(states, EnemyState.Detect);
                     break;
 
@@ -130,17 +145,6 @@ namespace _Project.Scripts.Core.Enemy
                     Debug.LogError($"Unhandled enemy type: {enemyType}");
                     break;
             }
-        }
-
-        public override void Initialize(PlayerController playerController)
-        {
-            base.Initialize(playerController);
-
-            _playerDetection = GetComponent<PlayerDetection>();
-
-            _playerDetection.Initialize(playerController);
-
-            Enemy.speed = playerController.Stats.movementSpeed;
         }
 
         public void Disable()
@@ -161,7 +165,13 @@ namespace _Project.Scripts.Core.Enemy
             // Create a mask for the "Room" area on the NavMesh. 
             // NavMesh.GetAreaFromName("Room") fetches the index of the "Room" area,
             // and the bitwise shift (1 << index) creates a mask for this area.
-            int roomAreaMask = 1 << NavMesh.GetAreaFromName("Room");
+            int roomAreaIndex = NavMesh.GetAreaFromName("Room");
+            // Check if the area exists
+            if (roomAreaIndex == -1)
+            {
+                return false;
+            }
+            int roomAreaMask = 1 << roomAreaIndex;
             bool isOnNavMesh = NavMesh.SamplePosition(ClosestPlayer.transform.position, out hit, 3.0f, roomAreaMask);
             if (isOnNavMesh)
             {
@@ -171,6 +181,7 @@ namespace _Project.Scripts.Core.Enemy
             // Return true if the player's position is on the NavMesh within the specified area.
             return isOnNavMesh;
         }
+
 
         // Method to find the closest player and check if its in detection range and in conical field of view
         internal bool FindPlayer()
@@ -208,6 +219,7 @@ namespace _Project.Scripts.Core.Enemy
         // Method to stop chasing the player, i.e., resetting the navmesh agent path
         internal void StopChasing()
         {
+            StopCoroutine(FollowPlayer());
             Enemy.ResetPath(); // Stop following the player
             Enemy.velocity = Vector3.zero;
         }
@@ -261,7 +273,8 @@ namespace _Project.Scripts.Core.Enemy
         internal bool IsPlayerInAttackRange()
         {
             var distanceToPlayer = Vector3.Distance(Enemy.transform.position, ClosestPlayer.position);
-            return distanceToPlayer <= _attackRange;
+            var attackRange = enemyType == EnemyType.Basic ? _enemyAttackRange : _chargerAttackRange;
+            return distanceToPlayer <= attackRange;
         }
 
 
@@ -273,7 +286,7 @@ namespace _Project.Scripts.Core.Enemy
             _isAttacking = true;
             _attackCoroutine = StartCoroutine(AttackCoroutine());
         }
-
+        
         // Stop the attack when the player is out of range
         internal void StopAttack()
         {
@@ -397,7 +410,7 @@ namespace _Project.Scripts.Core.Enemy
 
             // Visualization of the attack range (sphere)
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _attackRange);
+            Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, _enemyAttackRange);
 
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(PlayerController.MovementController.Body.position, EngagementDistance);
@@ -459,7 +472,21 @@ namespace _Project.Scripts.Core.Enemy
         {
             OnMoveInputUpdated?.Invoke(new Vector2(moveDirection.x, moveDirection.z));
         }
-        
+
+        public void DeathEffects()
+        {
+            // Spawn particle effect at the enemy's position and rotation
+            if (deathEffectPrefab != null)
+            {
+                Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            }
+            if (deathSFX != null)
+            {
+                AudioSource.PlayClipAtPoint(deathSFX, Camera.main.transform.position);
+            }
+
+        }
+
         private void LateUpdate()
         {
             Vector3 movementDir = Enemy.velocity;

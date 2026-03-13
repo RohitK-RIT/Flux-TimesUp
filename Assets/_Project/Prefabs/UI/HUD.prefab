@@ -873,8 +873,8 @@ MonoBehaviour:
   pickupText: {fileID: 8005351562394426261}
   currAmmo: {fileID: 2398764979154721602}
   maxAmmo: {fileID: 6631621857437910848}
+  ammo: {fileID: 2212695356168243663}
   primaryIconSlot: {fileID: 8563636870559189840}
-  secondaryIconSlot: {fileID: 1671536158140861195}
   meleeIconSlot: {fileID: 4437968692359122505}
   abilityIconSlot: {fileID: 3601954140710178096}
   overlay: {fileID: 3885057846322640736, guid: 524d8f0bb389ce84cb50e03d402a3295, type: 3}
@@ -882,6 +882,8 @@ MonoBehaviour:
   reloadingIcon: {fileID: 7017186723268787099}
   player: {fileID: 0}
   randomRoomGeneration: {fileID: 0}
+  pickupTextPrefab: {fileID: 5008045038340045437, guid: 5b6af21432d5ac44392e3621912b0f52,
+    type: 3}
 --- !u!1 &5242344781681421246
 GameObject:
   m_ObjectHideFlags: 0
@@ -2373,18 +2375,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94849f90242df5047a979af5d13a0802, type: 3}
---- !u!114 &1671536158140861195 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4780448738034730420, guid: 94849f90242df5047a979af5d13a0802,
-    type: 3}
-  m_PrefabInstance: {fileID: 6153585648045608639}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &7895631884544935382 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4104757103934032745, guid: 94849f90242df5047a979af5d13a0802,

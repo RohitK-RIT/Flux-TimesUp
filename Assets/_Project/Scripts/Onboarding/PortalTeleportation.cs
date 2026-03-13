@@ -1,19 +1,17 @@
 using _Project.Scripts.Core.Backend.Scene_Control;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _Project.Scripts.Onboarding
 {
     public class PortalTeleportation : MonoBehaviour
     {
-        [SerializeField] private Transform destination;
-        [SerializeField] private OnboardingManager onboardingManager;
+        [SerializeField] private string targetSceneName = "UI";
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
             {
-                var player = LevelSceneController.Instance.Player;
-                player.MovementController.SetPosition(destination.position);
-                onboardingManager.OnPlayerEnteredPortal();
+                SceneSystem.Instance.LoadScene(new SceneLoadRequest(targetSceneName, LoadSceneMode.Single));
             }
         }
     }

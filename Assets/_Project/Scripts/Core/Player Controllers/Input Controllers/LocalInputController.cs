@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -38,90 +39,89 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// Event that is called when the player switches weapons.
         /// </summary>
         public override event Action<int> OnSwitchWeaponInput;
-        
+
         [SerializeField] private float scrollCooldown = 0.25f; // Cooldown for weapon switching
         private float _lastScrollTime;
-        public override event Action<int> OnSwitchWeaponHotkey;
-
+        public event Action<int> OnSwitchWeaponHotkey;
 
         public override event Action OnReloadInput;
 
-        public override event Action OnLootPickupInput;
+        public event Action OnLootPickupInput;
+
+        public event Action OnDropInput;
 
         /// <summary>
         /// Component that handles player input Unity API calls.
         /// </summary>
         private PlayerInput _playerInput;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             _playerInput = new PlayerInput();
         }
 
         public void OnEnable()
         {
             // Subscribe to input events
+            // Look Input Events
+            _playerInput.Character.Look.performed += OnLookInputReceived;
+            _playerInput.Character.Look.canceled += OnLookInputReceived;
+
             // Move Input Events
-            _playerInput.PlayerControl.Move.started += OnMoveInputReceived;
-            _playerInput.PlayerControl.Move.performed += OnMoveInputReceived;
-            _playerInput.PlayerControl.Move.canceled += OnMoveInputReceived;
+            _playerInput.Character.Move.started += OnMoveInputReceived;
+            _playerInput.Character.Move.performed += OnMoveInputReceived;
+            _playerInput.Character.Move.canceled += OnMoveInputReceived;
 
             // Attack Input Events
-            _playerInput.PlayerControl.Attack.started += OnAttackInputStarted;
-            _playerInput.PlayerControl.Attack.canceled += OnAttackInputCancelled;
+            _playerInput.Character.Use.started += OnUseStarted;
+            _playerInput.Character.Use.canceled += OnUseCancelled;
 
-            // Look Input Events
-            _playerInput.PlayerControl.Look.performed += OnLookInputReceived;
-            _playerInput.PlayerControl.Look.canceled += OnLookInputReceived;
-
-            // Equip Ability Input Events
-            _playerInput.PlayerControl.EquipAbility.performed += OnEquipAbilityInput;
-
-            _playerInput.PlayerControl.SwitchWeapon.performed += OnSwitchWeaponInputReceived;
-            _playerInput.PlayerControl.SwitchWeaponHotkey.performed += OnSwitchWeaponHotkeyInput;
-            
-            _playerInput.PlayerControl.Reload.performed += OnReloadInputReceived;
-            
-            _playerInput.PlayerControl.LootPickUp.performed += OnLootPickupInputReceived;
+            // Item Input Events
+            _playerInput.Character.EquipAbility.performed += OnEquipAbilityInput;
+            _playerInput.Character.SwitchWeapon.performed += OnSwitchWeaponInputReceived;
+            _playerInput.Character.Drop.performed += OnDropPerformed;
+            _playerInput.Character.SwitchWeaponHotkey.performed += OnSwitchWeaponHotkeyInput;
+            _playerInput.Character.Reload.performed += OnReloadInputReceived;
+            _playerInput.Character.Pick.performed += OnPickPerformed;
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
             // Enable the PlayerInput component
-            _playerInput.PlayerControl.Enable();
+            _playerInput.Character.Enable();
         }
 
         public void OnDisable()
         {
             // Unsubscribe from input events
-            // Move Input Events
-            _playerInput.PlayerControl.Move.started -= OnMoveInputReceived;
-            _playerInput.PlayerControl.Move.performed -= OnMoveInputReceived;
-            _playerInput.PlayerControl.Move.canceled -= OnMoveInputReceived;
-
-            // Attack Input Events
-            _playerInput.PlayerControl.Attack.started -= OnAttackInputStarted;
-            _playerInput.PlayerControl.Attack.canceled -= OnAttackInputCancelled;
-
             // Look Input Events
-            _playerInput.PlayerControl.Look.performed -= OnLookInputReceived;
-            _playerInput.PlayerControl.Look.canceled -= OnLookInputReceived;
+            _playerInput.Character.Look.performed -= OnLookInputReceived;
+            _playerInput.Character.Look.canceled -= OnLookInputReceived;
 
-            // Equip Ability Input Events
-            _playerInput.PlayerControl.EquipAbility.performed -= OnEquipAbilityInput;
+            // Move Input Events
+            _playerInput.Character.Move.started -= OnMoveInputReceived;
+            _playerInput.Character.Move.performed -= OnMoveInputReceived;
+            _playerInput.Character.Move.canceled -= OnMoveInputReceived;
 
-            _playerInput.PlayerControl.SwitchWeapon.performed -= OnSwitchWeaponInputReceived;
-            _playerInput.PlayerControl.SwitchWeaponHotkey.performed -= OnSwitchWeaponHotkeyInput;
-            
-            _playerInput.PlayerControl.Reload.performed -= OnReloadInputReceived;
-            
-            _playerInput.PlayerControl.LootPickUp.performed -= OnLootPickupInputReceived;
+            // Use Input Events
+            _playerInput.Character.Use.started -= OnUseStarted;
+            _playerInput.Character.Use.canceled -= OnUseCancelled;
+
+            // Item Input Events
+            _playerInput.Character.EquipAbility.performed -= OnEquipAbilityInput;
+            _playerInput.Character.SwitchWeapon.performed -= OnSwitchWeaponInputReceived;
+            _playerInput.Character.Drop.performed -= OnDropPerformed;
+            _playerInput.Character.SwitchWeaponHotkey.performed -= OnSwitchWeaponHotkeyInput;
+            _playerInput.Character.Reload.performed -= OnReloadInputReceived;
+            _playerInput.Character.Pick.performed -= OnPickPerformed;
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
             // Disable the PlayerInput component
-            _playerInput.PlayerControl.Disable();
+            _playerInput.Character.Disable();
         }
 
         private void OnDestroy()
@@ -130,12 +130,14 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         }
 
         // Input Event Handlers
-        
+
         #region Loot Pickup Input
-        private void OnLootPickupInputReceived(InputAction.CallbackContext context)
+
+        private void OnPickPerformed(InputAction.CallbackContext context)
         {
             OnLootPickupInput?.Invoke();
         }
+
         #endregion
 
         #region Equip Ability Input
@@ -172,8 +174,9 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// This method is called when the player starts attacking.
         /// </summary>
         /// <param name="context">struct that hold the action context</param>
-        private void OnAttackInputStarted(InputAction.CallbackContext context)
+        private void OnUseStarted(InputAction.CallbackContext context)
         {
+            DataCollectionEvents.PlayerAttacked();
             // Invoke the OnAttackInputBegan event.
             OnAttackInputBegan?.Invoke();
         }
@@ -182,7 +185,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         /// This method is called when the player stops attacking.
         /// </summary>
         /// <param name="context">struct that hold the action context</param>
-        private void OnAttackInputCancelled(InputAction.CallbackContext context)
+        private void OnUseCancelled(InputAction.CallbackContext context)
         {
             // Invoke the OnAttackInputEnded event.
             OnAttackInputEnded?.Invoke();
@@ -223,7 +226,7 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
                 _lastScrollTime = Time.time;
             }
         }
-        
+
         private void OnSwitchWeaponHotkeyInput(InputAction.CallbackContext context)
         {
             string key = context.control.displayName;
@@ -241,9 +244,9 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
         }
 
         #endregion
-        
+
         #region Reload Input
-        
+
         /// <summary>
         /// This method is called when the player reloads the weapon.
         /// </summary>
@@ -253,7 +256,17 @@ namespace _Project.Scripts.Core.Player_Controllers.Input_Controllers
             // Invoke the OnReloadInput event.
             OnReloadInput?.Invoke();
         }
-        
+
+        #endregion
+
+        #region Drop Input
+
+        private void OnDropPerformed(InputAction.CallbackContext context)
+        {
+            // Invoke the OnDropInput event.
+            OnDropInput?.Invoke();
+        }
+
         #endregion
     }
 }

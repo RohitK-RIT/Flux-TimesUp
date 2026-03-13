@@ -1,6 +1,4 @@
-using System;
 using _Project.Scripts.Core.Backend.Interfaces;
-using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Player_Controllers.Input_Controllers;
 using _Project.Scripts.Core.Weapons.Abilities.Shield;
 using UnityEngine;
@@ -49,7 +47,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <summary>
         /// The property that gets or sets the current pickable item.
         /// </summary>
-        private IInteractable CurrentInteractable
+        public IInteractable CurrentInteractable
         {
             get => _currentInteractable;
             set
@@ -64,26 +62,14 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// The current pickable item the player is interacting with.
         /// </summary>
         private IInteractable _currentInteractable;
-
         protected override void Awake()
         {
+            _camera = Camera.main;
             base.Awake();
 
             // Get the required components
             _localInputController = GetComponent<LocalInputController>();
             _playerAimController = GetComponent<PlayerAimController>();
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            // Initialize the input controller and camera controller
-            _localInputController.Initialize(this);
-            _playerAimController.Initialize(this);
-
-            // Set the camera to the main camera
-            _camera = LevelSceneController.Instance.Camera;
         }
 
         private void Update()
@@ -100,13 +86,11 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputEnded += EndAttack;
 
             _localInputController.OnAbilityEquipped += AbilityEquipped;
-
             _localInputController.OnSwitchWeaponInput += SwitchWeapon;
             _localInputController.OnSwitchWeaponHotkey += SwitchWeaponHotKey;
-            
             _localInputController.OnReloadInput += Reload;
-
-            _localInputController.OnLootPickupInput += PickUpItem;
+            _localInputController.OnLootPickupInput += PickupItem;
+            _localInputController.OnDropInput += HandController.DropWeapon;
         }
 
         private void OnDisable()
@@ -118,11 +102,10 @@ namespace _Project.Scripts.Core.Player_Controllers
             _localInputController.OnAttackInputEnded -= EndAttack;
 
             _localInputController.OnAbilityEquipped -= AbilityEquipped;
-
             _localInputController.OnSwitchWeaponInput -= SwitchWeapon;
             _localInputController.OnReloadInput -= Reload;
-
-            _localInputController.OnLootPickupInput -= PickUpItem;
+            _localInputController.OnLootPickupInput -= PickupItem;
+            _localInputController.OnDropInput -= HandController.DropWeapon;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -136,10 +119,10 @@ namespace _Project.Scripts.Core.Player_Controllers
         /// <param name="other">collider of the object collided</param>
         private void CheckForCollectibles(Collider other)
         {
-            if (!other.TryGetComponent<ICollectible>(out var collectible)) 
+            if (!other.TryGetComponent<ICollectible>(out var collectible))
                 return;
-            
-            if (HandController.OnItemPicked(collectible))
+
+            if (HandController.OnItemCollected(collectible))
                 collectible.OnCollected(this);
         }
 
@@ -173,6 +156,10 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         private void UpdatePickable()
         {
+            if(_camera == null)
+            {
+                return;
+            }
             if (Physics.Raycast(_camera.ViewportPointToRay(ViewportCenter), out var hit, 8f))
             {
                 if (hit.collider.TryGetComponent<IInteractable>(out var interactable))
@@ -184,12 +171,12 @@ namespace _Project.Scripts.Core.Player_Controllers
             }
         }
 
-        private void PickUpItem()
+        private void PickupItem()
         {
             if (CurrentInteractable == null)
                 return;
 
-            if (!HandController.OnItemPicked(CurrentInteractable))
+            if (!HandController.OnItemInteracted(CurrentInteractable))
                 return;
 
             CurrentInteractable.OnPickup(this);

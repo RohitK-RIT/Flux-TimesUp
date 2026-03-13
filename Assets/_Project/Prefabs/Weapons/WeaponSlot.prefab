@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8844000275570514403}
   - component: {fileID: 2964321943430120570}
   - component: {fileID: 8130604049836109675}
+  - component: {fileID: 3494097460106356414}
   m_Layer: 5
   m_Name: WeaponSprite
   m_TagString: Untagged
@@ -120,6 +121,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3494097460106356414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557280464248700823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8084818808c2e534cb6f9a0096c1c6ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundType: 1
+  playType: 1
+  soundManager: {fileID: 5848181875861720457, guid: 3700e0b1028662d49b4e57581106d34e,
+    type: 3}
 --- !u!1 &1774089421338085156
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,6 +551,7 @@ GameObject:
   - component: {fileID: 6926015274780918247}
   - component: {fileID: 5434694214826590322}
   - component: {fileID: 7155650126416977627}
+  - component: {fileID: 1839190110513250659}
   m_Layer: 2
   m_Name: Weapon Info Card
   m_TagString: Untagged
@@ -630,6 +648,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1839190110513250659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778887869561502009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8084818808c2e534cb6f9a0096c1c6ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundType: 4
+  playType: 2
+  soundManager: {fileID: 5848181875861720457, guid: 3700e0b1028662d49b4e57581106d34e,
+    type: 3}
 --- !u!1 &3545431889035614111
 GameObject:
   m_ObjectHideFlags: 0

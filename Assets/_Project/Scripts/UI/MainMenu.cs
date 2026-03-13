@@ -9,6 +9,7 @@ namespace _Project.Scripts.UI
         public override PageID ID => PageID.MainMenu;
 
         [SerializeField] private string gameSceneName;
+        [SerializeField] private string tutorialSceneName = "Final Onboarding Scene";
 
         public void OnStartButtonClicked()
         {
@@ -17,8 +18,9 @@ namespace _Project.Scripts.UI
 
         public void OnTutorialButtonClicked()
         {
-            SceneSystem.Instance.LoadScene(new SceneLoadRequest("Onboarding Scene", LoadSceneMode.Single));
+            SceneSystem.Instance.LoadScene(new SceneLoadRequest(tutorialSceneName, LoadSceneMode.Single));
         }
+
         public void OnMultiPlayButtonClicked()
         {
             UIManager.Instance.SwitchPage(PageID.SessionsPage);

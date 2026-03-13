@@ -1,5 +1,6 @@
 using _Project.Scripts.Core.Backend.Scene_Control;
 using _Project.Scripts.Core.Enemy.EnemySpawner;
+using _Project.Scripts.Core.Weapons.Ranged;
 using _Project.Scripts.Gameplay.Time_Stability_Meter;
 using UnityEngine;
 
@@ -30,15 +31,21 @@ namespace _Project.Scripts.Gameplay.Revamp_PCG
         private bool _clearRoomCheck = false;
         
         private RoomWaveController _roomWaveController;
+        
+        private AudioSource _roomAudioSource;
+        private AudioPlayer _audioPlayer;
 
         private void Awake()
         {
             _roomWaveController = GetComponent<RoomWaveController>();
+            _roomAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
         }
         
         private void Start()
         {
             HidePortal();
+            _audioPlayer.PlayRoomClip(_roomAudioSource);
         }
 
         private void Update()

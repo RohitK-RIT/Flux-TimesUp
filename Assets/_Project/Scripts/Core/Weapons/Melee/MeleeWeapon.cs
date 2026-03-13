@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using _Project.Scripts.Core.Backend.Interfaces;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
+using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.Weapons.Melee
@@ -10,7 +13,9 @@ namespace _Project.Scripts.Core.Weapons.Melee
     /// </summary>
     public sealed class MeleeWeapon : Weapon
     {
+        public event Action OnAttackBegin;
         public override string WeaponID => stats.WeaponID;
+        public override string DisplayName => stats.WeaponName;
         public MeleeWeaponStats Stats => stats;
 
         /// <summary>
@@ -25,13 +30,31 @@ namespace _Project.Scripts.Core.Weapons.Melee
 
         private float _lastAttackTime = float.MinValue;
         private Coroutine _attackCoroutine;
+        private AudioSource _shootingAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _shootingAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
+
+        public override void OnCollected(PlayerController playerController)
+        {
+            if (playerController.HandController.Weapons[1])
+                return;
+
+            playerController.HandController.OnItemInteracted(this);
+        }
 
         public override void BeginUse()
         {
             if (IsAttacking)
                 return;
 
-            StartCoroutine(OnAttack());
+            _attackCoroutine = StartCoroutine(OnAttack());
         }
 
         public override void EndUse()
@@ -40,6 +63,7 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 return;
 
             StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
         }
 
         /// <summary>
@@ -51,8 +75,14 @@ namespace _Project.Scripts.Core.Weapons.Melee
             while (true)
             {
                 // Wait for the attack speed and then fire the bullet.
-                yield return new WaitWhile(() => Time.time - _lastAttackTime < 1 / stats.AttackSpeed);
-                Slash();
+                yield return new WaitUntil(() => Time.time - _lastAttackTime >= 1 / stats.AttackSpeed);
+
+                if (Owner is LocalPlayerController)
+                    Debug.Log($"Melee Check {Time.time} - {_lastAttackTime} = {Time.time - _lastAttackTime} >= {1 / stats.AttackSpeed}");
+
+                OnAttackBegin?.Invoke();
+                Invoke(nameof(Slash), 2.2f / (stats.AttackSpeed * 2f)); // Halfway through the animation
+                // Slash();
                 _lastAttackTime = Time.time;
             }
         }
@@ -62,10 +92,19 @@ namespace _Project.Scripts.Core.Weapons.Melee
         /// </summary>
         private void Slash()
         {
+            DataCollectionEvents.PlayerAttacked();
+            _audioPlayer.PlayAttackClip(_shootingAudioSource);
             // Check for enemies in the attack range
             var collidersFound = new Collider[20];
-            var count = Physics.OverlapSphereNonAlloc(CurrentPlayerController.transform.position, stats.Range, collidersFound, ~CurrentPlayerController.FriendlyLayer,
-                QueryTriggerInteraction.Ignore);
+
+            int opponentMask = 1 << LayerMask.NameToLayer(Owner.OpponentLayerName);
+            var count = Physics.OverlapSphereNonAlloc(
+                Owner.transform.position,
+                stats.Range,
+                collidersFound,
+                opponentMask,
+                QueryTriggerInteraction.Collide
+            );
 
             // Remove the enemies that are out of attack FOV
             for (var i = 0; i < count; i++)
@@ -73,20 +112,11 @@ namespace _Project.Scripts.Core.Weapons.Melee
                 if (!collidersFound[i])
                     continue;
 
-                var direction = collidersFound[i].transform.position - CurrentPlayerController.transform.position;
-                var angle = Vector3.Angle(CurrentPlayerController.MovementController.Body.forward, direction);
+                var direction = collidersFound[i].transform.position - Owner.transform.position;
+                var angle = Vector3.Angle(Owner.MovementController.Body.forward, direction);
 
                 // Deal damage to the enemies in the attack FOV
                 if (angle > stats.AttackFOV)
-                    continue;
-
-                var colliderLayerMask = 1 << collidersFound[i].gameObject.layer;
-
-                if ((colliderLayerMask & CurrentPlayerController.OpponentLayer) == 0)
-                    continue;
-
-                if (Physics.Raycast(CurrentPlayerController.transform.position, direction, out var raycastHit, stats.Range, ~CurrentPlayerController.FriendlyLayer,
-                        QueryTriggerInteraction.Ignore) && raycastHit.collider != collidersFound[i])
                     continue;
 
                 // Check if the enemy is a player and deal damage
@@ -100,5 +130,13 @@ namespace _Project.Scripts.Core.Weapons.Melee
             // TODO: Implement era specific damage calculation
             return new IDamageable.DamageInfo(stats.Damage, this);
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Copy Weapon ID")]
+        private void CopyWeaponID()
+        {
+            GUIUtility.systemCopyBuffer = stats.WeaponID;
+        }
+#endif
     }
 }

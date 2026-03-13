@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using _Project.Scripts.Core.Backend.Helper;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
 using UnityEngine;
 using _Project.Scripts.Core.Player_Controllers;
+using _Project.Scripts.Core.Weapons.Ranged;
 
 namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 {
@@ -26,14 +28,22 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         /// GameObject to represent the shield.
         /// </summary>
         private GameObject _shieldVisual;
+        private AudioSource _abilityAudioSource;
+        private AudioPlayer _audioPlayer;
 
-        public override void OnPickup(PlayerController controller)
+        private void Awake()
         {
-            base.OnPickup(controller);
+            _abilityAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
+
+        public override void OnPickup(PlayerController owner)
+        {
+            base.OnPickup(owner);
 
             // Instantiate the shield visual and set the shield visual as a child of the player.
-            _shieldVisual = Instantiate(shieldVisualPrefab, controller.transform);
-            _shieldVisual.gameObject.SetLayerRecursively( CurrentPlayerController.FriendlyLayerName);
+            _shieldVisual = Instantiate(shieldVisualPrefab, owner.transform);
+            _shieldVisual.gameObject.SetLayerRecursively( Owner.FriendlyLayerName);
             SetShieldVisual(false);
         }
 
@@ -51,6 +61,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
         public override void OnEquip()
         {
             base.OnEquip();
+            DataCollectionEvents.AbilityUsed();
+            _audioPlayer.PlayAbilityClip(_abilityAudioSource);
             Shield();
             Used = true;
         }
@@ -68,8 +80,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities.Shield
 
             SetShieldVisual(true);
             isAbilityActive = true;
-            CurrentPlayerController.StartCoroutine(DeactivateAbility(stats.Duration));
-            CurrentPlayerController.StartCoroutine(StartCooldown(stats.Cooldown));
+            Owner.StartCoroutine(DeactivateAbility(stats.Duration));
+            Owner.StartCoroutine(StartCooldown(stats.Cooldown));
         }
 
         /// <summary>

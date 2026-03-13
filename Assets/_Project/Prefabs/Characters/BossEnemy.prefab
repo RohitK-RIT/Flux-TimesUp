@@ -1318,6 +1318,8 @@ MonoBehaviour:
     type: 3}
   reduceTSMVFX: {fileID: 7478731271839673279, guid: 70accc193021c48fe8322a0278d4e573,
     type: 3}
+  deathSFX: {fileID: 0}
+  deathEffectPrefab: {fileID: 0}
 --- !u!114 &7350352694099059543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,9 +1429,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3f055ab0b5f4df19ef1d30fe4f712c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bodyIKRig: {fileID: 8772256074487202419}
   gunIKRig: {fileID: 1220190988788173036}
   gunAimingIKRig: {fileID: 7605964372563763094}
   meleeIKRig: {fileID: 2452228453874040472}
+  leftHandIKConstraint: {fileID: 1594245268811051365}
 --- !u!114 &1358199139427676378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1457,6 +1461,9 @@ MonoBehaviour:
   chargerEnemyPrefab: {fileID: 4518910825798227448, guid: 6234b64c2503f48a3a7db02d43a0fc11,
     type: 3}
   basicEnemyPrefab: {fileID: 0}
+  spawnSFX: {fileID: 8300000, guid: 48891a207861040c098718678ffa06c1, type: 3}
+  spawnEffectPrefab: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473,
+    type: 3}
 --- !u!114 &725896742905638278
 MonoBehaviour:
   m_ObjectHideFlags: 0

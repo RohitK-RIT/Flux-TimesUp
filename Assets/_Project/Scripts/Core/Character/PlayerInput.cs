@@ -24,7 +24,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     ""name"": ""PlayerInput"",
     ""maps"": [
         {
-            ""name"": ""PlayerControl"",
+            ""name"": ""Character"",
             ""id"": ""ab140a0f-0436-4cb3-a05a-f0b0d03f790e"",
             ""actions"": [
                 {
@@ -46,7 +46,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""Use"",
                     ""type"": ""Button"",
                     ""id"": ""7582dec2-15ab-452d-b06a-becdff655db9"",
                     ""expectedControlType"": ""Button"",
@@ -55,9 +55,36 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""EquipAbility"",
+                    ""name"": ""Equip Ability"",
                     ""type"": ""Button"",
                     ""id"": ""65709bd6-921b-42fe-b98e-c6f5d1b58f7d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5df890d-46b5-4b60-ac03-1f98fc12f8d5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pick"",
+                    ""type"": ""Button"",
+                    ""id"": ""d304de04-5e98-4879-b703-dbcf8f6657f1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""06d4815e-8f35-4487-a403-a7bd773e3545"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -71,24 +98,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": ""Clamp(min=-1,max=1)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Reload"",
-                    ""type"": ""Button"",
-                    ""id"": ""b5df890d-46b5-4b60-ac03-1f98fc12f8d5"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Loot Pick Up"",
-                    ""type"": ""Button"",
-                    ""id"": ""d304de04-5e98-4879-b703-dbcf8f6657f1"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""Switch Weapon Hotkey"",
@@ -163,7 +172,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboad"",
-                    ""action"": ""Attack"",
+                    ""action"": ""Use"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -185,18 +194,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboad"",
-                    ""action"": ""EquipAbility"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e7e93e19-f61b-42b1-a3b8-a45ed5a875d2"",
-                    ""path"": ""<Mouse>/scroll/y"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Switch Weapon"",
+                    ""action"": ""Equip Ability"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -218,7 +216,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Loot Pick Up"",
+                    ""action"": ""Pick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -246,12 +244,23 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f623737f-4845-41f7-b51e-3a01ac65b76d"",
-                    ""path"": ""<Keyboard>/3"",
+                    ""id"": ""4fed0ae2-3826-430f-ba13-edda53bf9256"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Switch Weapon Hotkey"",
+                    ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e7e93e19-f61b-42b1-a3b8-a45ed5a875d2"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Weapon"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -271,16 +280,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         }
     ]
 }");
-        // PlayerControl
-        m_PlayerControl = asset.FindActionMap("PlayerControl", throwIfNotFound: true);
-        m_PlayerControl_Move = m_PlayerControl.FindAction("Move", throwIfNotFound: true);
-        m_PlayerControl_Look = m_PlayerControl.FindAction("Look", throwIfNotFound: true);
-        m_PlayerControl_Attack = m_PlayerControl.FindAction("Attack", throwIfNotFound: true);
-        m_PlayerControl_EquipAbility = m_PlayerControl.FindAction("EquipAbility", throwIfNotFound: true);
-        m_PlayerControl_SwitchWeapon = m_PlayerControl.FindAction("Switch Weapon", throwIfNotFound: true);
-        m_PlayerControl_Reload = m_PlayerControl.FindAction("Reload", throwIfNotFound: true);
-        m_PlayerControl_LootPickUp = m_PlayerControl.FindAction("Loot Pick Up", throwIfNotFound: true);
-        m_PlayerControl_SwitchWeaponHotkey = m_PlayerControl.FindAction("Switch Weapon Hotkey", throwIfNotFound: true);
+        // Character
+        m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
+        m_Character_Move = m_Character.FindAction("Move", throwIfNotFound: true);
+        m_Character_Look = m_Character.FindAction("Look", throwIfNotFound: true);
+        m_Character_Use = m_Character.FindAction("Use", throwIfNotFound: true);
+        m_Character_EquipAbility = m_Character.FindAction("Equip Ability", throwIfNotFound: true);
+        m_Character_Reload = m_Character.FindAction("Reload", throwIfNotFound: true);
+        m_Character_Pick = m_Character.FindAction("Pick", throwIfNotFound: true);
+        m_Character_Drop = m_Character.FindAction("Drop", throwIfNotFound: true);
+        m_Character_SwitchWeapon = m_Character.FindAction("Switch Weapon", throwIfNotFound: true);
+        m_Character_SwitchWeaponHotkey = m_Character.FindAction("Switch Weapon Hotkey", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -339,65 +349,70 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // PlayerControl
-    private readonly InputActionMap m_PlayerControl;
-    private List<IPlayerControlActions> m_PlayerControlActionsCallbackInterfaces = new List<IPlayerControlActions>();
-    private readonly InputAction m_PlayerControl_Move;
-    private readonly InputAction m_PlayerControl_Look;
-    private readonly InputAction m_PlayerControl_Attack;
-    private readonly InputAction m_PlayerControl_EquipAbility;
-    private readonly InputAction m_PlayerControl_SwitchWeapon;
-    private readonly InputAction m_PlayerControl_Reload;
-    private readonly InputAction m_PlayerControl_LootPickUp;
-    private readonly InputAction m_PlayerControl_SwitchWeaponHotkey;
-    public struct PlayerControlActions
+    // Character
+    private readonly InputActionMap m_Character;
+    private List<ICharacterActions> m_CharacterActionsCallbackInterfaces = new List<ICharacterActions>();
+    private readonly InputAction m_Character_Move;
+    private readonly InputAction m_Character_Look;
+    private readonly InputAction m_Character_Use;
+    private readonly InputAction m_Character_EquipAbility;
+    private readonly InputAction m_Character_Reload;
+    private readonly InputAction m_Character_Pick;
+    private readonly InputAction m_Character_Drop;
+    private readonly InputAction m_Character_SwitchWeapon;
+    private readonly InputAction m_Character_SwitchWeaponHotkey;
+    public struct CharacterActions
     {
         private @PlayerInput m_Wrapper;
-        public PlayerControlActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Move => m_Wrapper.m_PlayerControl_Move;
-        public InputAction @Look => m_Wrapper.m_PlayerControl_Look;
-        public InputAction @Attack => m_Wrapper.m_PlayerControl_Attack;
-        public InputAction @EquipAbility => m_Wrapper.m_PlayerControl_EquipAbility;
-        public InputAction @SwitchWeapon => m_Wrapper.m_PlayerControl_SwitchWeapon;
-        public InputAction @Reload => m_Wrapper.m_PlayerControl_Reload;
-        public InputAction @LootPickUp => m_Wrapper.m_PlayerControl_LootPickUp;
-        public InputAction @SwitchWeaponHotkey => m_Wrapper.m_PlayerControl_SwitchWeaponHotkey;
-        public InputActionMap Get() { return m_Wrapper.m_PlayerControl; }
+        public CharacterActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Character_Move;
+        public InputAction @Look => m_Wrapper.m_Character_Look;
+        public InputAction @Use => m_Wrapper.m_Character_Use;
+        public InputAction @EquipAbility => m_Wrapper.m_Character_EquipAbility;
+        public InputAction @Reload => m_Wrapper.m_Character_Reload;
+        public InputAction @Pick => m_Wrapper.m_Character_Pick;
+        public InputAction @Drop => m_Wrapper.m_Character_Drop;
+        public InputAction @SwitchWeapon => m_Wrapper.m_Character_SwitchWeapon;
+        public InputAction @SwitchWeaponHotkey => m_Wrapper.m_Character_SwitchWeaponHotkey;
+        public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(PlayerControlActions set) { return set.Get(); }
-        public void AddCallbacks(IPlayerControlActions instance)
+        public static implicit operator InputActionMap(CharacterActions set) { return set.Get(); }
+        public void AddCallbacks(ICharacterActions instance)
         {
-            if (instance == null || m_Wrapper.m_PlayerControlActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_PlayerControlActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_CharacterActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CharacterActionsCallbackInterfaces.Add(instance);
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
+            @Use.started += instance.OnUse;
+            @Use.performed += instance.OnUse;
+            @Use.canceled += instance.OnUse;
             @EquipAbility.started += instance.OnEquipAbility;
             @EquipAbility.performed += instance.OnEquipAbility;
             @EquipAbility.canceled += instance.OnEquipAbility;
-            @SwitchWeapon.started += instance.OnSwitchWeapon;
-            @SwitchWeapon.performed += instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled += instance.OnSwitchWeapon;
             @Reload.started += instance.OnReload;
             @Reload.performed += instance.OnReload;
             @Reload.canceled += instance.OnReload;
-            @LootPickUp.started += instance.OnLootPickUp;
-            @LootPickUp.performed += instance.OnLootPickUp;
-            @LootPickUp.canceled += instance.OnLootPickUp;
+            @Pick.started += instance.OnPick;
+            @Pick.performed += instance.OnPick;
+            @Pick.canceled += instance.OnPick;
+            @Drop.started += instance.OnDrop;
+            @Drop.performed += instance.OnDrop;
+            @Drop.canceled += instance.OnDrop;
+            @SwitchWeapon.started += instance.OnSwitchWeapon;
+            @SwitchWeapon.performed += instance.OnSwitchWeapon;
+            @SwitchWeapon.canceled += instance.OnSwitchWeapon;
             @SwitchWeaponHotkey.started += instance.OnSwitchWeaponHotkey;
             @SwitchWeaponHotkey.performed += instance.OnSwitchWeaponHotkey;
             @SwitchWeaponHotkey.canceled += instance.OnSwitchWeaponHotkey;
         }
 
-        private void UnregisterCallbacks(IPlayerControlActions instance)
+        private void UnregisterCallbacks(ICharacterActions instance)
         {
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
@@ -405,41 +420,44 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
+            @Use.started -= instance.OnUse;
+            @Use.performed -= instance.OnUse;
+            @Use.canceled -= instance.OnUse;
             @EquipAbility.started -= instance.OnEquipAbility;
             @EquipAbility.performed -= instance.OnEquipAbility;
             @EquipAbility.canceled -= instance.OnEquipAbility;
-            @SwitchWeapon.started -= instance.OnSwitchWeapon;
-            @SwitchWeapon.performed -= instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled -= instance.OnSwitchWeapon;
             @Reload.started -= instance.OnReload;
             @Reload.performed -= instance.OnReload;
             @Reload.canceled -= instance.OnReload;
-            @LootPickUp.started -= instance.OnLootPickUp;
-            @LootPickUp.performed -= instance.OnLootPickUp;
-            @LootPickUp.canceled -= instance.OnLootPickUp;
+            @Pick.started -= instance.OnPick;
+            @Pick.performed -= instance.OnPick;
+            @Pick.canceled -= instance.OnPick;
+            @Drop.started -= instance.OnDrop;
+            @Drop.performed -= instance.OnDrop;
+            @Drop.canceled -= instance.OnDrop;
+            @SwitchWeapon.started -= instance.OnSwitchWeapon;
+            @SwitchWeapon.performed -= instance.OnSwitchWeapon;
+            @SwitchWeapon.canceled -= instance.OnSwitchWeapon;
             @SwitchWeaponHotkey.started -= instance.OnSwitchWeaponHotkey;
             @SwitchWeaponHotkey.performed -= instance.OnSwitchWeaponHotkey;
             @SwitchWeaponHotkey.canceled -= instance.OnSwitchWeaponHotkey;
         }
 
-        public void RemoveCallbacks(IPlayerControlActions instance)
+        public void RemoveCallbacks(ICharacterActions instance)
         {
-            if (m_Wrapper.m_PlayerControlActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_CharacterActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(IPlayerControlActions instance)
+        public void SetCallbacks(ICharacterActions instance)
         {
-            foreach (var item in m_Wrapper.m_PlayerControlActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_CharacterActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_PlayerControlActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_CharacterActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public PlayerControlActions @PlayerControl => new PlayerControlActions(this);
+    public CharacterActions @Character => new CharacterActions(this);
     private int m_KeyboadSchemeIndex = -1;
     public InputControlScheme KeyboadScheme
     {
@@ -458,15 +476,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             return asset.controlSchemes[m_GamepadSchemeIndex];
         }
     }
-    public interface IPlayerControlActions
+    public interface ICharacterActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
-        void OnAttack(InputAction.CallbackContext context);
+        void OnUse(InputAction.CallbackContext context);
         void OnEquipAbility(InputAction.CallbackContext context);
-        void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
-        void OnLootPickUp(InputAction.CallbackContext context);
+        void OnPick(InputAction.CallbackContext context);
+        void OnDrop(InputAction.CallbackContext context);
+        void OnSwitchWeapon(InputAction.CallbackContext context);
         void OnSwitchWeaponHotkey(InputAction.CallbackContext context);
     }
 }

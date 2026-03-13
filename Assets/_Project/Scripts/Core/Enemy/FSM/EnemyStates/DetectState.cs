@@ -30,7 +30,7 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         // Called when the enemy exits the DetectState
         public override void ExitState()
         {
-            Debug.Log("Exiting Detect State");
+            //Debug.Log("Exiting Detect State");
             
             // If the broadcaster leaves the detect state it should not be the broadcaster again
             if (_enemyInputController.MemberType == MemberType.Broadcaster)
@@ -58,10 +58,15 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
         
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
+            
             // If a player is detected, move to Detect state
             if (!_enemyInputController.FindPlayer())
             {
-                return EnemyState.Detect;
+                return EnemyState.Patrol;
             }
             
             // If the enemy can chase the player, transition to Chase
@@ -71,8 +76,8 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             }
 
             // Otherwise, keep patrolling
-            return EnemyState.Patrol;
             
+            return EnemyState.Detect;
             
         }
     }

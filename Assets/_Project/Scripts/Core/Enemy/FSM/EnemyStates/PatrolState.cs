@@ -24,13 +24,6 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
             _enemyInputController.RoamingPosition = _enemyInputController.GetRoamingPosition(_startingPosition);
         }
 
-        // Called when the enemy exits the FleeState
-        public override void ExitState()
-        {
-            Debug.Log("Exiting Patrol State");
-            //_enemyInputController.StopChasing();
-        }
-
         // Called every frame while the enemy is in the ChaseState
         // ReSharper disable Unity.PerformanceAnalysis
         public override void UpdateState()
@@ -46,6 +39,10 @@ namespace _Project.Scripts.Core.Enemy.FSM.EnemyStates
 
         public override EnemyState GetNextState()
         {
+            if (_enemyInputController.EnemyHUD.enemy.CurrentHealth<=0)
+            {
+                return EnemyState.Death;
+            }
             // If enemy is reloading stay in patrol state
             if (_enemyInputController.enemyType == EnemyType.Basic)
             {

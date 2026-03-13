@@ -17,7 +17,7 @@ namespace _Project.Scripts.Core.Player_Controllers
         public delegate void PlayerDeath(PlayerController attacker, PlayerController deadPlayer, IHandItem itemKilledBy);
 
         /// <summary>
-        /// 
+        /// Event that is triggered when a player dies.
         /// </summary>
         public static event PlayerDeath OnDeath;
 
@@ -92,13 +92,6 @@ namespace _Project.Scripts.Core.Player_Controllers
 
         protected virtual void Start()
         {
-            
-            // Initialize the player's movement, weapon controller and animation controller
-            MovementController.Initialize(this);
-            HandController.Initialize(this);
-            AnimationController.Initialize(this);
-            IKController.Initialize(this);
-
             // Initialize the player's health
             currentHealth = Stats.maxHealth;
             gameObject.SetLayerRecursively(FriendlyLayerName);

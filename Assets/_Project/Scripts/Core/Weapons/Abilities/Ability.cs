@@ -36,17 +36,17 @@ namespace _Project.Scripts.Core.Weapons.Abilities
 
         public float CooldownTime { get; private set; }
 
-        public PlayerController CurrentPlayerController { get; private set; }
+        public PlayerController Owner { get; private set; }
 
-        public virtual void OnPickup(PlayerController controller)
+        public virtual void OnPickup(PlayerController owner)
         {
-            CurrentPlayerController = controller;
-            gameObject.SetLayerRecursively(controller.FriendlyLayerName);
+            Owner = owner;
+            gameObject.SetLayerRecursively(owner.FriendlyLayerName);
         }
 
         public virtual void OnDrop()
         {
-            CurrentPlayerController = null;
+            Owner = null;
             gameObject.SetLayerRecursively("Default");
         }
 
@@ -60,6 +60,8 @@ namespace _Project.Scripts.Core.Weapons.Abilities
         {
             Used = false;
         }
+
+        public virtual void OnUnequip() { }
 
         /// <summary>
         /// Starts the cooldown period for the ability.
