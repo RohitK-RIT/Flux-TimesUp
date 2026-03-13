@@ -1,0 +1,94 @@
+using System.Collections;
+using _Project.Scripts.Core.Backend.Scene_Control;
+using _Project.Scripts.Core.Enemy.GroupEnemyBehavior;
+using _Project.Scripts.Core.Weapons.Ranged;
+using _Project.Scripts.Gameplay.Time_Stability_Meter;
+using UnityEngine;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
+
+namespace _Project.Scripts.Gameplay.Revamp_PCG
+{
+    public class RandomRoomGeneration : MonoBehaviour
+    {
+        [SerializeField] private DungeonRoom[] poolOfRoomPrefabs;
+        [SerializeField] private BossEnemyRoom bossRoom;
+        private DungeonRoom _currentRoom;
+        public bool hasInstantiatedBossRoom = false;
+        
+        private AudioSource _roomAudioSource;
+        private AudioPlayer _audioPlayer;
+
+        private void Awake()
+        {
+            _roomAudioSource = GetComponent<AudioSource>();
+            _audioPlayer = GetComponent<AudioPlayer>();
+        }
+        private void Start()
+        {
+            InitializeRoomGeneration();
+        }
+
+        private void Update()
+        {
+            //check if the room if cleared of enemies and the TSM is 100
+            if (hasInstantiatedBossRoom == false && _currentRoom.CheckIfRoomIsCleared() &&
+                Mathf.Round(TimeStabilityMeter.Instance.TimeStability) >= TimeStabilityMeter.Instance.TotalTimeStability)
+            {
+                TimeStabilityMeter.Instance.PauseTimeStabilityMeter = true;
+                _currentRoom.ShowPortal();
+
+                if (_currentRoom.CheckIfPlayerEntersPortal())
+                {
+                    DataCollectionEvents.PortalExited();
+                    _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
+                    Destroy(_currentRoom.gameObject);
+                    //spawn boss room
+                    InstantiateBossRoom(bossRoom);
+                    hasInstantiatedBossRoom = true;
+                }
+            }
+
+            //if the player enters the portal, generate a new room
+            if (!hasInstantiatedBossRoom && _currentRoom.CheckIfRoomIsCleared() && _currentRoom.CheckIfPlayerEntersPortal())
+            {
+                DataCollectionEvents.PortalExited();
+                _audioPlayer.PlayPlayerTeleportClip(_roomAudioSource);
+                InitializeRoomGeneration();
+            }
+        }
+
+        private void InitializeRoomGeneration()
+        {
+            //if there is a current room that exists, destroy it
+            if (_currentRoom != null)
+            {
+                Destroy(_currentRoom.gameObject);
+            }
+
+            var randomRoomIndex = Random.Range(0, poolOfRoomPrefabs.Length);
+            var spawnedRoom = InstantiateRoom(poolOfRoomPrefabs[randomRoomIndex]);
+            _currentRoom = spawnedRoom;
+
+            // LevelSceneController.Instance.Player.gameObject.SetActive(false);
+            //Instantiate Player in the new room at the entry point
+            LevelSceneController.Instance.Player.MovementController.SetPosition(_currentRoom.EntryPoint.transform.position);
+            // LevelSceneController.Instance.Player.gameObject.SetActive(true);
+
+            //TODO: all enemies killed => spawn loot
+        }
+
+        private DungeonRoom InstantiateRoom(DungeonRoom roomToSpawn)
+        {
+            return Instantiate(roomToSpawn, transform.position, Quaternion.identity, transform);
+        }
+
+        private void InstantiateBossRoom(BossEnemyRoom bossRoomToSpawn)
+        {
+            var bossRoomInstance = Instantiate(bossRoomToSpawn, transform.position, Quaternion.identity, transform);
+
+            //Instantiate Player in the boss room at the entry point
+            LevelSceneController.Instance.Player.MovementController.SetPosition(bossRoomInstance.EntryPoint.transform.position);
+        }
+    }
+}

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d22cffc77194ba1885f044e07aad85f, type: 3}
+  m_Name: RWS_Pistol1
+  m_EditorClassIdentifier: 
+  weaponID: Pistol1
+  weaponType: 1
+  weaponName: M1911
+  damage: 20
+  range: 75
+  attackSpeed: 3
+  weaponEra: 0
+  timeStabilityEffect: 5
+  fireModes: 00000000
+  projectilePrefab: {fileID: 3585076104673698268, guid: d5d5414df1dcdd544b7e10df57f273c9,
+    type: 3}
+  projectileSpeed: 50
+  reloadTime: 2
+  spread: 0.01
+  recoil: 0.01
+  magazineSize: 8
+  maxBulletCount: 40
+  burstAmount: 3
+  burstDuration: 0.1
+  trailSpeed: 100
+  missDistance: 100
