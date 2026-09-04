@@ -130,3 +130,7 @@
 *.gz lfs
 *.rar lfs
 *.tar lfs
+# --- GitHub Linguist: exclude third-party asset packs from language stats ---
+Assets/SyntyStudios/**   linguist-vendored
+"Assets/Hovl Studio/**"  linguist-vendored
+Assets/TutorialInfo/**   linguist-generated
